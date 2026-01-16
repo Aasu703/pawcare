@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../schema';
 import Link from 'next/link';
+import { login } from '@/lib/api/auth';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -30,13 +31,22 @@ export default function LoginForm() {
         return;
       }
 
-      // Handle login logic here
-      console.log('Login data:', result.data);
-  // TODO: Call your login API
+      // Call login API
+      const response = await login(result.data);
+      
+      if (response.success) {
+        // Store token if needed
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        router.push('/home');
+      } else {
+        setErrors({ email: response.message || 'Login failed' });
+      }
   setLoading(false);
-  router.push('/home');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
+      setErrors({ email: error.message || 'Login failed' });
       setLoading(false);
     }
   };

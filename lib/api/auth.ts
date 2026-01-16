@@ -24,8 +24,8 @@ export const register = async ( registerData : any ) => {
 export const login = async ( loginData : any ) => {
     try{
         const response = await axios.post(
-            API.AUTH.LOGIN, 
-            loginData 
+            API.AUTH.LOGIN, // change
+            loginData // change
         );
         return response.data;
 

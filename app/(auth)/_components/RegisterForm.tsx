@@ -3,12 +3,16 @@
 import { useState } from 'react';
 import { registerSchema } from '../schema';
 import Link from 'next/link';
+import { register } from '@/lib/api/auth';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     Firstname: '',
     Lastname: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
   });
@@ -22,6 +26,8 @@ export default function RegisterForm() {
       [name]: value,
     }));
   };
+
+  // TODO: Add onSubmit handler when registration action and router are implemented.
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,12 +48,18 @@ export default function RegisterForm() {
         return;
       }
 
-      // Handle register logic here
-      console.log('Register data:', result.data);
-      // TODO: Call your register API
+      // Call register API
+      const response = await register(result.data);
+      
+      if (response.success) {
+        router.push('/login');
+      } else {
+        setErrors({ Firstname: response.message || 'Registration failed' });
+      }
       setLoading(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Register error:', error);
+      setErrors({ Firstname: error.message || 'Registration failed' });
       setLoading(false);
     }
   };
@@ -113,6 +125,24 @@ export default function RegisterForm() {
               placeholder="Enter your email"
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          </div>
+          {/* Phone Number */}
+          <div>
+            <label htmlFor="phoneNumber" className="block text-sm font-medium text-[#f8d548]">
+              Phone Number
+            </label>
+            <input
+              id="phoneNumber"
+              name="phoneNumber"
+              type="text"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-[#0b3238] text-white focus:outline-none focus:ring-2 ${
+                errors.phoneNumber ? 'border-red-500 focus:ring-red-500' : 'border-[#f8d548]/60 focus:ring-[#f8d548]'
+              }`}
+              placeholder="Enter your phone number"
+            />
+            {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
           </div>
 
           {/* Password */}
