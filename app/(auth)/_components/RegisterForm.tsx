@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { registerSchema } from '../schema';
 import Link from 'next/link';
-import { register } from '@/lib/api/auth';
+import { handleRegister } from '@/lib/actions/auth-actions';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
@@ -48,8 +48,8 @@ export default function RegisterForm() {
         return;
       }
 
-      // Call register API
-      const response = await register(result.data);
+      // Call register action (sets auth cookies server-side if provided)
+      const response = await handleRegister(result.data);
       
       if (response.success) {
         router.push('/login');

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../schema';
 import Link from 'next/link';
-import { login } from '@/lib/api/auth';
+import { handleLogin } from '@/lib/actions/auth-actions';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -31,14 +31,10 @@ export default function LoginForm() {
         return;
       }
 
-      // Call login API
-      const response = await login(result.data);
+      // Call login action (sets auth cookies server-side)
+      const response = await handleLogin(result.data);
       
       if (response.success) {
-        // Store token if needed
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
         router.push('/home');
       } else {
         setErrors({ email: response.message || 'Login failed' });
