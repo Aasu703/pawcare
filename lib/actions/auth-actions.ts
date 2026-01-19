@@ -1,8 +1,8 @@
 // server side processing of both actions
 "use server";
-import { set } from "zod";
+
 import { register, login } from "../api/auth";
-import { setAuthToken,  setUserData} from "../cookie";
+import { setAuthToken, setUserData } from "../cookie";
 
 export const handleRegister = async (userData: any) => {
     try{
@@ -10,6 +10,12 @@ export const handleRegister = async (userData: any) => {
         const result=await register(userData);
         // how to send back to component
         if(result.success){
+            if (result.token) {
+                await setAuthToken(result.token);
+            }
+            if (result.data) {
+                await setUserData(result.data);
+            }
             return {
                 success: true,
                 message: "Registration successful",
