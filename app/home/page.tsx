@@ -1,7 +1,11 @@
+"use client"; // IMPORTANT TO USE CONTEXT
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProtectedHome() {
+  const{user, logout} = useAuth();
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white flex items-center justify-center px-4">
       <div className="max-w-4xl w-full">
@@ -16,13 +20,10 @@ export default function ProtectedHome() {
                 This is a placeholder for your authenticated home page.
                  For now it is visible to everyone.
               </p>
-              {/* <div className="space-y-2 text-sm text-gray-400">
-                <p className="font-semibold text-amber-300">Suggested next steps to secure:</p>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>Add an auth check (middleware or server-side) and redirect unauthenticated users to /login.</li>
-                  <li>Protect data fetching with session validation on the server.</li>
-                </ul>
-              </div> */}
+             <div>
+                 {user && <div> Welcome {user.email}</div>}
+                {user && <button onClick={logout}>Logout</button>}
+                </div>
               <div className="flex flex-wrap gap-3 pt-4">
                 <Link href="/login" className="bg-amber-500 text-black px-6 py-3 rounded-lg font-semibold hover:bg-amber-600 transition">
                   Go to Login

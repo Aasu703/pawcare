@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import { loginSchema } from '../schema';
 import Link from 'next/link';
 import { handleLogin } from '@/lib/actions/auth-actions';
+import { useAuth } from '@/context/AuthContext'; 
 
 export default function LoginForm() {
+  const {checkAuth} = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,10 +33,13 @@ export default function LoginForm() {
         return;
       }
 
+      
+
       // Call login action (sets auth cookies server-side)
       const response = await handleLogin(result.data);
       
       if (response.success) {
+        await checkAuth();
         router.push('/home');
       } else {
         setErrors({ email: response.message || 'Login failed' });
