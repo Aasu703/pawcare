@@ -1,7 +1,7 @@
 // server side processing of both actions
 "use server";
 
-import { register, login } from "../api/auth";
+import { register, login , whoAmI} from "../api/auth";
 import { setAuthToken, setUserData } from "../cookie";
 
 export const handleRegister = async (userData: any) => {
@@ -58,4 +58,28 @@ export const handleLogin = async (loginData: any) => {
         };
     }
 }
+
+export const handlewhoAmI = async () => {
+    try{
+        const result=await whoAmI();
+        if(result.success){
+            return {
+                success: true,
+                message: "User data fetched successfully",
+                data: result.data
+                };
+        }
+        return {
+            success: false,
+            message: result.message  ||"Fetching user data failed"
+        };
+    }
+    catch(err: Error | any){
+        return {
+            success: false,
+            message: err.message  ||"Fetching user data failed"
+        };
+    }
+}
+
 
