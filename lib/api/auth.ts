@@ -37,3 +37,18 @@ export const login = async ( loginData : any ) => {
         )
     }
 }
+
+export const whoAmI = async () => {
+    try{
+        const response = await axios.get(
+            API.AUTH.WHOAMI, // change
+        );
+        return response.data;
+    }catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message 
+            || err.message 
+            ||"Fetching user data failed"
+        )
+    }
+}
