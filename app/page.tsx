@@ -1,16 +1,29 @@
+"use client"
 
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 
 export default function Page() {
-  
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      router.replace('/home');
+    }
+  }, [isAuthenticated, loading, router]);
+
+  if (loading) {
+    return null;
+  }
 
   return (
-    
     <main className="min-h-screen bg-[#0f4f57] text-white">
-
       {/* Navigation */}
       <nav className="bg-[#0c4148]/95 backdrop-blur sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">

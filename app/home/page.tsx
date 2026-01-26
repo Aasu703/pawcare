@@ -5,12 +5,19 @@ import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPri
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
+
 export default function ProtectedHome() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated, loading } = useAuth();
   const router = useRouter();
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isAuthenticated, loading, router]);
 
   const handleLogout = async () => {
     await logout();
@@ -37,6 +44,10 @@ export default function ProtectedHome() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  if (loading) {
+    return null;
+  }
 
   const features = [
     {
