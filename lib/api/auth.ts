@@ -52,3 +52,24 @@ export const whoAmI = async () => {
         )
     }
 }
+
+export const updateProfile = async ( updateData : any ) => {
+    try{
+        const response = await axios.put(
+            API.AUTH.UPDATEPROFILE, // change
+            updateData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data", // this part is important for file upload
+                },
+            }
+        );
+        return response.data;
+    }catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message 
+            || err.message 
+            ||"Updating profile failed"
+        )
+    }
+}   

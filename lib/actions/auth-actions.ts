@@ -1,7 +1,7 @@
 // server side processing of both actions
 "use server";
 
-import { register, login , whoAmI} from "../api/auth";
+import { register, login , whoAmI, updateProfile} from "../api/auth";
 import { setAuthToken, setUserData } from "../cookie";
 
 export const handleRegister = async (userData: any) => {
@@ -80,6 +80,28 @@ export const handlewhoAmI = async () => {
             message: err.message  ||"Fetching user data failed"
         };
     }
+}       
+
+export const handleUpdateProfile = async (FormData: any) => {
+    try{
+        const result = await updateProfile(FormData);
+        if(result.success){
+            // update cookie data
+            await setUserData(result.data);
+            return {
+                success: true,
+                message: "Profile updated successfully",
+                data: result.data
+            };
+        }
+        return {
+            success: false,
+            message: result.message || "Profile update failed"
+        };
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.message || "Profile update failed"
+        };
+    }
 }
-
-
