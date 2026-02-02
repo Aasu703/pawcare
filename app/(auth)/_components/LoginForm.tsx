@@ -40,7 +40,12 @@ export default function LoginForm() {
       
       if (response.success) {
         await checkAuth();
-        router.push('/home');
+        // Redirect based on user role
+        if (response.data?.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/home');
+        }
       } else {
         setErrors({ email: response.message || 'Login failed' });
       }

@@ -3,7 +3,7 @@ import WeeklyAppointmentsChart from "@/components/admin/WeeklyAppointmentsChart"
 import RevenueTrendChart from "@/components/admin/RevenueTrendChart";
 import RecentAppointmentsTable from "@/components/admin/RecentAppointmentsTable";
 
-export default function Page() {
+export default function DashboardContent() {
     return (
         <div className="p-8">
             {/* Header */}
