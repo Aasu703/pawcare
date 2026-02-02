@@ -11,9 +11,11 @@ export const API = {
  },
  ADMIN:{
     USER: {
-        CREATE: '/api/admin/user/create',
-        GET_ALL_USERS: '/api/admin/user/get-all-users',
-        // Add other user-related admin endpoints here
+        CREATE: '/api/admin/user',
+        GET_ALL: '/api/admin/user',
+        GET_BY_ID: (id: string) => `/api/admin/user/${id}`,
+        UPDATE: (id: string) => `/api/admin/user/${id}`,
+        DELETE: (id: string) => `/api/admin/user/${id}`,
     }
  }
 };

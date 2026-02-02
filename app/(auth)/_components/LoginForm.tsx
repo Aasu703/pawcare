@@ -44,7 +44,7 @@ export default function LoginForm() {
         if (response.data?.role === 'admin') {
           router.push('/admin/dashboard');
         } else {
-          router.push('/home');
+          router.push('/user/home');
         }
       } else {
         setErrors({ email: response.message || 'Login failed' });
