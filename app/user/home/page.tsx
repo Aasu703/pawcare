@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity } from "lucide-react";
+import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
@@ -25,6 +25,10 @@ export default function ProtectedHome() {
 
   const handleBackToLanding = () => {
     router.push("/");
+  };
+
+  const handleProfileClick = () => {
+    router.push("/user/profile");
   };
 
   useEffect(() => {
@@ -147,6 +151,17 @@ export default function ProtectedHome() {
           <div className="flex items-center gap-4">
             <button className="p-2 rounded-lg hover:bg-gray-100 transition">
               <Bell className="w-5 h-5 text-gray-700" />
+            </button>
+            <button 
+              onClick={handleProfileClick}
+              className="p-2 rounded-lg hover:bg-gray-100 transition group relative"
+              title="Edit Profile"
+            >
+              <User className="w-5 h-5 text-gray-700 group-hover:text-yellow-600 transition-colors" />
+              {/* Optional tooltip */}
+              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                Edit Profile
+              </span>
             </button>
             <button className="p-2 rounded-lg hover:bg-gray-100 transition">
               <Settings className="w-5 h-5 text-gray-700" />
