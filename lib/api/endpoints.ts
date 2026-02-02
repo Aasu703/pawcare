@@ -16,6 +16,23 @@ export const API = {
         GET_BY_ID: (id: string) => `/api/admin/user/${id}`,
         UPDATE: (id: string) => `/api/admin/user/${id}`,
         DELETE: (id: string) => `/api/admin/user/${id}`,
+    },
+    PET: {
+        CREATE: '/api/admin/pet',
+        GET_ALL: '/api/admin/pet',
+        GET_BY_ID: (id: string) => `/api/admin/pet/${id}`,
+        UPDATE: (id: string) => `/api/admin/pet/${id}`,
+        DELETE: (id: string) => `/api/admin/pet/${id}`,
+    },
+    PROVIDER: {
+        CREATE: '/api/admin/provider',
+        GET_ALL: '/api/admin/provider',
+        GET_BY_ID: (id: string) => `/api/admin/provider/${id}`,
+        UPDATE: (id: string) => `/api/admin/provider/${id}`,
+        DELETE: (id: string) => `/api/admin/provider/${id}`,
+    },
+    STATS: {
+        DASHBOARD: '/api/admin/stats/dashboard',
     }
  }
 };

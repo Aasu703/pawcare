@@ -18,10 +18,25 @@ axiosInstance.interceptors.request.use(
         if(token && config.headers){
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+        // Debug: Log outgoing requests
+        console.log(`🚀 [${config.method?.toUpperCase()}] ${config.baseURL}${config.url}`);
         return config;
     },
     (error) => {
         return Promise.reject(error);
     }
 );
+
+// Debug: Log responses
+axiosInstance.interceptors.response.use(
+    (response) => {
+        console.log(`✅ [${response.status}] ${response.config.url}`, response.data);
+        return response;
+    },
+    (error) => {
+        console.error(`❌ [${error.response?.status || 'Network Error'}] ${error.config?.url}`, error.response?.data || error.message);
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;

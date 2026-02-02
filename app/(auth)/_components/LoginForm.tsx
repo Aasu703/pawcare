@@ -42,7 +42,7 @@ export default function LoginForm() {
         await checkAuth();
         // Redirect based on user role
         if (response.data?.role === 'admin') {
-          router.push('/admin/dashboard');
+          router.push('/admin');
         } else {
           router.push('/user/home');
         }
