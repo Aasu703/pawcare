@@ -9,4 +9,11 @@ export const API = {
     // LOGOUT: '/api/auth/logout',
    UPDATEPROFILE: '/api/auth/update-profile',
  },
+ ADMIN:{
+    USER: {
+        CREATE: '/api/admin/user/create',
+        GET_ALL_USERS: '/api/admin/user/get-all-users',
+        // Add other user-related admin endpoints here
+    }
+ }
 };
