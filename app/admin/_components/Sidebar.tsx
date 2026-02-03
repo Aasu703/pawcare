@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   PawPrint,
@@ -10,6 +11,7 @@ import {
   Calendar,
   Store,
   UserCog,
+  LogOut,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -47,6 +49,11 @@ const sidebarItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-background">
@@ -78,6 +85,21 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* User Info & Logout */}
+        <div className="border-t p-4">
+          <div className="mb-3 px-3">
+            <p className="text-sm font-medium">{user?.Firstname || user?.name || "Admin"}</p>
+            <p className="text-xs text-muted-foreground">{user?.email}</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+          >
+            <LogOut className="h-5 w-5" />
+            Logout
+          </button>
+        </div>
       </div>
     </aside>
   );
