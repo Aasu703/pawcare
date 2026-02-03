@@ -53,10 +53,10 @@ export const whoAmI = async () => {
     }
 }
 
-export const updateProfile = async ( updateData : any ) => {
+export const updateProfile = async ( userId: string, updateData : any ) => {
     try{
         const response = await axios.put(
-            API.AUTH.UPDATEPROFILE, // change
+            `${API.AUTH.UPDATEPROFILE}/${userId}`,
             updateData,
             {
                 headers: {
@@ -73,3 +73,24 @@ export const updateProfile = async ( updateData : any ) => {
         )
     }
 }   
+
+export const createUserByAdmin = async (formData: FormData) => {
+    try {
+        const response = await axios.post(
+            API.AUTH.CREATEUSER,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message
+            || err.message
+            || "Creating user failed"
+        );
+    }
+}

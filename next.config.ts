@@ -1,27 +1,21 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  experimental: {
-    serverActions: {
-      bodySizeLimit: "10mb", // Increase limit for file uploads
-    },
-  },
-  images: {
-    dangerouslyAllowLocalIP: true,
+const backendUrl = 
+process.env.API_BASE_URL || "http://localhost:5000";
+const IsDEV = backendUrl.startsWith("http://localhost");
+
+const config: NextConfig = {
+  images:{
+    dangerouslyAllowLocalIP: IsDEV,
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "5050",
-        pathname: "/uploads/**",
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '5000',
+        pathname: '/uploads/**',
       },
-      {
-        protocol: "http",
-        hostname: "images.unsplash.com",
-      }
-  ],
-  },
-};
+    ],
+  }
+}
 
-export default nextConfig;
+export default config;

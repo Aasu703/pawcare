@@ -52,7 +52,9 @@ export default function RegisterForm() {
       const response = await handleRegister(result.data);
       
       if (response.success) {
-        router.push('/login');
+        // Use hard navigation to trigger proxy redirect
+        const redirectPath = response.data?.role === 'admin' ? '/admin' : '/user/home';
+        window.location.href = redirectPath;
       } else {
         setErrors({ Firstname: response.message || 'Registration failed' });
       }

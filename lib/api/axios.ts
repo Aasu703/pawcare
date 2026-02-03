@@ -1,5 +1,13 @@
 import axios from "axios";
-import { getAuthToken } from "../cookie"; 
+
+// Client-safe cookie helper
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL 
     || "http://localhost:5050";
@@ -14,7 +22,7 @@ const axiosInstance = axios.create(
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const token = await getAuthToken();
+        const token = getCookie('auth_token');
         if(token && config.headers){
             config.headers['Authorization'] = `Bearer ${token}`;
         }

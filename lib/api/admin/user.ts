@@ -43,7 +43,12 @@ export const updateUser = async (id: string, userData: any) => {
     try {
         const response = await axios.put(
             API.ADMIN.USER.UPDATE(id),
-            userData
+            userData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+            }
         );
         return response.data;
     } catch (error: Error | any) {

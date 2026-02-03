@@ -1,7 +1,7 @@
 // server side processing of both actions
 "use server";
 
-import { register, login , whoAmI, updateProfile} from "../api/auth";
+import { register, login , whoAmI, updateProfile, createUserByAdmin } from "../api/auth";
 import { setAuthToken, setUserData } from "../cookie";
 
 export const handleRegister = async (userData: any) => {
@@ -82,9 +82,9 @@ export const handlewhoAmI = async () => {
     }
 }       
 
-export const handleUpdateProfile = async (FormData: any) => {
+export const handleUpdateProfile = async (userId: string, FormData: any) => {
     try{
-        const result = await updateProfile(FormData);
+        const result = await updateProfile(userId, FormData);
         if(result.success){
             // update cookie data
             await setUserData(result.data);
@@ -102,6 +102,28 @@ export const handleUpdateProfile = async (FormData: any) => {
         return {
             success: false,
             message: err.message || "Profile update failed"
+        };
+    }
+}
+
+export const handleAdminCreateUser = async (formData: FormData) => {
+    try {
+        const result = await createUserByAdmin(formData);
+        if (result.success) {
+            return {
+                success: true,
+                message: result.message || "User created successfully",
+                data: result.data
+            };
+        }
+        return {
+            success: false,
+            message: result.message || "User creation failed"
+        };
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.message || "User creation failed"
         };
     }
 }

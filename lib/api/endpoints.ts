@@ -7,15 +7,16 @@ export const API = {
     LOGIN: '/api/auth/login',
     WHOAMI: '/api/auth/whoami',
     // LOGOUT: '/api/auth/logout',
-   UPDATEPROFILE: '/api/auth/update-profile',
+    UPDATEPROFILE: '/api/auth',
+    CREATEUSER: '/api/auth/user'
  },
  ADMIN:{
     USER: {
-        CREATE: '/api/admin/user',
-        GET_ALL: '/api/admin/user',
-        GET_BY_ID: (id: string) => `/api/admin/user/${id}`,
-        UPDATE: (id: string) => `/api/admin/user/${id}`,
-        DELETE: (id: string) => `/api/admin/user/${id}`,
+          CREATE: '/api/admin/users',
+          GET_ALL: '/api/admin/users',
+          GET_BY_ID: (id: string) => `/api/admin/users/${id}`,
+          UPDATE: (id: string) => `/api/admin/users/${id}`,
+          DELETE: (id: string) => `/api/admin/users/${id}`,
     },
     PET: {
         CREATE: '/api/admin/pet',

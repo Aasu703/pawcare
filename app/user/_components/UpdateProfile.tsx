@@ -17,9 +17,9 @@ export default function UpdateUserForm({
     const { register, handleSubmit, control, formState: {errors, isSubmitting} } = useForm<UpdateUserData>({
         resolver: zodResolver(updateUserSchema),
         defaultValues: {
-            Firstname: user?.Firstname || "",
-            Lastname: user?.Lastname || "",
-            PhoneNumber: user?.PhoneNumber || "",
+            Firstname: user?.Firstname || user?.firstName || user?.firstname || "",
+            Lastname: user?.Lastname || user?.lastName || user?.lastname || "",
+            PhoneNumber: user?.PhoneNumber || user?.phoneNumber || user?.phone || "",
             email: user?.email || "",
         }
     });
@@ -30,10 +30,17 @@ export default function UpdateUserForm({
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-    const imageSrc = user?.imageUrl
-        ? user.imageUrl.startsWith("http")
-            ? user.imageUrl
-            : `${baseUrl}${user.imageUrl}`
+    const rawImageUrl =
+        user?.imageUrl ||
+        user?.image ||
+        user?.avatar ||
+        user?.profileImage ||
+        user?.profileImageUrl ||
+        "";
+    const imageSrc = rawImageUrl
+        ? rawImageUrl.startsWith("http")
+            ? rawImageUrl
+            : `${baseUrl}${rawImageUrl}`
         : "";
 
     const handleImageChange = (file: File | undefined, onChange: (file: File | undefined) => void) => {
@@ -60,20 +67,24 @@ export default function UpdateUserForm({
     const onSubmit = async (data: UpdateUserData) => {
         setError(null);
         try{
+            if (!user?._id) {
+                throw new Error("Missing user id.");
+            }
             const formData = new FormData();
             formData.append("Firstname", data.Firstname);
             formData.append("Lastname", data.Lastname);
-            formData.append("PhoneNumber", data.PhoneNumber);
+            formData.append("phone", data.PhoneNumber);
             formData.append("email", data.email);
             if (data.image) {
                 formData.append("image", data.image);
             }
-            const response = await handleUpdateProfile(formData);
+            const response = await handleUpdateProfile(user?._id, formData);
 
             if(!response.success) {
                 throw new Error(response.message || "Failed to update profile.");
             }
             toast.success("Profile updated successfully.");
+            router.refresh();
         } catch (error: any) {
             setError(error.message || "An unexpected error occurred."); 
         }

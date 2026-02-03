@@ -5,11 +5,11 @@ import { X } from "lucide-react";
 
 interface User {
   _id: string;
-  name: string;
+  Firstname: string;
+  Lastname: string;
   email: string;
   role: string;
   phone?: string;
-  address?: string;
 }
 
 interface UserModalProps {
@@ -56,11 +56,22 @@ export default function UserModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">Name</label>
+            <label className="mb-1 block text-sm font-medium">First Name</label>
             <input
-              name="name"
+              name="Firstname"
               type="text"
-              defaultValue={user?.name || ""}
+              defaultValue={user?.Firstname || ""}
+              required
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Last Name</label>
+            <input
+              name="Lastname"
+              type="text"
+              defaultValue={user?.Lastname || ""}
               required
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -82,6 +93,18 @@ export default function UserModal({
               <label className="mb-1 block text-sm font-medium">Password</label>
               <input
                 name="password"
+                type="password"
+                required
+                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+          )}
+
+          {mode === "create" && (
+            <div>
+              <label className="mb-1 block text-sm font-medium">Confirm Password</label>
+              <input
+                name="confirmPassword"
                 type="password"
                 required
                 className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -113,11 +136,11 @@ export default function UserModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Address</label>
-            <textarea
-              name="address"
-              defaultValue={user?.address || ""}
-              rows={2}
+            <label className="mb-1 block text-sm font-medium">Profile Image</label>
+            <input
+              name="image"
+              type="file"
+              accept="image/*"
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>

@@ -13,11 +13,11 @@ import UserModal from "./UserModal";
 
 interface User {
   _id: string;
-  name: string;
+  Firstname: string;
+  Lastname: string;
   email: string;
   role: string;
   phone?: string;
-  address?: string;
   createdAt?: string;
 }
 
@@ -87,7 +87,7 @@ export default function UsersTable() {
 
   const filteredUsers = users.filter(
     (user) =>
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      `${user.Firstname} ${user.Lastname}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -150,7 +150,7 @@ export default function UsersTable() {
               ) : (
                 filteredUsers.map((user) => (
                   <tr key={user._id} className="border-b last:border-0">
-                    <td className="py-4 font-medium">{user.name}</td>
+                    <td className="py-4 font-medium">{user.Firstname} {user.Lastname}</td>
                     <td className="py-4 text-muted-foreground">{user.email}</td>
                     <td className="py-4">
                       <span

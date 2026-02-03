@@ -39,13 +39,9 @@ export default function LoginForm() {
       const response = await handleLogin(result.data);
       
       if (response.success) {
-        await checkAuth();
-        // Redirect based on user role
-        if (response.data?.role === 'admin') {
-          router.push('/admin');
-        } else {
-          router.push('/user/home');
-        }
+        // Use hard navigation to trigger proxy redirect and ensure cookies are properly set
+        const redirectPath = response.data?.role === 'admin' ? '/admin' : '/user/home';
+        window.location.href = redirectPath;
       } else {
         setErrors({ email: response.message || 'Login failed' });
       }
