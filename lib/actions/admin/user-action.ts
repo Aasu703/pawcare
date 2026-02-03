@@ -1,11 +1,17 @@
 "use server";
 
-import { createUser, getAllUsers, getUserById, updateUser, deleteUser } from "@/lib/api/admin/user";
+import { 
+    createUserServer, 
+    getAllUsersServer, 
+    getUserByIdServer, 
+    updateUserServer, 
+    deleteUserServer 
+} from "@/lib/api/admin/user-server";
 import { revalidatePath } from "next/cache";
 
 export const handleCreateUser = async (data: FormData) => {
     try {
-        const response = await createUser(data);
+        const response = await createUserServer(data);
         if (response.success) {
             revalidatePath("/admin/users");
             return { success: true, message: "User created successfully.", data: response.data };
@@ -15,6 +21,7 @@ export const handleCreateUser = async (data: FormData) => {
             message: response.message || "Failed to create user.",
         };
     } catch (error: any) {
+        console.error('Create user error:', error);
         return {
             success: false,
             message: error.message || "An error occurred while creating the user.",
@@ -24,7 +31,7 @@ export const handleCreateUser = async (data: FormData) => {
 
 export const handleGetAllUsers = async () => {
     try {
-        const response = await getAllUsers();
+        const response = await getAllUsersServer();
         if (response.success) {
             return { success: true, data: response.data };
         }
@@ -33,6 +40,7 @@ export const handleGetAllUsers = async () => {
             message: response.message || "Failed to fetch users.",
         };
     } catch (error: any) {
+        console.error('Get all users error:', error);
         return {
             success: false,
             message: error.message || "An error occurred while fetching users.",
@@ -42,7 +50,7 @@ export const handleGetAllUsers = async () => {
 
 export const handleGetUserById = async (id: string) => {
     try {
-        const response = await getUserById(id);
+        const response = await getUserByIdServer(id);
         if (response.success) {
             return { success: true, data: response.data };
         }
@@ -51,6 +59,7 @@ export const handleGetUserById = async (id: string) => {
             message: response.message || "Failed to fetch user.",
         };
     } catch (error: any) {
+        console.error('Get user by id error:', error);
         return {
             success: false,
             message: error.message || "An error occurred while fetching user.",
@@ -60,7 +69,7 @@ export const handleGetUserById = async (id: string) => {
 
 export const handleUpdateUser = async (id: string, data: FormData) => {
     try {
-        const response = await updateUser(id, data);
+        const response = await updateUserServer(id, data);
         if (response.success) {
             revalidatePath("/admin/users");
             return { success: true, message: "User updated successfully.", data: response.data };
@@ -70,6 +79,7 @@ export const handleUpdateUser = async (id: string, data: FormData) => {
             message: response.message || "Failed to update user.",
         };
     } catch (error: any) {
+        console.error('Update user error:', error);
         return {
             success: false,
             message: error.message || "An error occurred while updating the user.",
@@ -79,7 +89,7 @@ export const handleUpdateUser = async (id: string, data: FormData) => {
 
 export const handleDeleteUser = async (id: string) => {
     try {
-        const response = await deleteUser(id);
+        const response = await deleteUserServer(id);
         if (response.success) {
             revalidatePath("/admin/users");
             return { success: true, message: "User deleted successfully." };
@@ -89,6 +99,7 @@ export const handleDeleteUser = async (id: string) => {
             message: response.message || "Failed to delete user.",
         };
     } catch (error: any) {
+        console.error('Delete user error:', error);
         return {
             success: false,
             message: error.message || "An error occurred while deleting the user.",
