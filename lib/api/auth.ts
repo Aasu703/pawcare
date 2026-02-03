@@ -38,17 +38,44 @@ export const login = async ( loginData : any ) => {
     }
 }
 
-export const whoAmI = async () => {
+export const updateProfile = async ( userId: string, updateData : any ) => {
     try{
-        const response = await axios.get(
-            API.AUTH.WHOAMI, // change
+        const response = await axios.put(
+            `${API.AUTH.UPDATEPROFILE}`,
+            updateData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data", // this part is important for file upload
+                },
+            }
         );
         return response.data;
     }catch (err: Error | any) {
         throw new Error(
             err.response?.data?.message 
             || err.message 
-            ||"Fetching user data failed"
+            ||"Updating profile failed"
         )
+    }
+}   
+
+export const createUserByAdmin = async (formData: FormData) => {
+    try {
+        const response = await axios.post(
+            API.AUTH.CREATEUSER,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message
+            || err.message
+            || "Creating user failed"
+        );
     }
 }

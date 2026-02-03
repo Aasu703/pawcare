@@ -17,6 +17,9 @@ export const setAuthToken = async (token: string) => {
     cookieStore.set({
         name: 'auth_token',
         value: token,
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        sameSite: 'lax',
     })
 }
 
@@ -30,6 +33,9 @@ export const setUserData = async (userData: UserData) => {
     cookieStore.set({
         name: 'user_data',
         value: JSON.stringify(userData),
+        path: '/',
+        maxAge: 60 * 60 * 24 * 30, // 30 days
+        sameSite: 'lax',
     })
 }
 

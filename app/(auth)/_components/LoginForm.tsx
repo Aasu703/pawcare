@@ -37,14 +37,23 @@ export default function LoginForm() {
 
       // Call login action (sets auth cookies server-side)
       const response = await handleLogin(result.data);
+      console.log('🔐 Login response:', response);
       
       if (response.success) {
-        await checkAuth();
-        router.push('/home');
+        console.log('✅ Login successful, user role:', response.data?.role);
+        
+        // Pass user data directly to avoid cookie race condition
+        await checkAuth(response.data);
+        
+        // Navigate to appropriate page based on role
+        const redirectPath = response.data?.role === 'admin' ? '/admin' : '/user/home';
+        console.log('🚀 Navigating to:', redirectPath);
+        router.push(redirectPath);
       } else {
+        console.error('❌ Login failed:', response.message);
         setErrors({ email: response.message || 'Login failed' });
       }
-  setLoading(false);
+      setLoading(false);
     } catch (error: any) {
       console.error('Login error:', error);
       setErrors({ email: error.message || 'Login failed' });
