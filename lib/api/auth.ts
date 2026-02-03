@@ -38,25 +38,10 @@ export const login = async ( loginData : any ) => {
     }
 }
 
-export const whoAmI = async () => {
-    try{
-        const response = await axios.get(
-            API.AUTH.WHOAMI, // change
-        );
-        return response.data;
-    }catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            ||"Fetching user data failed"
-        )
-    }
-}
-
 export const updateProfile = async ( userId: string, updateData : any ) => {
     try{
         const response = await axios.put(
-            `${API.AUTH.UPDATEPROFILE}/${userId}`,
+            `${API.AUTH.UPDATEPROFILE}`,
             updateData,
             {
                 headers: {

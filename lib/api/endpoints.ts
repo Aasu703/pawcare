@@ -7,7 +7,7 @@ export const API = {
     LOGIN: '/api/auth/login',
     WHOAMI: '/api/auth/whoami',
     // LOGOUT: '/api/auth/logout',
-    UPDATEPROFILE: '/api/auth',
+    UPDATEPROFILE: '/api/auth/update-profile',
     CREATEUSER: '/api/auth/user'
  },
  ADMIN:{

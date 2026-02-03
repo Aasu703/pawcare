@@ -1,8 +1,43 @@
 // server side processing of both actions
 "use server";
 
-import { register, login , whoAmI, updateProfile, createUserByAdmin } from "../api/auth";
-import { setAuthToken, setUserData } from "../cookie";
+import { cookies } from "next/headers";
+import { register, login , updateProfile, createUserByAdmin } from "../api/auth";
+import { setAuthToken, setUserData, getAuthToken } from "../cookie";
+import axios from "../api/axios";
+import { API } from "../api/endpoints";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
+
+// Server-side whoAmI that uses Next.js cookies
+export const whoAmI = async () => {
+    try {
+        const token = await getAuthToken();
+        
+        if (!token) {
+            return {
+                success: false,
+                message: "No auth token found"
+            };
+        }
+
+        const response = await axios.get(
+            API.AUTH.WHOAMI,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message 
+            || err.message 
+            || "Fetching user data failed"
+        );
+    }
+};
 
 export const handleRegister = async (userData: any) => {
     try{
@@ -61,47 +96,68 @@ export const handleLogin = async (loginData: any) => {
 
 export const handlewhoAmI = async () => {
     try{
-        const result=await whoAmI();
+        const result = await whoAmI();
         if(result.success){
             return {
                 success: true,
                 message: "User data fetched successfully",
                 data: result.data
-                };
-        }
-        return {
-            success: false,
-            message: result.message  ||"Fetching user data failed"
-        };
-    }
-    catch(err: Error | any){
-        return {
-            success: false,
-            message: err.message  ||"Fetching user data failed"
-        };
-    }
-}       
-
-export const handleUpdateProfile = async (userId: string, FormData: any) => {
-    try{
-        const result = await updateProfile(userId, FormData);
-        if(result.success){
-            // update cookie data
-            await setUserData(result.data);
-            return {
-                success: true,
-                message: "Profile updated successfully",
-                data: result.data
             };
         }
         return {
             success: false,
-            message: result.message || "Profile update failed"
+            message: result.message || "Fetching user data failed"
         };
-    } catch (err: Error | any) {
+    }
+    catch(err: Error | any){
+        console.error('whoAmI error:', err);
         return {
             success: false,
-            message: err.message || "Profile update failed"
+            message: err.message || "Fetching user data failed"
+        };
+    }
+}
+
+export const handleUpdateProfile = async (userId: string, formData: any) => {
+    try{
+        const token = await getAuthToken();
+        
+        if (!token) {
+            return {
+                success: false,
+                message: "No auth token found"
+            };
+        }
+
+        const response = await axios.put(
+            API.AUTH.UPDATEPROFILE,
+            formData,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                    // Don't set Content-Type for FormData, let axios handle it
+                }
+            }
+        );
+
+        if(response.data?.success){
+            // update cookie data
+            await setUserData(response.data.data);
+            return {
+                success: true,
+                message: "Profile updated successfully",
+                data: response.data.data
+            };
+        }
+        return {
+            success: false,
+            message: response.data?.message || "Profile update failed"
+        };
+    } catch (err: Error | any) {
+        console.error('Profile update error:', err);
+        return {
+            success: false,
+            message: err.response?.data?.message || err.message || "Profile update failed"
         };
     }
 }

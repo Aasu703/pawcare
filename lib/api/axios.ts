@@ -5,7 +5,11 @@ function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift() || null;
+    // Decode the cookie value (handles URL encoding)
+    return cookieValue ? decodeURIComponent(cookieValue) : null;
+  }
   return null;
 }
 
@@ -26,6 +30,12 @@ axiosInstance.interceptors.request.use(
         if(token && config.headers){
             config.headers['Authorization'] = `Bearer ${token}`;
         }
+        
+        // Don't set Content-Type if FormData is being sent (let browser handle it)
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
+        }
+        
         // Debug: Log outgoing requests
         console.log(`🚀 [${config.method?.toUpperCase()}] ${config.baseURL}${config.url}`);
         return config;

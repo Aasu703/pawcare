@@ -14,7 +14,11 @@ function getCookie(name: string): string | null {
   if (typeof document === 'undefined') return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift() || null;
+    // Decode the cookie value (handles URL encoding)
+    return cookieValue ? decodeURIComponent(cookieValue) : null;
+  }
   return null;
 }
 
@@ -28,7 +32,7 @@ interface AuthContextProps {
   user: any;
   loading: boolean;
   logout: () => Promise<void>;
-  checkAuth: () => Promise<void>;
+  checkAuth: (userData?: any) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -39,14 +43,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const checkAuth = async () => {
+  const checkAuth = async (directUserData?: any) => {
     setLoading(true);
 
     try {
+      // If user data is passed directly (e.g., after login), use it
+      if (directUserData) {
+        console.log('✅ Using direct user data:', directUserData);
+        console.log('👤 User role:', directUserData?.role);
+        setUser(directUserData);
+        setIsAuthenticated(true);
+        setLoading(false);
+        return;
+      }
+
       const token = getCookie('auth_token');
+      console.log('🔍 CheckAuth - Token:', token ? 'EXISTS' : 'MISSING');
 
       // 🔒 No token = logged out
       if (!token) {
+        console.log('❌ No token found');
         setUser(null);
         setIsAuthenticated(false);
         return;
@@ -54,12 +70,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // ✅ Token exists → fetch user from cookie
       const userDataStr = getCookie('user_data');
-      const userData = userDataStr ? JSON.parse(userDataStr) : null;
+      console.log('📦 Raw user_data cookie:', userDataStr);
+      let userData = null;
+      
+      if (userDataStr) {
+        try {
+          userData = JSON.parse(userDataStr);
+        } catch (e) {
+          console.error('❌ Failed to parse user_data cookie:', e);
+          console.error('📦 Cookie value was:', userDataStr);
+          // Cookie is malformed, clear it
+          deleteCookie('user_data');
+          deleteCookie('auth_token');
+          setUser(null);
+          setIsAuthenticated(false);
+          setLoading(false);
+          return;
+        }
+      }
+      
+      console.log('✅ User data from cookie:', userData);
+      console.log('👤 User role:', userData?.role);
 
       setUser(userData);
       setIsAuthenticated(true);
     } catch (error) {
       // ❌ Anything fails → clean logout state
+      console.error('❌ CheckAuth error:', error);
       setUser(null);
       setIsAuthenticated(false);
     } finally {

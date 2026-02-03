@@ -29,7 +29,7 @@ export default function UpdateUserForm({
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
     const rawImageUrl =
         user?.imageUrl ||
         user?.image ||
