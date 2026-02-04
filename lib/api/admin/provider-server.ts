@@ -27,11 +27,12 @@ export const getAllProvidersServer = async () => {
         return response.data;
     } catch (err: Error | any) {
         console.error('Get all providers error:', err);
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to fetch providers"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to fetch providers"
+        };
     }
 };
 
@@ -56,11 +57,12 @@ export const getProviderByIdServer = async (id: string) => {
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to fetch provider"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to fetch provider"
+        };
     }
 };
 
@@ -75,22 +77,30 @@ export const createProviderServer = async (providerData: FormData) => {
             };
         }
 
+        // Convert FormData to JSON object
+        const jsonData: any = {};
+        providerData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
-            providerData,
+            jsonData,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             }
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to create provider"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to create provider"
+        };
     }
 };
 
@@ -105,22 +115,30 @@ export const updateProviderServer = async (id: string, providerData: FormData) =
             };
         }
 
+        // Convert FormData to JSON object
+        const jsonData: any = {};
+        providerData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
         const response = await axios.put(
             API.ADMIN.PROVIDER.UPDATE(id),
-            providerData,
+            jsonData,
             {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             }
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to update provider"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to update provider"
+        };
     }
 };
 
@@ -145,10 +163,11 @@ export const deleteProviderServer = async (id: string) => {
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to delete provider"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to delete provider"
+        };
     }
 };
