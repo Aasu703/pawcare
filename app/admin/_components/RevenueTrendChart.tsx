@@ -1,5 +1,7 @@
 "use client";
 
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
 interface RevenueData {
   month: string;
   revenue: number;
@@ -7,6 +9,7 @@ interface RevenueData {
 
 interface RevenueTrendChartProps {
   data?: RevenueData[];
+  isLoading?: boolean;
 }
 
 const defaultData: RevenueData[] = [
@@ -20,69 +23,56 @@ const defaultData: RevenueData[] = [
 
 export default function RevenueTrendChart({
   data = defaultData,
+  isLoading = false,
 }: RevenueTrendChartProps) {
-  const maxRevenue = Math.max(...data.map((d) => d.revenue));
-  const yAxisSteps = [0, 15000, 30000, 45000, 60000];
-
-  // Calculate points for the line
-  const chartWidth = 100;
-  const chartHeight = 200;
-  const points = data.map((item, index) => {
-    const x = (index / (data.length - 1)) * chartWidth;
-    const y = chartHeight - (item.revenue / maxRevenue) * chartHeight;
-    return { x, y, ...item };
-  });
-
-  const pathD = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-    .join(" ");
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <div className="h-6 w-32 animate-pulse rounded bg-muted mb-6" />
+        <div className="h-64 w-full animate-pulse rounded bg-muted" />
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
       <h3 className="mb-6 text-lg font-semibold">Revenue Trend</h3>
-      <div className="flex h-64">
-        {/* Y-axis labels */}
-        <div className="flex flex-col justify-between pr-4 text-sm text-muted-foreground">
-          {[...yAxisSteps].reverse().map((step) => (
-            <span key={step}>{step}</span>
-          ))}
-        </div>
-
-        {/* Chart */}
-        <div className="relative flex-1">
-          <svg
-            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-            className="h-52 w-full"
-            preserveAspectRatio="none"
-          >
-            {/* Line */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="#eab308"
-              strokeWidth="2"
-              vectorEffect="non-scaling-stroke"
+      <div className="h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+            <XAxis
+              dataKey="month"
+              axisLine={false}
+              tickLine={false}
+              className="text-sm text-muted-foreground"
             />
-            {/* Points */}
-            {points.map((p, i) => (
-              <circle
-                key={i}
-                cx={p.x}
-                cy={p.y}
-                r="3"
-                fill="#eab308"
-                vectorEffect="non-scaling-stroke"
-              />
-            ))}
-          </svg>
-
-          {/* X-axis labels */}
-          <div className="mt-2 flex justify-between text-sm text-muted-foreground">
-            {data.map((item) => (
-              <span key={item.month}>{item.month}</span>
-            ))}
-          </div>
-        </div>
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              className="text-sm text-muted-foreground"
+              tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "hsl(var(--card))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
+              formatter={(value: number | undefined) => value ? [`$${value.toLocaleString()}`, "Revenue"] : ["$0", "Revenue"]}
+            />
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="#eab308"
+              strokeWidth={3}
+              dot={{ fill: "#eab308", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: "#eab308", strokeWidth: 2 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

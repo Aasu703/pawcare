@@ -1,5 +1,7 @@
 "use client";
 
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
 interface AppointmentData {
   day: string;
   count: number;
@@ -7,6 +9,7 @@ interface AppointmentData {
 
 interface WeeklyAppointmentsChartProps {
   data?: AppointmentData[];
+  isLoading?: boolean;
 }
 
 const defaultData: AppointmentData[] = [
@@ -21,35 +24,52 @@ const defaultData: AppointmentData[] = [
 
 export default function WeeklyAppointmentsChart({
   data = defaultData,
+  isLoading = false,
 }: WeeklyAppointmentsChartProps) {
-  const maxCount = Math.max(...data.map((d) => d.count));
-  const yAxisSteps = [0, 8, 16, 24, 32];
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <div className="h-6 w-48 animate-pulse rounded bg-muted mb-6" />
+        <div className="h-64 w-full animate-pulse rounded bg-muted" />
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
       <h3 className="mb-6 text-lg font-semibold">Weekly Appointments</h3>
-      <div className="flex h-64">
-        {/* Y-axis labels */}
-        <div className="flex flex-col justify-between pr-4 text-sm text-muted-foreground">
-          {yAxisSteps.reverse().map((step) => (
-            <span key={step}>{step}</span>
-          ))}
-        </div>
-
-        {/* Chart */}
-        <div className="flex flex-1 items-end justify-around gap-2">
-          {data.map((item) => (
-            <div key={item.day} className="flex flex-col items-center gap-2">
-              <div
-                className="w-12 rounded-t-md bg-orange-500 transition-all hover:bg-orange-600"
-                style={{
-                  height: `${(item.count / maxCount) * 200}px`,
-                }}
-              />
-              <span className="text-sm text-muted-foreground">{item.day}</span>
-            </div>
-          ))}
-        </div>
+      <div className="h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+            <XAxis
+              dataKey="day"
+              axisLine={false}
+              tickLine={false}
+              className="text-sm text-muted-foreground"
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              className="text-sm text-muted-foreground"
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "hsl(var(--card))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
+              labelStyle={{ color: "hsl(var(--foreground))" }}
+            />
+            <Bar
+              dataKey="count"
+              fill="hsl(var(--primary))"
+              radius={[4, 4, 0, 0]}
+              className="hover:opacity-80 transition-opacity"
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );

@@ -113,6 +113,13 @@ export default function LoginForm() {
           </button>
         </form>
 
+        {/* Forgot Password Link */}
+        <div className="text-right">
+          <Link href="/forget-password" className="text-[#f8d548] hover:underline text-sm">
+            Forgot Password?
+          </Link>
+        </div>
+
         {/* Register Link */}
         <p className="mt-6 text-center text-gray-200">
           Don&apos;t have an account?{' '}

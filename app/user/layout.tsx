@@ -9,13 +9,13 @@ export default function UserLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading, isAuthenticated, loggingOut } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    console.log('🏠 User Layout - Loading:', loading, 'Auth:', isAuthenticated, 'User:', user, 'Role:', user?.role);
+    console.log('🏠 User Layout - Loading:', loading, 'Auth:', isAuthenticated, 'User:', user, 'Role:', user?.role, 'LoggingOut:', loggingOut);
     
-    if (!loading) {
+    if (!loading && !loggingOut) {
       if (!isAuthenticated) {
         console.log('🚫 User Layout - Not authenticated, redirecting to login');
         router.push("/login");
@@ -26,7 +26,7 @@ export default function UserLayout({
         console.log('✅ User Layout - User authenticated, rendering content');
       }
     }
-  }, [loading, isAuthenticated, user, router]);
+  }, [loading, isAuthenticated, user, router, loggingOut]);
 
   if (loading) {
     return (

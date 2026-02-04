@@ -31,6 +31,7 @@ interface AuthContextProps {
   isAuthenticated: boolean;
   user: any;
   loading: boolean;
+  loggingOut: boolean;
   logout: () => Promise<void>;
   checkAuth: (userData?: any) => Promise<void>;
 }
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
   const router = useRouter();
 
   const checkAuth = async (directUserData?: any) => {
@@ -110,6 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const logout = async () => {
+    setLoggingOut(true);
     try {
       deleteCookie('auth_token');
       deleteCookie('user_data');
@@ -118,6 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setIsAuthenticated(false);
       router.replace("/"); // safer than push
+      setLoggingOut(false);
     }
   };
 
@@ -127,6 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAuthenticated,
         user,
         loading,
+        loggingOut,
         logout,
         checkAuth,
       }}

@@ -1,4 +1,5 @@
 import { Calendar } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Appointment {
   id: string;
@@ -11,6 +12,7 @@ interface Appointment {
 
 interface RecentAppointmentsProps {
   appointments?: Appointment[];
+  isLoading?: boolean;
 }
 
 const defaultAppointments: Appointment[] = [
@@ -65,7 +67,30 @@ const statusColors = {
 
 export default function RecentAppointments({
   appointments = defaultAppointments,
+  isLoading = false,
 }: RecentAppointmentsProps) {
+  if (isLoading) {
+    return (
+      <div className="rounded-xl border bg-card p-6 shadow-sm">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="h-6 w-48 animate-pulse rounded bg-muted" />
+          <div className="h-5 w-5 animate-pulse rounded bg-muted" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center space-x-4">
+              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+              <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-6 w-20 animate-pulse rounded bg-muted" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl border bg-card p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
@@ -85,8 +110,15 @@ export default function RecentAppointments({
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment) => (
-              <tr key={appointment.id} className="border-b last:border-0">
+            {appointments.map((appointment, index) => (
+              <motion.tr
+                key={appointment.id}
+                className="border-b last:border-0 hover:bg-muted/50 transition-colors"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                whileHover={{ scale: 1.01 }}
+              >
                 <td className="py-4 font-medium">{appointment.petName}</td>
                 <td className="py-4 text-muted-foreground">
                   {appointment.ownerName}
@@ -102,7 +134,7 @@ export default function RecentAppointments({
                     {appointment.status}
                   </span>
                 </td>
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
