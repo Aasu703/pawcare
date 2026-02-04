@@ -3,9 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Sidebar } from "./_components";
 
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -14,11 +13,17 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
+    console.log('🏠 User Layout - Loading:', loading, 'Auth:', isAuthenticated, 'User:', user, 'Role:', user?.role);
+    
     if (!loading) {
       if (!isAuthenticated) {
+        console.log('🚫 User Layout - Not authenticated, redirecting to login');
         router.push("/login");
-      } else if (user?.role !== "admin") {
-        router.push("/user/home");
+      } else if (user?.role === "admin") {
+        console.log('🚫 User Layout - Admin detected, redirecting to admin');
+        router.push("/admin");
+      } else {
+        console.log('✅ User Layout - User authenticated, rendering content');
       }
     }
   }, [loading, isAuthenticated, user, router]);
@@ -31,14 +36,9 @@ export default function AdminLayout({
     );
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || user?.role !== "user") {
     return null;
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Sidebar />
-      <main className="ml-64 min-h-screen p-8">{children}</main>
-    </div>
-  );
+  return <section>{children}</section>;
 }

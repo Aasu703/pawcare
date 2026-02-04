@@ -2,22 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 
 export default function Page() {
-  const { isAuthenticated, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && isAuthenticated) {
-      router.replace("/home");
-    }
-  }, [isAuthenticated, loading, router]);
-
-  if (loading) return null;
 
   return (
     <main className="min-h-screen bg-[#0f4f57] text-white overflow-x-hidden">

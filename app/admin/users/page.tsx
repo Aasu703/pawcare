@@ -1,10 +1,13 @@
-import Link from "next/link";
+import { DashboardHeader, UsersTable } from "../_components";
 
-
-export default async function Page() {
-    return (
-        <div>
-            <Link className="text-blue-500 underline" href="/admin/users/list">Go to User List Page</Link>
-        </div>
-    )
+export default function UsersPage() {
+  return (
+    <div>
+      <DashboardHeader
+        title="Users"
+        subtitle="Manage all users in the system"
+      />
+      <UsersTable />
+    </div>
+  );
 }
