@@ -49,7 +49,12 @@ export default function RegisterForm() {
       }
 
       // Call register action (sets auth cookies server-side if provided)
-      const response = await handleRegister(result.data);
+      const payload = {
+        ...result.data,
+        phone: formData.phoneNumber,
+      } as any;
+
+      const response = await handleRegister(payload);
       
       if (response.success) {
         // Use hard navigation to trigger proxy redirect
