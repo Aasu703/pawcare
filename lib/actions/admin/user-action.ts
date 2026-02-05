@@ -1,5 +1,5 @@
 "use server";
-
+    
 import { 
     createUserServer, 
     getAllUsersServer, 
@@ -29,9 +29,9 @@ export const handleCreateUser = async (data: FormData) => {
     }
 };
 
-export const handleGetAllUsers = async () => {
+export const handleGetAllUsers = async (page: number = 1, limit: number = 10) => {
     try {
-        const response = await getAllUsersServer();
+        const response = await getAllUsersServer(page, limit);
         if (response.success) {
             return { success: true, data: response.data };
         }

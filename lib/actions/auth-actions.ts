@@ -2,7 +2,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { register, login , updateProfile, createUserByAdmin } from "../api/auth";
+import { register, login , updateProfile, createUserByAdmin, requestPasswordReset, resetPassword } from "../api/auth";
 import { setAuthToken, setUserData, getAuthToken } from "../cookie";
 import axios from "../api/axios";
 import { API } from "../api/endpoints";
@@ -183,3 +183,25 @@ export const handleAdminCreateUser = async (formData: FormData) => {
         };
     }
 }
+
+export const handleForgotPassword = async (email: string) => {
+    try {
+        const result = await requestPasswordReset(email);
+        return result;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.message || "Failed to send password reset email"
+        );
+    }
+};
+
+export const handleResetPassword = async (token: string, newPassword: string) => {
+    try {
+        const result = await resetPassword(token, newPassword);
+        return result;
+    } catch (err: Error | any) {
+        throw new Error(
+            err.message || "Failed to reset password"
+        );
+    }
+};

@@ -13,7 +13,7 @@ import ProviderModal from "./ProviderModal";
 
 interface Provider {
   _id: string;
-  name: string;
+  businessName: string;
   email: string;
   phone?: string;
   specialty?: string;
@@ -87,7 +87,7 @@ export default function ProvidersTable() {
 
   const filteredProviders = providers.filter(
     (provider) =>
-      provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       provider.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (provider.specialty &&
         provider.specialty.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -156,7 +156,7 @@ export default function ProvidersTable() {
               ) : (
                 filteredProviders.map((provider) => (
                   <tr key={provider._id} className="border-b last:border-0">
-                    <td className="py-4 font-medium">{provider.name}</td>
+                    <td className="py-4 font-medium">{provider.businessName}</td>
                     <td className="py-4 text-muted-foreground">{provider.email}</td>
                     <td className="py-4">
                       <span

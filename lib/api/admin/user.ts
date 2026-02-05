@@ -19,9 +19,9 @@ export const createUser = async (userData: any) => {
     }
 }
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (page: number = 1, limit: number = 10) => {
     try {
-        const response = await axios.get(API.ADMIN.USER.GET_ALL);
+        const response = await axios.get(`${API.ADMIN.USER.GET_ALL}?page=${page}&limit=${limit}`);
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message

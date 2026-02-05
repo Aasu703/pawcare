@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 
 interface Provider {
   _id: string;
-  name: string;
+  businessName: string;
   email: string;
   phone?: string;
   specialty?: string;
@@ -57,11 +57,11 @@ export default function ProviderModal({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">Name</label>
+            <label className="mb-1 block text-sm font-medium">Business Name</label>
             <input
-              name="name"
+              name="businessName"
               type="text"
-              defaultValue={provider?.name || ""}
+              defaultValue={provider?.businessName || ""}
               required
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -79,15 +79,28 @@ export default function ProviderModal({
           </div>
 
           {mode === "create" && (
-            <div>
-              <label className="mb-1 block text-sm font-medium">Password</label>
-              <input
-                name="password"
-                type="password"
-                required
-                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
+            <>
+              <div>
+                <label className="mb-1 block text-sm font-medium">Password</label>
+                <input
+                  name="password"
+                  type="password"
+                  required
+                  minLength={8}
+                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">Confirm Password</label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  minLength={8}
+                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+            </>
           )}
 
           <div>
@@ -96,6 +109,9 @@ export default function ProviderModal({
               name="phone"
               type="tel"
               defaultValue={provider?.phone || ""}
+              required
+              minLength={10}
+              placeholder="e.g. 1234567890"
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
@@ -121,6 +137,8 @@ export default function ProviderModal({
             <textarea
               name="address"
               defaultValue={provider?.address || ""}
+              required
+              minLength={5}
               rows={2}
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />

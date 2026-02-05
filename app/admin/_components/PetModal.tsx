@@ -9,6 +9,7 @@ interface Pet {
   species: string;
   breed?: string;
   age?: number;
+  weight?: number;
   owner?: {
     _id: string;
     name: string;
@@ -106,9 +107,21 @@ export default function PetModal({
           </div>
 
           <div>
+            <label className="mb-1 block text-sm font-medium">Weight (kg)</label>
+            <input
+              name="weight"
+              type="number"
+              min="0"
+              step="0.1"
+              defaultValue={pet?.weight || ""}
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
+
+          <div>
             <label className="mb-1 block text-sm font-medium">Owner ID</label>
             <input
-              name="owner"
+              name="ownerId"
               type="text"
               defaultValue={pet?.owner?._id || ""}
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -119,7 +132,7 @@ export default function PetModal({
           <div>
             <label className="mb-1 block text-sm font-medium">Image</label>
             <input
-              name="image"
+              name="imageUrl"
               type="file"
               accept="image/*"
               className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"

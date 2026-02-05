@@ -29,11 +29,12 @@ export const getAllPetsServer = async () => {
         return response.data;
     } catch (err: Error | any) {
         console.error('Get all pets error:', err);
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to fetch pets"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to fetch pets"
+        };
     }
 };
 
@@ -58,11 +59,12 @@ export const getPetByIdServer = async (id: string) => {
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to fetch pet"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to fetch pet"
+        };
     }
 };
 
@@ -77,23 +79,50 @@ export const createPetServer = async (petData: FormData) => {
             };
         }
 
-        const response = await axios.post(
-            API.ADMIN.PET.CREATE,
-            petData,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                    // Don't set Content-Type for FormData
+        // Check if FormData contains a file
+        const hasFile = Array.from(petData.values()).some(value => value instanceof File && value.size > 0);
+
+        let response;
+        if (hasFile) {
+            // Send as FormData if there's a file
+            response = await axios.post(
+                API.ADMIN.PET.CREATE,
+                petData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            // Convert FormData to JSON object if no file
+            const jsonData: any = {};
+            petData.forEach((value, key) => {
+                if (!(value instanceof File)) {
+                    jsonData[key] = value;
+                }
+            });
+
+            response = await axios.post(
+                API.ADMIN.PET.CREATE,
+                jsonData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+        }
+        
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to create pet"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to create pet"
+        };
     }
 };
 
@@ -108,23 +137,50 @@ export const updatePetServer = async (id: string, petData: FormData) => {
             };
         }
 
-        const response = await axios.put(
-            API.ADMIN.PET.UPDATE(id),
-            petData,
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                    // Don't set Content-Type for FormData
+        // Check if FormData contains a file
+        const hasFile = Array.from(petData.values()).some(value => value instanceof File && value.size > 0);
+
+        let response;
+        if (hasFile) {
+            // Send as FormData if there's a file
+            response = await axios.put(
+                API.ADMIN.PET.UPDATE(id),
+                petData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            // Convert FormData to JSON object if no file
+            const jsonData: any = {};
+            petData.forEach((value, key) => {
+                if (!(value instanceof File)) {
+                    jsonData[key] = value;
+                }
+            });
+
+            response = await axios.put(
+                API.ADMIN.PET.UPDATE(id),
+                jsonData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+        }
+        
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to update pet"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to update pet"
+        };
     }
 };
 
@@ -149,10 +205,11 @@ export const deletePetServer = async (id: string) => {
         );
         return response.data;
     } catch (err: Error | any) {
-        throw new Error(
-            err.response?.data?.message 
-            || err.message 
-            || "Failed to delete pet"
-        );
+        return {
+            success: false,
+            message: err.response?.data?.message 
+                || err.message 
+                || "Failed to delete pet"
+        };
     }
 };
