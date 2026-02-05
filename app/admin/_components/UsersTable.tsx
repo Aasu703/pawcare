@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { toast } from "react-toastify";
 import {
@@ -12,7 +13,7 @@ import {
 import UserModal from "./UserModal";
 
 interface User {
-  _id: string;
+  id: string;
   Firstname: string;
   Lastname: string;
   email: string;
@@ -28,12 +29,19 @@ export default function UsersTable() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const limit = 10;
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page: number = 1) => {
     setLoading(true);
-    const result = await handleGetAllUsers();
+    const result = await handleGetAllUsers(page, limit);
     if (result.success) {
-      setUsers(result.data || []);
+      setUsers(result.data.users || []);
+      setTotalPages(result.data.totalPages || 1);
+      setTotalUsers(result.data.total || 0);
+      setCurrentPage(page);
     } else {
       toast.error(result.message);
     }
@@ -73,7 +81,7 @@ export default function UsersTable() {
     if (modalMode === "create") {
       result = await handleCreateUser(data);
     } else if (selectedUser) {
-      result = await handleUpdateUser(selectedUser._id, data);
+      result = await handleUpdateUser(selectedUser.id, data);
     }
 
     if (result?.success) {
@@ -149,8 +157,15 @@ export default function UsersTable() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user._id} className="border-b last:border-0">
-                    <td className="py-4 font-medium">{user.Firstname} {user.Lastname}</td>
+                  <tr key={user.id} className="border-b last:border-0">
+                    <td className="py-4">
+                      <Link
+                        href={`/admin/users/${user.id}`}
+                        className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
+                      >
+                        {user.Firstname} {user.Lastname}
+                      </Link>
+                    </td>
                     <td className="py-4 text-muted-foreground">{user.email}</td>
                     <td className="py-4">
                       <span
@@ -174,7 +189,7 @@ export default function UsersTable() {
                           <Pencil className="h-4 w-4 text-blue-500" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user._id)}
+                          onClick={() => handleDelete(user.id)}
                           className="rounded-lg p-2 hover:bg-muted"
                           title="Delete"
                         >
@@ -187,6 +202,34 @@ export default function UsersTable() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            Showing {users.length > 0 ? (currentPage - 1) * limit + 1 : 0} to {Math.min(currentPage * limit, totalUsers)} of {totalUsers} users
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => fetchUsers(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="rounded-lg border px-3 py-2 text-sm hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => fetchUsers(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="rounded-lg border px-3 py-2 text-sm hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 

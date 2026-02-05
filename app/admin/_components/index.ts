@@ -6,6 +6,8 @@ export { default as RevenueTrendChart } from "./RevenueTrendChart";
 export { default as RecentAppointments } from "./RecentAppointments";
 export { default as UsersTable } from "./UsersTable";
 export { default as UserModal } from "./UserModal";
+export { default as UserDetail } from "./UserDetail";
+export { default as UserEditForm } from "./UserEditForm";
 export { default as PetsTable } from "./PetsTable";
 export { default as PetModal } from "./PetModal";
 export { default as ProvidersTable } from "./ProvidersTable";

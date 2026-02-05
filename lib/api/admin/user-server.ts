@@ -5,7 +5,7 @@ import axios from "@/lib/api/axios";
 import { API } from "@/lib/api/endpoints";
 
 // Server-side functions that use Next.js cookies for authentication
-export const getAllUsersServer = async () => {
+export const getAllUsersServer = async (page: number = 1, limit: number = 10) => {
     try {
         const token = await getAuthToken();
         
@@ -17,7 +17,7 @@ export const getAllUsersServer = async () => {
         }
 
         const response = await axios.get(
-            API.ADMIN.USER.GET_ALL,
+            `${API.ADMIN.USER.GET_ALL}?page=${page}&limit=${limit}`,
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
