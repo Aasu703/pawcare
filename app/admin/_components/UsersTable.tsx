@@ -13,7 +13,7 @@ import {
 import UserModal from "./UserModal";
 
 interface User {
-  id: string;
+  _id: string;
   Firstname: string;
   Lastname: string;
   email: string;
@@ -81,7 +81,7 @@ export default function UsersTable() {
     if (modalMode === "create") {
       result = await handleCreateUser(data);
     } else if (selectedUser) {
-      result = await handleUpdateUser(selectedUser.id, data);
+      result = await handleUpdateUser(selectedUser._id, data);
     }
 
     if (result?.success) {
@@ -157,10 +157,10 @@ export default function UsersTable() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id} className="border-b last:border-0">
+                  <tr key={user._id} className="border-b last:border-0">       
                     <td className="py-4">
                       <Link
-                        href={`/admin/users/${user.id}`}
+                        href={`/admin/users/${user._id}`}
                         className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
                       >
                         {user.Firstname} {user.Lastname}
@@ -189,7 +189,7 @@ export default function UsersTable() {
                           <Pencil className="h-4 w-4 text-blue-500" />
                         </button>
                         <button
-                          onClick={() => handleDelete(user.id)}
+                          onClick={() => handleDelete(user._id)}
                           className="rounded-lg p-2 hover:bg-muted"
                           title="Delete"
                         >

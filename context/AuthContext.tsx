@@ -116,12 +116,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       deleteCookie('auth_token');
       deleteCookie('user_data');
+      // Redirect first
+      router.replace("/");
     } finally {
-      // Always reset state
+      // Reset state
       setUser(null);
       setIsAuthenticated(false);
-      router.replace("/"); // safer than push
-      setLoggingOut(false);
+      // Keep loggingOut true for a bit to prevent redirects
+      setTimeout(() => setLoggingOut(false), 1000);
     }
   };
 

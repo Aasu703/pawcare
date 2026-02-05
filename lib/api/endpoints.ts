@@ -37,5 +37,14 @@ export const API = {
     STATS: {
         DASHBOARD: '/api/admin/stats/dashboard',
     }
+ },
+ USER:{
+    PET: {
+        CREATE: '/api/user/pet',
+        GET_ALL: '/api/user/pet',
+        GET_BY_ID: (id: string) => `/api/user/pet/${id}`,
+        UPDATE: (id: string) => `/api/user/pet/${id}`,
+        DELETE: (id: string) => `/api/user/pet/${id}`,
+    },
  }
 };
