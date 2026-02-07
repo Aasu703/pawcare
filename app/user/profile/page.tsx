@@ -2,6 +2,8 @@ import { handlewhoAmI } from "@/lib/actions/auth-actions";
 import { notFound } from "next/navigation";
 import UpdateUserForm from "../_components/UpdateProfile";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfilePage() {
     const result = await handlewhoAmI();
 

@@ -24,7 +24,7 @@ export default function PetListPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
+  const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
 
   useEffect(() => {
     fetchPets();

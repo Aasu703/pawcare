@@ -7,7 +7,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { useRouter } from "next/navigation";
+import { handleLogout } from "@/lib/actions/auth-actions";
 
 // Client-safe cookie helpers (no server actions)
 function getCookie(name: string): string | null {
@@ -43,61 +43,46 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [loggingOut, setLoggingOut] = useState(false);
-  const router = useRouter();
 
   const checkAuth = async (directUserData?: any) => {
     setLoading(true);
-
     try {
       // If user data is passed directly (e.g., after login), use it
       if (directUserData) {
         console.log('✅ Using direct user data:', directUserData);
-        console.log('👤 User role:', directUserData?.role);
         setUser(directUserData);
         setIsAuthenticated(true);
         setLoading(false);
         return;
       }
 
+      // Otherwise, check for cookies client-side
       const token = getCookie('auth_token');
-      console.log('🔍 CheckAuth - Token:', token ? 'EXISTS' : 'MISSING');
+      const userDataStr = getCookie('user_data');
 
-      // 🔒 No token = logged out
-      if (!token) {
-        console.log('❌ No token found');
+      // Validate token exists and is not the string "undefined"
+      const hasValidToken = token && token !== 'undefined' && token.length > 20;
+
+      if (!hasValidToken || !userDataStr) {
+        console.log('❌ No valid auth cookies found');
         setUser(null);
         setIsAuthenticated(false);
         return;
       }
 
-      // ✅ Token exists → fetch user from cookie
-      const userDataStr = getCookie('user_data');
-      console.log('📦 Raw user_data cookie:', userDataStr);
-      let userData = null;
-      
-      if (userDataStr) {
-        try {
-          userData = JSON.parse(userDataStr);
-        } catch (e) {
-          console.error('❌ Failed to parse user_data cookie:', e);
-          console.error('📦 Cookie value was:', userDataStr);
-          // Cookie is malformed, clear it
-          deleteCookie('user_data');
-          deleteCookie('auth_token');
-          setUser(null);
-          setIsAuthenticated(false);
-          setLoading(false);
-          return;
-        }
+      try {
+        const userData = JSON.parse(userDataStr);
+        console.log('✅ User data from cookie:', userData);
+        setUser(userData);
+        setIsAuthenticated(true);
+      } catch (e) {
+        console.error('❌ Failed to parse user_data cookie:', e);
+        deleteCookie('user_data');
+        deleteCookie('auth_token');
+        setUser(null);
+        setIsAuthenticated(false);
       }
-      
-      console.log('✅ User data from cookie:', userData);
-      console.log('👤 User role:', userData?.role);
-
-      setUser(userData);
-      setIsAuthenticated(true);
     } catch (error) {
-      // ❌ Anything fails → clean logout state
       console.error('❌ CheckAuth error:', error);
       setUser(null);
       setIsAuthenticated(false);
@@ -114,16 +99,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     setLoggingOut(true);
     try {
+      // Clear server-side cookies
+      await handleLogout();
+      // Clear client-side cookies
       deleteCookie('auth_token');
       deleteCookie('user_data');
-      // Redirect first
-      router.replace("/");
-    } finally {
       // Reset state
       setUser(null);
       setIsAuthenticated(false);
-      // Keep loggingOut true for a bit to prevent redirects
-      setTimeout(() => setLoggingOut(false), 1000);
+      // Hard redirect to landing page
+      window.location.href = "/";
+    } catch (error) {
+      console.error('Logout error:', error);
+      // On error, still clear client-side and redirect
+      deleteCookie('auth_token');
+      deleteCookie('user_data');
+      setUser(null);
+      setIsAuthenticated(false);
+      window.location.href = "/";
+    } finally {
+      setLoggingOut(false);
     }
   };
 

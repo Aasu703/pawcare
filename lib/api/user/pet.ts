@@ -1,110 +1,62 @@
 import { API } from '@/lib/api/endpoints';
 import { Pet, CreatePetRequest, UpdatePetRequest } from '@/lib/types/pet';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
+import axios from '@/lib/api/axios';
 
 export async function createUserPet(petData: FormData): Promise<{ success: boolean; message: string; data?: Pet }> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API.USER.PET.CREATE}`, {
-      method: 'POST',
-      body: petData,
-      credentials: 'include',
+    const response = await axios.post(API.USER.PET.CREATE, petData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    if (!response.ok) {
-      try {
-        const errorData = await response.json();
-        return { success: false, message: errorData.message || 'Failed to create pet' };
-      } catch {
-        return { success: false, message: `HTTP ${response.status}: ${response.statusText}` };
-      }
-    }
-
-    const data = await response.json();
-    return { success: true, message: data.message || 'Pet created successfully', data: data.data };
-  } catch (error) {
+    return { success: true, message: response.data.message || 'Pet created successfully', data: response.data.data };
+  } catch (error: any) {
     console.error('Error creating pet:', error);
-    return { success: false, message: 'Network error occurred' };
+    return { success: false, message: error.response?.data?.message || error.message || 'Failed to create pet' };
   }
 }
 
 export async function getUserPets(): Promise<{ success: boolean; message: string; data?: Pet[] }> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API.USER.PET.GET_ALL}`, {
-      method: 'GET',
-      credentials: 'include',
-    });
+    const response = await axios.get(API.USER.PET.GET_ALL);
 
-    const data = await response.json();
-
-    if (response.ok) {
-      return { success: true, message: data.message || 'Pets retrieved successfully', data: data.data };
-    } else {
-      return { success: false, message: data.message || 'Failed to retrieve pets' };
-    }
-  } catch (error) {
+    return { success: true, message: response.data.message || 'Pets retrieved successfully', data: response.data.data };
+  } catch (error: any) {
     console.error('Error retrieving pets:', error);
-    return { success: false, message: 'Network error occurred' };
+    return { success: false, message: error.response?.data?.message || error.message || 'Failed to retrieve pets' };
   }
 }
 
 export async function getUserPetById(petId: string): Promise<{ success: boolean; message: string; data?: Pet }> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API.USER.PET.GET_BY_ID(petId)}`, {
-      method: 'GET',
-      credentials: 'include',
-    });
+    const response = await axios.get(API.USER.PET.GET_BY_ID(petId));
 
-    const data = await response.json();
-
-    if (response.ok) {
-      return { success: true, message: data.message || 'Pet retrieved successfully', data: data.data };
-    } else {
-      return { success: false, message: data.message || 'Failed to retrieve pet' };
-    }
-  } catch (error) {
+    return { success: true, message: response.data.message || 'Pet retrieved successfully', data: response.data.data };
+  } catch (error: any) {
     console.error('Error retrieving pet:', error);
-    return { success: false, message: 'Network error occurred' };
+    return { success: false, message: error.response?.data?.message || error.message || 'Failed to retrieve pet' };
   }
 }
 
 export async function updateUserPet(petId: string, petData: FormData): Promise<{ success: boolean; message: string; data?: Pet }> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API.USER.PET.UPDATE(petId)}`, {
-      method: 'PUT',
-      body: petData,
-      credentials: 'include',
+    const response = await axios.put(API.USER.PET.UPDATE(petId), petData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
 
-    const data = await response.json();
-
-    if (response.ok) {
-      return { success: true, message: data.message || 'Pet updated successfully', data: data.data };
-    } else {
-      return { success: false, message: data.message || 'Failed to update pet' };
-    }
-  } catch (error) {
+    return { success: true, message: response.data.message || 'Pet updated successfully', data: response.data.data };
+  } catch (error: any) {
     console.error('Error updating pet:', error);
-    return { success: false, message: 'Network error occurred' };
+    return { success: false, message: error.response?.data?.message || error.message || 'Failed to update pet' };
   }
 }
 
 export async function deleteUserPet(petId: string): Promise<{ success: boolean; message: string }> {
   try {
-    const response = await fetch(`${API_BASE_URL}${API.USER.PET.DELETE(petId)}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
+    const response = await axios.delete(API.USER.PET.DELETE(petId));
 
-    const data = await response.json();
-
-    if (response.ok) {
-      return { success: true, message: data.message || 'Pet deleted successfully' };
-    } else {
-      return { success: false, message: data.message || 'Failed to delete pet' };
-    }
-  } catch (error) {
+    return { success: true, message: response.data.message || 'Pet deleted successfully' };
+  } catch (error: any) {
     console.error('Error deleting pet:', error);
-    return { success: false, message: 'Network error occurred' };
+    return { success: false, message: error.response?.data?.message || error.message || 'Failed to delete pet' };
   }
 }

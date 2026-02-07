@@ -2,12 +2,12 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { register, login , updateProfile, createUserByAdmin, requestPasswordReset, resetPassword } from "../api/auth";
-import { setAuthToken, setUserData, getAuthToken } from "../cookie";
+import { register, login, logout, updateProfile, createUserByAdmin, requestPasswordReset, resetPassword } from "../api/auth";
+import { setAuthToken, setUserData, getAuthToken, clearAuthCookies } from "../cookie";
 import axios from "../api/axios";
 import { API } from "../api/endpoints";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
+const BASE_URL = process.env.API_BASE_URL || "http://localhost:5050";
 
 // Server-side whoAmI that uses Next.js cookies
 export const whoAmI = async () => {
@@ -189,9 +189,10 @@ export const handleForgotPassword = async (email: string) => {
         const result = await requestPasswordReset(email);
         return result;
     } catch (err: Error | any) {
-        throw new Error(
-            err.message || "Failed to send password reset email"
-        );
+        return {
+            success: false,
+            message: err.message || "Failed to send password reset email"
+        };
     }
 };
 
@@ -200,8 +201,31 @@ export const handleResetPassword = async (token: string, newPassword: string) =>
         const result = await resetPassword(token, newPassword);
         return result;
     } catch (err: Error | any) {
-        throw new Error(
-            err.message || "Failed to reset password"
-        );
+        return {
+            success: false,
+            message: err.message || "Failed to reset password"
+        };
     }
 };
+
+export const handleLogout = async () => {
+    try{
+        const result = await logout();
+        if(result.success){
+            await clearAuthCookies();
+            return {
+                success: true,
+                message: "Logout successful"
+            };
+        }
+        return {
+            success: false,
+            message: result.message || "Logout failed"
+        };
+    }catch(err: Error | any){
+        return {
+            success: false,
+            message: err.message || "Logout failed"
+        };
+    }
+}

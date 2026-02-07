@@ -5,6 +5,7 @@ export const API = {
  AUTH:{
     REGISTER: '/api/auth/register',
     LOGIN: '/api/auth/login',
+    LOGOUT: '/api/auth/logout',
     WHOAMI: '/api/auth/whoami',
     // LOGOUT: '/api/auth/logout',
     UPDATEPROFILE: '/api/auth/update-profile',
