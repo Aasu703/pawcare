@@ -38,6 +38,19 @@ export const login = async ( loginData : any ) => {
     }
 }
 
+export const logout = async () => {
+    try{
+        const response = await axios.post(API.AUTH.LOGOUT);
+        return response.data;
+    }catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message 
+            || err.message 
+            ||"Logout failed"
+        )
+    }
+}
+
 export const updateProfile = async ( userId: string, updateData : any ) => {
     try{
         const response = await axios.put(

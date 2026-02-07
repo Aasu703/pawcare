@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginSchema } from '../schema';
 import Link from 'next/link';
@@ -8,12 +8,19 @@ import { handleLogin } from '@/lib/actions/auth-actions';
 import { useAuth } from '@/context/AuthContext'; 
 
 export default function LoginForm() {
-  const {checkAuth} = useAuth();
+  const {checkAuth, isAuthenticated, user} = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath = user.role === 'admin' ? '/admin' : '/user/home';
+      window.location.href = redirectPath;
+    }
+  }, [isAuthenticated, user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +40,6 @@ export default function LoginForm() {
         return;
       }
 
-      
-
       // Call login action (sets auth cookies server-side)
       const response = await handleLogin(result.data);
       console.log('🔐 Login response:', response);
@@ -42,21 +47,23 @@ export default function LoginForm() {
       if (response.success) {
         console.log('✅ Login successful, user role:', response.data?.role);
         
-        // Pass user data directly to avoid cookie race condition
+        // Update auth context with user data
         await checkAuth(response.data);
         
-        // Navigate to appropriate page based on role
-        const redirectPath = response.data?.role === 'admin' ? '/admin' : '/user/home';
-        console.log('🚀 Navigating to:', redirectPath);
-        router.push(redirectPath);
+        // Hard redirect — ensures cookies are sent to server and middleware handles routing
+        const redirectPath = response.data.role === 'admin' ? '/admin' : '/user/home';
+        window.location.href = redirectPath;
+        return; // Stop further execution
       } else {
         console.error('❌ Login failed:', response.message);
-        setErrors({ email: response.message || 'Login failed' });
+        const errorMessage = response.message === "Error" ? "Login failed. Please check your credentials." : response.message || 'Login failed';
+        setErrors({ email: errorMessage });
       }
       setLoading(false);
     } catch (error: any) {
       console.error('Login error:', error);
-      setErrors({ email: error.message || 'Login failed' });
+      const errorMessage = error.message === "Error" ? "Login failed. Please check your credentials." : error.message || 'Login failed';
+      setErrors({ email: errorMessage });
       setLoading(false);
     }
   };

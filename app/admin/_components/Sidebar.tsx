@@ -89,8 +89,8 @@ export default function Sidebar() {
         {/* User Info & Logout */}
         <div className="border-t p-4">
           <div className="mb-3 px-3">
-            <p className="text-sm font-medium">{user?.Firstname || user?.name || "Admin"}</p>
-            <p className="text-xs text-muted-foreground">{user?.email}</p>
+            <p className="text-sm font-medium">{user?.Firstname} {user?.Lastname}</p>
+            <p className="text-xs text-muted-foreground">Logged in as {user?.role || "admin"}</p>
           </div>
           <button
             onClick={handleLogout}

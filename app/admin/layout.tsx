@@ -14,10 +14,10 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !loggingOut) {
-      if (!isAuthenticated) {
+    if (!loading) {
+      if (!isAuthenticated && !loggingOut) {
         router.push("/login");
-      } else if (user?.role !== "admin") {
+      } else if (user?.role !== "admin" && !loggingOut) {
         router.push("/user/home");
       }
     }

@@ -1,9 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity, User } from "lucide-react";
+import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity, User, Plus, Eye, Edit } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { getUserPets } from "@/lib/api/user/pet";
+
+interface Pet {
+  _id: string;
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  weight: number;
+  imageUrl?: string;
+  createdAt: string;
+}
 
 
 export default function ProtectedHome() {
@@ -12,6 +26,11 @@ export default function ProtectedHome() {
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [petsLoading, setPetsLoading] = useState(true);
+  const [petsError, setPetsError] = useState<string | null>(null);
+
+  const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
 
   const handleLogout = async () => {
     await logout();
@@ -42,6 +61,28 @@ export default function ProtectedHome() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
+  const fetchPets = async () => {
+    try {
+      setPetsLoading(true);
+      const response = await getUserPets();
+
+      if (response.success && response.data) {
+        setPets(response.data);
+      } else {
+        setPetsError(response.message || 'Failed to fetch pets');
+      }
+    } catch (error) {
+      console.error('Error fetching pets:', error);
+      setPetsError('An error occurred while fetching pets');
+    } finally {
+      setPetsLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -101,7 +142,7 @@ export default function ProtectedHome() {
   ];
 
   const stats = [
-    { label: "Active Pets", value: "3", icon: <PawPrint className="w-5 h-5" /> },
+    { label: "Active Pets", value: petsLoading ? "..." : pets.length.toString(), icon: <PawPrint className="w-5 h-5" /> },
     { label: "Appointments", value: "2", icon: <Calendar className="w-5 h-5" /> },
     { label: "Reminders", value: "5", icon: <Bell className="w-5 h-5" /> }
   ];
@@ -176,14 +217,14 @@ export default function ProtectedHome() {
           </div>
           
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
-            {user?.name ? `Hey ${user.name}!` : "Your pet,"}<br />
-            {user?.name ? "Welcome back 👋" : "our priority 👋"}
+            {user?.Firstname ? `Hey ${user.Firstname}!` : "Your pet,"}<br />
+            {user?.Firstname ? "Welcome back 👋" : "our priority 👋"}
           </h1>
           
           <p className="text-xl text-gray-600 mb-8 max-w-2xl">
-            {user?.email && (
+            {user?.Firstname && (
               <>
-                Logged in as <span className="text-yellow-600 font-semibold">{user.email}</span>
+                Logged in as <span className="text-yellow-600 font-semibold">{user.Firstname} {user.Lastname}</span>
               </>
             )}
           </p>
@@ -207,9 +248,11 @@ export default function ProtectedHome() {
           </div>
 
           <div className="flex gap-4">
-            <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 font-semibold hover:shadow-lg hover:shadow-amber-500/50 transform hover:scale-105 transition">
-              Add New Pet
-            </button>
+            <Link href="/user/pet/add">
+              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 font-semibold hover:shadow-lg hover:shadow-amber-500/50 transform hover:scale-105 transition">
+                Add New Pet
+              </button>
+            </Link>
             <button 
               onClick={handleBackToLanding}
               className="px-6 py-3 rounded-xl border border-white/20 font-semibold hover:bg-white/5 transition flex items-center gap-2"
@@ -218,6 +261,143 @@ export default function ProtectedHome() {
               Back to Landing
             </button>
           </div>
+        </div>
+
+        {/* Pets Section */}
+        <div className="mb-16">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Heart className="w-6 h-6 text-pink-500" />
+              <h2 className="text-3xl font-bold">Your Pets</h2>
+            </div>
+            <Link href="/user/pet">
+              <button className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                View All
+              </button>
+            </Link>
+          </div>
+
+          {petsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(3)].map((_, index) => (
+                <div key={index} className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-6 shadow-xl animate-pulse">
+                  <div className="w-20 h-20 rounded-full bg-gray-200 mx-auto mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded mb-4"></div>
+                  <div className="flex gap-2">
+                    <div className="h-8 bg-gray-200 rounded flex-1"></div>
+                    <div className="h-8 bg-gray-200 rounded flex-1"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : petsError ? (
+            <div className="bg-red-50 border border-red-200 rounded-3xl p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <PawPrint className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Unable to Load Pets</h3>
+              <p className="text-gray-600 mb-4">{petsError}</p>
+              <button
+                onClick={fetchPets}
+                className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : pets.length === 0 ? (
+            <div className="bg-gradient-to-br from-green-50 to-blue-50 border border-green-200 rounded-3xl p-12 text-center">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center mx-auto mb-6">
+                <PawPrint className="w-12 h-12 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">No Pets Yet</h3>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                Start your pet care journey! Add your first furry friend to keep track of their health, appointments, and more.
+              </p>
+              <Link href="/user/pet/add">
+                <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all">
+                  <Plus className="w-5 h-5" />
+                  Add Your First Pet
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pets.slice(0, 3).map((pet) => (
+                <div
+                  key={pet._id}
+                  className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group cursor-pointer"
+                  onClick={() => router.push(`/user/pet/${pet._id}/edit`)}
+                >
+                  {/* Pet Image */}
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    {pet.imageUrl ? (
+                      <Image
+                        src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
+                        alt={pet.name}
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center">
+                        <PawPrint className="w-10 h-10 text-white" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Pet Info */}
+                  <div className="text-center mb-4">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-green-600 transition-colors">{pet.name}</h3>
+                    <p className="text-sm text-gray-600 mb-2">
+                      {pet.species} • {pet.breed}
+                    </p>
+                    <div className="flex justify-center gap-4 text-xs text-gray-500">
+                      <span>Age: {pet.age}y</span>
+                      <span>Weight: {pet.weight}kg</span>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/user/pet/${pet._id}/edit`);
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push('/user/pet');
+                      }}
+                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {pets.length > 3 && (
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-dashed border-gray-300 rounded-3xl p-6 flex items-center justify-center hover:bg-gray-100 transition-colors cursor-pointer group" onClick={() => router.push('/user/pet')}>
+                  <div className="text-center">
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-300 transition-colors">
+                      <Plus className="w-6 h-6 text-gray-600" />
+                    </div>
+                    <p className="text-sm font-medium text-gray-600">View All Pets</p>
+                    <p className="text-xs text-gray-500">+{pets.length - 3} more</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Features Section */}

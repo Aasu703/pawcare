@@ -5,6 +5,7 @@ export const API = {
  AUTH:{
     REGISTER: '/api/auth/register',
     LOGIN: '/api/auth/login',
+    LOGOUT: '/api/auth/logout',
     WHOAMI: '/api/auth/whoami',
     // LOGOUT: '/api/auth/logout',
     UPDATEPROFILE: '/api/auth/update-profile',
@@ -37,5 +38,14 @@ export const API = {
     STATS: {
         DASHBOARD: '/api/admin/stats/dashboard',
     }
+ },
+ USER:{
+    PET: {
+        CREATE: '/api/user/pet',
+        GET_ALL: '/api/user/pet',
+        GET_BY_ID: (id: string) => `/api/user/pet/${id}`,
+        UPDATE: (id: string) => `/api/user/pet/${id}`,
+        DELETE: (id: string) => `/api/user/pet/${id}`,
+    },
  }
 };
