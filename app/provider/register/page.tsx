@@ -79,7 +79,7 @@ export default function ProviderRegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#f8d548] hover:brightness-95 disabled:bg-yellow-300 text-[#0c4148] font-semibold py-2 rounded-lg transition"
+            className="w-full bg-[#f8d548] hover:brightness-95 disabled:bg-primary text-[#0c4148] font-semibold py-2 rounded-lg transition"
           >
             {loading ? "Registering..." : "Register"}
           </button>
@@ -95,3 +95,4 @@ export default function ProviderRegisterPage() {
     </div>
   );
 }
+
