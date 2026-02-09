@@ -50,18 +50,30 @@ function proxy(req: NextRequest) {
 
     // Redirect authenticated users away from public auth pages
     if (hasValidToken && user && isPublicPath) {
-        const redirectUrl = user.role === 'admin' ? "/admin" : "/user/home";
+        const redirectUrl = user.role === 'admin' ? "/admin" : user.role === 'provider' ? "/provider/dashboard" : "/user/home";
         return NextResponse.redirect(new URL(redirectUrl, req.url));
     }
 
     // Block non-admin users from admin routes
     if (hasValidToken && isAdminPath && user?.role !== 'admin') {
-        return NextResponse.redirect(new URL("/user/home", req.url));
+        const redirectUrl = user?.role === 'provider' ? '/provider/dashboard' : '/user/home';
+        return NextResponse.redirect(new URL(redirectUrl, req.url));
     }
 
     // Block admin users from user routes
     if (hasValidToken && isUserPath && user?.role === 'admin') {
         return NextResponse.redirect(new URL("/admin", req.url));
+    }
+
+    // Block non-provider users from provider routes
+    if (hasValidToken && isProviderPath && !isProviderAuthPath && user?.role !== 'provider') {
+        const redirectUrl = user?.role === 'admin' ? '/admin' : '/user/home';
+        return NextResponse.redirect(new URL(redirectUrl, req.url));
+    }
+
+    // Redirect authenticated providers away from provider auth pages  
+    if (hasValidToken && user?.role === 'provider' && isProviderAuthPath) {
+        return NextResponse.redirect(new URL('/provider/dashboard', req.url));
     }
 
     // Allow request to continue
