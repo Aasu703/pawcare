@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import UserSidebar from "./_components/UserSidebar";
 
 export default function UserLayout({
   children,
@@ -13,17 +14,11 @@ export default function UserLayout({
   const router = useRouter();
 
   useEffect(() => {
-    console.log('🏠 User Layout - Loading:', loading, 'Auth:', isAuthenticated, 'User:', user, 'Role:', user?.role, 'LoggingOut:', loggingOut);
-    
     if (!loading && !loggingOut) {
       if (!isAuthenticated) {
-        console.log('🚫 User Layout - Not authenticated, redirecting to login');
         router.push("/login");
       } else if (user?.role === "admin") {
-        console.log('🚫 User Layout - Admin detected, redirecting to admin');
         router.push("/admin");
-      } else {
-        console.log('✅ User Layout - User authenticated, rendering content');
       }
     }
   }, [loading, isAuthenticated, user, router, loggingOut]);
@@ -40,5 +35,10 @@ export default function UserLayout({
     return null;
   }
 
-  return <section>{children}</section>;
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <UserSidebar />
+      <main className="ml-64 min-h-screen p-8">{children}</main>
+    </div>
+  );
 }

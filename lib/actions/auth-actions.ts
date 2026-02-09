@@ -6,6 +6,7 @@ import { register, login, logout, updateProfile, createUserByAdmin, requestPassw
 import { setAuthToken, setUserData, getAuthToken, clearAuthCookies } from "../cookie";
 import axios from "../api/axios";
 import { API } from "../api/endpoints";
+import { providerLogin as providerLoginApi, providerRegister as providerRegisterApi } from "../api/provider/provider";
 
 const BASE_URL = process.env.API_BASE_URL || "http://localhost:5050";
 
@@ -82,14 +83,107 @@ export const handleLogin = async (loginData: any) => {
                 token: result.token
                 };
         }
+        // If user login fails, try provider login
+        try {
+            const providerResult = await providerLoginApi(loginData);
+            if (providerResult.success) {
+                const providerData = { ...providerResult.data, role: "provider" };
+                if (providerResult.token) {
+                    await setAuthToken(providerResult.token);
+                }
+                await setUserData(providerData);
+                return {
+                    success: true,
+                    message: "Login successful",
+                    data: providerData,
+                    token: providerResult.token
+                };
+            }
+        } catch (providerErr: any) {
+            // Provider login also failed — return original user error
+        }
         return {
             success: false,
             message: result.message  ||"Login failed"
         };
     }catch(err: Error | any){
+        // User login threw an error — try provider login as fallback
+        try {
+            const providerResult = await providerLoginApi(loginData);
+            if (providerResult.success) {
+                const providerData = { ...providerResult.data, role: "provider" };
+                if (providerResult.token) {
+                    await setAuthToken(providerResult.token);
+                }
+                await setUserData(providerData);
+                return {
+                    success: true,
+                    message: "Login successful",
+                    data: providerData,
+                    token: providerResult.token
+                };
+            }
+        } catch (providerErr: any) {
+            // Both failed
+        }
         return {
             success: false,
             message: err.message  ||"Login failed"
+        };
+    }
+}
+
+export const handleProviderLogin = async (loginData: any) => {
+    try {
+        const providerResult = await providerLoginApi(loginData);
+        if (providerResult.success) {
+            const providerData = { ...providerResult.data, role: "provider" };
+            if (providerResult.token) {
+                await setAuthToken(providerResult.token);
+            }
+            await setUserData(providerData);
+            return {
+                success: true,
+                message: "Login successful",
+                data: providerData,
+                token: providerResult.token
+            };
+        }
+        return {
+            success: false,
+            message: providerResult.message || "Provider login failed"
+        };
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.message || "Provider login failed"
+        };
+    }
+}
+
+export const handleProviderRegister = async (providerData: any) => {
+    try {
+        const result = await providerRegisterApi(providerData);
+        if (result.success) {
+            const userData = { ...result.data, role: "provider" };
+            if (result.token) {
+                await setAuthToken(result.token);
+            }
+            await setUserData(userData);
+            return {
+                success: true,
+                message: "Registration successful",
+                data: userData
+            };
+        }
+        return {
+            success: false,
+            message: result.message || "Provider registration failed"
+        };
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.message || "Provider registration failed"
         };
     }
 }

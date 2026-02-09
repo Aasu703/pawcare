@@ -1,0 +1,6 @@
+﻿app/admin/feedback/page.tsx(64,24): error TS2339: Property 'serviceId' does not exist on type 'Feedback'.
+app/admin/feedback/page.tsx(66,35): error TS2339: Property 'serviceId' does not exist on type 'Feedback'.
+app/admin/feedback/page.tsx(66,63): error TS2339: Property 'serviceId' does not exist on type 'Feedback'.
+app/admin/feedback/page.tsx(72,73): error TS2339: Property 'rating' does not exist on type 'Feedback'.
+app/admin/feedback/page.tsx(76,22): error TS2339: Property 'comment' does not exist on type 'Feedback'.
+app/admin/feedback/page.tsx(76,73): error TS2339: Property 'comment' does not exist on type 'Feedback'.

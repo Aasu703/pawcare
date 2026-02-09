@@ -1,0 +1,193 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { getProviderServices, createProviderService, updateProviderService, deleteProviderService } from "@/lib/api/provider/provider";
+import { Service } from "@/lib/types/service";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
+
+export default function ProviderServicesPage() {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    price: 0,
+    duration_minutes: 30,
+    catergory: "" as "" | "grooming" | "boarding" | "vet",
+  });
+
+  useEffect(() => { loadServices(); }, []);
+
+  const loadServices = async () => {
+    setLoading(true);
+    const res = await getProviderServices();
+    if (res.success && res.data) setServices(res.data);
+    setLoading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      ...form,
+      catergory: form.catergory || undefined,
+    };
+    let res;
+    if (editingId) {
+      res = await updateProviderService(editingId, payload);
+    } else {
+      res = await createProviderService(payload as any);
+    }
+    if (res.success) {
+      toast.success(editingId ? "Service updated!" : "Service created!");
+      resetForm();
+      loadServices();
+    } else {
+      toast.error(res.message);
+    }
+  };
+
+  const handleEdit = (service: Service) => {
+    setEditingId(service._id);
+    setForm({
+      title: service.title,
+      description: service.description || "",
+      price: service.price,
+      duration_minutes: service.duration_minutes,
+      catergory: service.catergory || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this service?")) return;
+    const res = await deleteProviderService(id);
+    if (res.success) {
+      toast.success("Service deleted");
+      loadServices();
+    } else {
+      toast.error(res.message);
+    }
+  };
+
+  const resetForm = () => {
+    setShowForm(false);
+    setEditingId(null);
+    setForm({ title: "", description: "", price: 0, duration_minutes: 30, catergory: "" });
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">My Services</h1>
+          <p className="text-gray-500 mt-1">Manage the services you offer</p>
+        </div>
+        <button
+          onClick={() => { resetForm(); setShowForm(true); }}
+          className="flex items-center gap-2 bg-[#0f4f57] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-[#0c4148] transition-colors"
+        >
+          <Plus className="h-5 w-5" />
+          Add Service
+        </button>
+      </div>
+
+      {/* Form Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-lg">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-bold">{editingId ? "Edit Service" : "Add Service"}</h2>
+              <button onClick={resetForm} className="text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                  <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (min)</label>
+                  <input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="1" required />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select value={form.catergory} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent">
+                  <option value="">Select category</option>
+                  <option value="grooming">Grooming</option>
+                  <option value="boarding">Boarding</option>
+                  <option value="vet">Vet</option>
+                </select>
+              </div>
+              <button type="submit"
+                className="w-full bg-[#0f4f57] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0c4148] transition-colors">
+                {editingId ? "Update Service" : "Create Service"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Services Table */}
+      {loading ? (
+        <div className="flex justify-center py-20">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+        </div>
+      ) : services.length === 0 ? (
+        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
+          <p className="text-lg text-gray-500">No services yet</p>
+          <p className="text-sm text-gray-400 mt-1">Add your first service to get started</p>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {services.map((s) => (
+                <tr key={s._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">
+                    <div className="text-sm font-medium text-gray-900">{s.title}</div>
+                    <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || "-"}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">${s.price}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">{s.duration_minutes} min</td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex gap-2 justify-end">
+                      <button onClick={() => handleEdit(s)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(s._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
