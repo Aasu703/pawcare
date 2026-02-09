@@ -30,8 +30,11 @@ export interface Feedback {
   _id: string;
   id?: string;
   feedback: string;
-  providerId?: string;
-  userId?: string;
+  comment?: string; // alias for feedback?
+  rating?: number;
+  serviceId?: string | { title: string }; // populated
+  providerId?: string | { businessName: string }; // populated
+  userId?: string | { Firstname: string }; // populated
   createdAt?: string;
   updatedAt?: string;
 }
@@ -49,13 +52,17 @@ export interface Inventory {
   _id: string;
   id?: string;
   product_name: string;
+  itemName?: string; // specific to admin view?
   description?: string;
-  quantity?: number;
+  quantity: number;
   price?: number;
   category?: string;
-  providerId?: string;
+  providerId?: string | Provider;
   createdAt?: string;
   updatedAt?: string;
+  minThreshold?: number;
+  unit?: string;
+  notes?: string;
 }
 
 export interface CreateInventoryRequest {
