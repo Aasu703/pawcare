@@ -16,7 +16,16 @@ export default function AdminFeedbackPage() {
     setLoading(true);
     try {
       const res = await getAllFeedback(1, 100);
-      setFeedback(res.data || res.feedback || []);
+      // Normalize response into an array of feedback
+      let list: any = [];
+      if (Array.isArray(res)) list = res;
+      else if (Array.isArray(res?.data)) list = res.data;
+      else if (Array.isArray(res?.feedback)) list = res.feedback;
+      else if (Array.isArray(res?.items)) list = res.items;
+      else if (Array.isArray(res?.data?.items)) list = res.data.items;
+      else list = [];
+
+      setFeedback(list);
     } catch { /* empty */ }
     setLoading(false);
   };
