@@ -38,7 +38,7 @@ function NewBookingForm() {
   const loadData = async () => {
     setLoading(true);
     const [serviceRes, petsRes] = await Promise.all([
-      serviceId ? getServiceById(serviceId) : Promise.resolve({ success: false }),
+      serviceId ? getServiceById(serviceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
       getUserPets(),
     ]);
 

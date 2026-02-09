@@ -61,10 +61,8 @@ export default function AdminHealthRecordsPage() {
               <p><span className="font-medium">Pet:</span> {typeof selected.petId === "object" ? (selected.petId as any).name : selected.petId}</p>
               <p><span className="font-medium">Type:</span> <span className={`px-2 py-0.5 rounded-full text-xs ${recordTypeColors[selected.recordType] || ""}`}>{selected.recordType}</span></p>
               <p><span className="font-medium">Date:</span> {new Date(selected.date).toLocaleDateString()}</p>
-              {selected.nextDate && <p><span className="font-medium">Next Date:</span> {new Date(selected.nextDate).toLocaleDateString()}</p>}
-              <p><span className="font-medium">Vet:</span> {selected.vetName || "-"}</p>
-              <p><span className="font-medium">Description:</span> {selected.description}</p>
-              {selected.notes && <p><span className="font-medium">Notes:</span> {selected.notes}</p>}
+              {selected.nextDueDate && <p><span className="font-medium">Next Due:</span> {new Date(selected.nextDueDate).toLocaleDateString()}</p>}
+              {selected.description && <p><span className="font-medium">Description:</span> {selected.description}</p>}
             </div>
           </div>
         </div>
@@ -82,7 +80,7 @@ export default function AdminHealthRecordsPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vet</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
@@ -96,7 +94,7 @@ export default function AdminHealthRecordsPage() {
                     <span className={`px-2 py-1 rounded-full text-xs ${recordTypeColors[r.recordType] || "bg-gray-100"}`}>{r.recordType}</span>
                   </td>
                   <td className="px-6 py-4 text-sm">{new Date(r.date).toLocaleDateString()}</td>
-                  <td className="px-6 py-4 text-sm">{r.vetName || "-"}</td>
+                  <td className="px-6 py-4 text-sm">{r.title || "-"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex gap-1 justify-end">
                       <button onClick={() => setSelected(r)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Eye className="h-4 w-4" /></button>

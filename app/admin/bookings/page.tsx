@@ -69,8 +69,8 @@ export default function AdminBookingsPage() {
               <p><span className="font-medium">Service:</span> {typeof selected.serviceId === "object" ? (selected.serviceId as any).title : selected.serviceId}</p>
               <p><span className="font-medium">User:</span> {typeof selected.userId === "object" ? (selected.userId as any).Firstname : selected.userId}</p>
               <p><span className="font-medium">Pet:</span> {typeof selected.petId === "object" ? (selected.petId as any).name : selected.petId}</p>
-              <p><span className="font-medium">Date:</span> {new Date(selected.date).toLocaleDateString()}</p>
-              <p><span className="font-medium">Time:</span> {selected.startTime} - {selected.endTime}</p>
+              <p><span className="font-medium">Start:</span> {new Date(selected.startTime).toLocaleString()}</p>
+              <p><span className="font-medium">End:</span> {new Date(selected.endTime).toLocaleString()}</p>
               <p><span className="font-medium">Status:</span> <span className={`px-2 py-0.5 rounded-full text-xs ${statusColors[selected.status] || ""}`}>{selected.status}</span></p>
               {selected.notes && <p><span className="font-medium">Notes:</span> {selected.notes}</p>}
             </div>
@@ -101,7 +101,7 @@ export default function AdminBookingsPage() {
                 <tr key={b._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm">{typeof b.serviceId === "object" ? (b.serviceId as any).title : b.serviceId}</td>
                   <td className="px-6 py-4 text-sm">{typeof b.userId === "object" ? (b.userId as any).Firstname : b.userId}</td>
-                  <td className="px-6 py-4 text-sm">{new Date(b.date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 text-sm">{new Date(b.startTime).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
                     <select value={b.status} onChange={(e) => handleStatusChange(b._id, e.target.value)}
                       className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[b.status] || "bg-gray-100"}`}>

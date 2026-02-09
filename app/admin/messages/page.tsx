@@ -50,9 +50,7 @@ export default function AdminMessagesPage() {
               <button onClick={() => setSelected(null)}><X className="h-5 w-5 text-gray-400" /></button>
             </div>
             <div className="space-y-3 text-sm">
-              <p><span className="font-medium">From:</span> {typeof selected.senderId === "object" ? (selected.senderId as any).Firstname : selected.senderId}</p>
-              <p><span className="font-medium">To:</span> {typeof selected.receiverId === "object" ? (selected.receiverId as any).Firstname : selected.receiverId}</p>
-              <p><span className="font-medium">Subject:</span> {selected.subject || "-"}</p>
+              <p><span className="font-medium">User:</span> {typeof selected.userId === "object" ? (selected.userId as any).Firstname : selected.userId}</p>
               <p><span className="font-medium">Date:</span> {selected.createdAt ? new Date(selected.createdAt).toLocaleString() : ""}</p>
               <div className="border-t pt-3 mt-3">
                 <p className="text-gray-700">{selected.content}</p>
@@ -74,9 +72,8 @@ export default function AdminMessagesPage() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">From</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">To</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Content</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
@@ -86,9 +83,8 @@ export default function AdminMessagesPage() {
                 <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-400">No messages found</td></tr>
               ) : messages.map((m) => (
                 <tr key={m._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm">{typeof m.senderId === "object" ? (m.senderId as any).Firstname : m.senderId}</td>
-                  <td className="px-6 py-4 text-sm">{typeof m.receiverId === "object" ? (m.receiverId as any).Firstname : m.receiverId}</td>
-                  <td className="px-6 py-4 text-sm truncate max-w-xs">{m.subject || m.content?.substring(0, 50) || "-"}</td>
+                  <td className="px-6 py-4 text-sm">{typeof m.userId === "object" ? (m.userId as any).Firstname : m.userId}</td>
+                  <td className="px-6 py-4 text-sm truncate max-w-xs">{m.content?.substring(0, 60) || "-"}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{m.createdAt ? new Date(m.createdAt).toLocaleDateString() : ""}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex gap-1 justify-end">

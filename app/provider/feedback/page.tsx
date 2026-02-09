@@ -3,52 +3,48 @@
 import { useState, useEffect } from "react";
 import { getFeedbackByProvider } from "@/lib/api/provider/provider";
 import { Feedback } from "@/lib/types/provider";
-import { Star, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
+
+function getProviderId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const cookie = document.cookie.split("; ").find((c) => c.startsWith("user_data="));
+    if (cookie) {
+      const data = JSON.parse(decodeURIComponent(cookie.split("=")[1]));
+      return data._id || data.id || "";
+    }
+  } catch { /* empty */ }
+  return "";
+}
 
 export default function ProviderFeedbackPage() {
   const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [loading, setLoading] = useState(true);
+  const providerId = getProviderId();
 
   useEffect(() => {
+    if (!providerId) return;
     const load = async () => {
       setLoading(true);
-      const res = await getFeedbackByProvider();
+      const res = await getFeedbackByProvider(providerId);
       if (res.success && res.data) setFeedback(res.data);
       setLoading(false);
     };
     load();
-  }, []);
-
-  const avgRating =
-    feedback.length > 0
-      ? (feedback.reduce((sum, f) => sum + (f.rating || 0), 0) / feedback.length).toFixed(1)
-      : "0";
+  }, [providerId]);
 
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Feedback</h1>
-        <p className="text-gray-500 mt-1">Reviews and ratings from your customers</p>
+        <p className="text-gray-500 mt-1">Feedback from your customers</p>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      {/* Summary */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">Total Reviews</p>
+          <p className="text-sm text-gray-500">Total Feedback</p>
           <p className="text-3xl font-bold text-[#0f4f57] mt-1">{feedback.length}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">Average Rating</p>
-          <div className="flex items-center gap-2 mt-1">
-            <p className="text-3xl font-bold text-[#0f4f57]">{avgRating}</p>
-            <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <p className="text-sm text-gray-500">5-Star Reviews</p>
-          <p className="text-3xl font-bold text-[#0f4f57] mt-1">
-            {feedback.filter((f) => f.rating === 5).length}
-          </p>
         </div>
       </div>
 
@@ -61,7 +57,7 @@ export default function ProviderFeedbackPage() {
         <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
           <MessageCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
           <p className="text-lg text-gray-500">No feedback yet</p>
-          <p className="text-sm text-gray-400 mt-1">Reviews will appear here once customers leave feedback</p>
+          <p className="text-sm text-gray-400 mt-1">Feedback will appear here once customers submit it</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -69,32 +65,15 @@ export default function ProviderFeedbackPage() {
             <div key={f._id} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">
-                      {typeof f.userId === "object" ? (f.userId as any).name || "Customer" : "Customer"}
-                    </span>
-                    {f.serviceId && (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                        {typeof f.serviceId === "object" ? (f.serviceId as any).title || "Service" : "Service"}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`h-4 w-4 ${star <= (f.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}`}
-                      />
-                    ))}
-                  </div>
+                  <span className="font-semibold text-gray-900 text-sm">
+                    {typeof f.userId === "object" ? (f.userId as any).Firstname || "Customer" : "Customer"}
+                  </span>
                 </div>
                 <span className="text-xs text-gray-400">
                   {f.createdAt ? new Date(f.createdAt).toLocaleDateString() : ""}
                 </span>
               </div>
-              {f.comment && (
-                <p className="mt-3 text-gray-600 text-sm">{f.comment}</p>
-              )}
+              <p className="mt-3 text-gray-600 text-sm">{f.feedback}</p>
             </div>
           ))}
         </div>

@@ -57,10 +57,7 @@ export default function AdminReviewsPage() {
                     <span className="font-medium text-sm">
                       {typeof r.userId === "object" ? (r.userId as any).Firstname || "User" : "User"}
                     </span>
-                    <span className="text-xs text-gray-400">reviewed</span>
-                    <span className="font-medium text-sm">
-                      {typeof r.serviceId === "object" ? (r.serviceId as any).title || "Service" : "Service"}
-                    </span>
+                    <span className="text-xs text-gray-400">left a review</span>
                   </div>
                   <div className="flex items-center gap-1 mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
