@@ -12,6 +12,11 @@ import {
   Store,
   UserCog,
   LogOut,
+  Star,
+  MessageSquare,
+  HeartPulse,
+  MessageCircle,
+  Package,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -21,14 +26,14 @@ const sidebarItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Pets",
-    href: "/admin/pets",
-    icon: PawPrint,
-  },
-  {
     title: "Users",
     href: "/admin/users",
     icon: Users,
+  },
+  {
+    title: "Pets",
+    href: "/admin/pets",
+    icon: PawPrint,
   },
   {
     title: "Providers",
@@ -36,14 +41,39 @@ const sidebarItems = [
     icon: UserCog,
   },
   {
-    title: "Appointments",
-    href: "/admin/appointments",
+    title: "Bookings",
+    href: "/admin/bookings",
     icon: Calendar,
   },
   {
     title: "Services",
     href: "/admin/services",
     icon: Store,
+  },
+  {
+    title: "Reviews",
+    href: "/admin/reviews",
+    icon: Star,
+  },
+  {
+    title: "Messages",
+    href: "/admin/messages",
+    icon: MessageSquare,
+  },
+  {
+    title: "Health Records",
+    href: "/admin/health-records",
+    icon: HeartPulse,
+  },
+  {
+    title: "Feedback",
+    href: "/admin/feedback",
+    icon: MessageCircle,
+  },
+  {
+    title: "Inventory",
+    href: "/admin/inventory",
+    icon: Package,
   },
 ];
 
