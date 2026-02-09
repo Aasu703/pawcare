@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 const publicPaths = ["/login", "/register", "/forget-password", "/reset-password"];
 const adminPaths = ["/admin"];
 const userPaths = ["/user"];
+const providerPaths = ["/provider"];
+const providerAuthPaths = ["/provider/login", "/provider/register"];
 
 function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -27,10 +29,23 @@ function proxy(req: NextRequest) {
     const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
     const isAdminPath = adminPaths.some((path) => pathname.startsWith(path));
     const isUserPath = userPaths.some((path) => pathname.startsWith(path));
+    const isProviderPath = providerPaths.some((path) => pathname.startsWith(path));
+    const isProviderAuthPath = providerAuthPaths.some((path) => pathname === path);
+
+    // Allow provider auth pages without token
+    if (isProviderAuthPath) {
+        return NextResponse.next();
+    }
 
     // Redirect unauthenticated users from protected routes
     if (!hasValidToken && (isAdminPath || isUserPath)) {
         return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    // Provider protected routes — check for provider_token cookie
+    const providerToken = req.cookies.get('auth_token')?.value;
+    if (!providerToken && isProviderPath && !isProviderAuthPath) {
+        return NextResponse.redirect(new URL("/provider/login", req.url));
     }
 
     // Redirect authenticated users away from public auth pages
@@ -59,6 +74,7 @@ export const config = {
     matcher: [
         "/admin/:path*",
         "/user/:path*",
+        "/provider/:path*",
         "/login",
         "/register",
         "/forget-password",

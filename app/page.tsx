@@ -24,6 +24,7 @@ export default function Page() {
           <div className="flex gap-6 text-sm font-semibold">
             <Link href="/">Home</Link>
             <Link href="/about">About</Link>
+            <Link href="/services">Services</Link>
             <Link href="/login">Login</Link>
             <Link
               href="/register"

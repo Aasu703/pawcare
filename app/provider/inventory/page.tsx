@@ -6,24 +6,38 @@ import { Inventory } from "@/lib/types/provider";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { toast } from "sonner";
 
+function getProviderId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const cookie = document.cookie.split("; ").find((c) => c.startsWith("user_data="));
+    if (cookie) {
+      const data = JSON.parse(decodeURIComponent(cookie.split("=")[1]));
+      return data._id || data.id || "";
+    }
+  } catch { /* empty */ }
+  return "";
+}
+
 export default function ProviderInventoryPage() {
   const [items, setItems] = useState<Inventory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
-    itemName: "",
+    product_name: "",
+    description: "",
     quantity: 0,
-    unit: "",
-    minThreshold: 0,
-    notes: "",
+    price: 0,
+    category: "",
   });
 
-  useEffect(() => { loadItems(); }, []);
+  const providerId = getProviderId();
+
+  useEffect(() => { if (providerId) loadItems(); }, [providerId]);
 
   const loadItems = async () => {
     setLoading(true);
-    const res = await getInventoryByProvider();
+    const res = await getInventoryByProvider(providerId);
     if (res.success && res.data) setItems(res.data);
     setLoading(false);
   };
@@ -34,7 +48,7 @@ export default function ProviderInventoryPage() {
     if (editingId) {
       res = await updateInventory(editingId, form);
     } else {
-      res = await createInventory(form);
+      res = await createInventory({ ...form, providerId });
     }
     if (res.success) {
       toast.success(editingId ? "Item updated!" : "Item added!");
@@ -48,11 +62,11 @@ export default function ProviderInventoryPage() {
   const handleEdit = (item: Inventory) => {
     setEditingId(item._id);
     setForm({
-      itemName: item.itemName,
-      quantity: item.quantity,
-      unit: item.unit || "",
-      minThreshold: item.minThreshold || 0,
-      notes: item.notes || "",
+      product_name: item.product_name,
+      description: item.description || "",
+      quantity: item.quantity || 0,
+      price: item.price || 0,
+      category: item.category || "",
     });
     setShowForm(true);
   };
@@ -71,11 +85,8 @@ export default function ProviderInventoryPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ itemName: "", quantity: 0, unit: "", minThreshold: 0, notes: "" });
+    setForm({ product_name: "", description: "", quantity: 0, price: 0, category: "" });
   };
-
-  const isLowStock = (item: Inventory) =>
-    item.minThreshold && item.quantity <= item.minThreshold;
 
   return (
     <div>
@@ -93,16 +104,6 @@ export default function ProviderInventoryPage() {
         </button>
       </div>
 
-      {/* Low Stock Alert */}
-      {items.filter(isLowStock).length > 0 && (
-        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-          <p className="font-semibold text-amber-800">⚠ Low Stock Alert</p>
-          <p className="text-sm text-amber-600 mt-1">
-            {items.filter(isLowStock).map((i) => i.itemName).join(", ")} — below minimum threshold
-          </p>
-        </div>
-      )}
-
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -113,9 +114,14 @@ export default function ProviderInventoryPage() {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
-                <input type="text" value={form.itemName} onChange={(e) => setForm({ ...form, itemName: e.target.value })}
+                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                <input type="text" value={form.product_name} onChange={(e) => setForm({ ...form, product_name: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" required />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -124,21 +130,15 @@ export default function ProviderInventoryPage() {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
-                  <input type="text" value={form.unit} onChange={(e) => setForm({ ...form, unit: e.target.value })} placeholder="e.g. pcs, kg, bottles"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                  <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Min Threshold</label>
-                <input type="number" value={form.minThreshold} onChange={(e) => setForm({ ...form, minThreshold: +e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" />
-                <p className="text-xs text-gray-400 mt-1">Get alerted when stock falls below this</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} rows={2}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <input type="text" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. food, medicine, equipment"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" />
               </div>
               <button type="submit"
                 className="w-full bg-[#0f4f57] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0c4148] transition-colors">
@@ -163,12 +163,13 @@ export default function ProviderInventoryPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item) => (
-            <div key={item._id} className={`bg-white rounded-xl border p-5 ${isLowStock(item) ? "border-amber-300 bg-amber-50/50" : "border-gray-200"}`}>
+            <div key={item._id} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{item.itemName}</h3>
-                  <p className="text-2xl font-bold text-[#0f4f57] mt-1">
-                    {item.quantity} <span className="text-sm font-normal text-gray-400">{item.unit}</span>
+                  <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
+                  {item.description && <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>}
+                  <p className="text-2xl font-bold text-[#0f4f57] mt-2">
+                    {item.quantity ?? 0} <span className="text-sm font-normal text-gray-400">units</span>
                   </p>
                 </div>
                 <div className="flex gap-1">
@@ -176,12 +177,8 @@ export default function ProviderInventoryPage() {
                   <button onClick={() => handleDelete(item._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
                 </div>
               </div>
-              {item.minThreshold ? (
-                <p className={`text-xs mt-3 ${isLowStock(item) ? "text-amber-600 font-medium" : "text-gray-400"}`}>
-                  Min threshold: {item.minThreshold} {item.unit}
-                </p>
-              ) : null}
-              {item.notes && <p className="text-xs text-gray-400 mt-1">{item.notes}</p>}
+              {item.price ? <p className="text-xs text-gray-400 mt-2">${item.price}</p> : null}
+              {item.category && <p className="text-xs text-gray-400 mt-1">Category: {item.category}</p>}
             </div>
           ))}
         </div>
