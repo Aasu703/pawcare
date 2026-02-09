@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 import { loginSchema } from '../schema';
 import Link from 'next/link';
 import { handleLogin, handleProviderLogin } from '@/lib/actions/auth-actions';
-import { useAuth } from '@/context/AuthContext'; 
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginForm() {
-  const {checkAuth, isAuthenticated, user} = useAuth();
+  const { checkAuth, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -46,13 +46,13 @@ export default function LoginForm() {
         ? await handleProviderLogin(result.data)
         : await handleLogin(result.data);
       console.log('🔐 Login response:', response);
-      
+
       if (response.success) {
         console.log('✅ Login successful, user role:', response.data?.role);
-        
+
         // Update auth context with user data
         await checkAuth(response.data);
-        
+
         // Hard redirect — ensures cookies are sent to server and middleware handles routing
         const redirectPath = response.data.role === 'admin' ? '/admin' : response.data.role === 'provider' ? '/provider/dashboard' : '/user/home';
         window.location.href = redirectPath;
@@ -72,31 +72,29 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f4f57] to-[#0c4148]">
-      <div className="w-full max-w-md bg-[#0c4148] border border-[#f8d548]/40 p-8 rounded-2xl shadow-xl shadow-yellow-500/20">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
+      <div className="w-full max-w-md bg-gray-900 border border-primary/40 p-8 rounded-2xl shadow-xl shadow-primary/20">
         <h1 className="text-2xl font-bold text-white mb-6">Login</h1>
 
         {/* Role Toggle */}
-        <div className="flex mb-6 bg-[#0b3238] rounded-lg p-1 border border-[#f8d548]/30">
+        <div className="flex mb-6 bg-gray-800 rounded-lg p-1 border border-primary/30">
           <button
             type="button"
             onClick={() => { setRole('user'); setErrors({}); }}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-              role === 'user'
-                ? 'bg-[#f8d548] text-[#0c4148] shadow-md'
+            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${role === 'user'
+                ? 'bg-primary text-white shadow-md'
                 : 'text-gray-300 hover:text-white'
-            }`}
+              }`}
           >
             User
           </button>
           <button
             type="button"
             onClick={() => { setRole('provider'); setErrors({}); }}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${
-              role === 'provider'
-                ? 'bg-[#f8d548] text-[#0c4148] shadow-md'
+            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${role === 'provider'
+                ? 'bg-primary text-white shadow-md'
                 : 'text-gray-300 hover:text-white'
-            }`}
+              }`}
           >
             Provider
           </button>
@@ -105,7 +103,7 @@ export default function LoginForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Field */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-[#f8d548]">
+            <label htmlFor="email" className="block text-sm font-medium text-primary">
               Email
             </label>
             <input
@@ -113,9 +111,8 @@ export default function LoginForm() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-[#0b3238] text-white focus:outline-none focus:ring-2 ${
-                errors.email ? 'border-red-500 focus:ring-red-500' : 'border-[#f8d548]/60 focus:ring-[#f8d548]'
-              }`}
+              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-primary/60 focus:ring-primary'
+                }`}
               placeholder={role === 'provider' ? "Enter your business email" : "Enter your email"}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
@@ -123,7 +120,7 @@ export default function LoginForm() {
 
           {/* Password Field */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-[#f8d548]">
+            <label htmlFor="password" className="block text-sm font-medium text-primary">
               Password
             </label>
             <input
@@ -131,9 +128,8 @@ export default function LoginForm() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-[#0b3238] text-white focus:outline-none focus:ring-2 ${
-                errors.password ? 'border-red-500 focus:ring-red-500' : 'border-[#f8d548]/60 focus:ring-[#f8d548]'
-              }`}
+              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-primary/60 focus:ring-primary'
+                }`}
               placeholder="Enter your password"
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
@@ -143,7 +139,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#f8d548] hover:brightness-95 disabled:bg-yellow-300 text-[#0c4148] font-semibold py-2 rounded-lg transition"
+            className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-white font-semibold py-2 rounded-lg transition"
           >
             {loading ? 'Logging in...' : `Login as ${role === 'provider' ? 'Provider' : 'User'}`}
           </button>
@@ -151,7 +147,7 @@ export default function LoginForm() {
 
         {/* Forgot Password Link */}
         <div className="text-right">
-          <Link href="/forget-password" className="text-[#f8d548] hover:underline text-sm">
+          <Link href="/forget-password" className="text-primary hover:underline text-sm">
             Forgot Password?
           </Link>
         </div>
@@ -159,7 +155,7 @@ export default function LoginForm() {
         {/* Register Link */}
         <p className="mt-6 text-center text-gray-200">
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-[#f8d548] hover:underline">
+          <Link href="/register" className="text-primary hover:underline">
             Register here
           </Link>
         </p>
@@ -167,3 +163,4 @@ export default function LoginForm() {
     </div>
   );
 }
+
