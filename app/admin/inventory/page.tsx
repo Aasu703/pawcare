@@ -16,7 +16,21 @@ export default function AdminInventoryPage() {
     setLoading(true);
     try {
       const res = await getAllInventory(1, 100);
-      setItems(res.data || res.inventory || []);
+      // Normalize response into an array of items. The admin API may return different shapes:
+      // - an array directly
+      // - { data: [...] }
+      // - { inventory: [...] }
+      // - { items: [...] }
+      let list: any = [];
+      if (Array.isArray(res)) list = res;
+      else if (Array.isArray(res?.data)) list = res.data;
+      else if (Array.isArray(res?.inventory)) list = res.inventory;
+      else if (Array.isArray(res?.items)) list = res.items;
+      else if (Array.isArray(res?.data?.items)) list = res.data.items;
+      else if (Array.isArray(res?.data?.inventory)) list = res.data.inventory;
+      else list = [];
+
+      setItems(list);
     } catch { /* empty */ }
     setLoading(false);
   };
