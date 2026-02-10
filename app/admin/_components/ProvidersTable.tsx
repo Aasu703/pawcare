@@ -72,6 +72,26 @@ export default function ProvidersTable() {
     }
   };
 
+  const handleApprove = async (id: string) => {
+    try {
+      await axios.put(API.PROVIDER.APPROVE(id));
+      toast.success("Provider approved");
+      fetchProviders();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to approve");
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    try {
+      await axios.put(API.PROVIDER.REJECT(id));
+      toast.success("Provider rejected");
+      fetchProviders();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to reject");
+    }
+  };
+
   const handleSubmit = async (data: FormData) => {
     let result;
     if (modalMode === "create") {
@@ -144,9 +164,9 @@ export default function ProvidersTable() {
               <tr className="border-b text-left text-sm text-muted-foreground">
                 <th className="pb-3 font-medium">Name</th>
                 <th className="pb-3 font-medium">Email</th>
-                <th className="pb-3 font-medium">Specialty</th>
+                <th className="pb-3 font-medium">Type</th>
                 <th className="pb-3 font-medium">Phone</th>
-                <th className="pb-3 font-medium">Status</th>
+                <th className="pb-3 font-medium">Approval</th>
                 <th className="pb-3 font-medium">Actions</th>
               </tr>
             </thead>
@@ -163,13 +183,13 @@ export default function ProvidersTable() {
                     <td className="py-4 font-medium">{provider.businessName}</td>
                     <td className="py-4 text-muted-foreground">{provider.email}</td>
                     <td className="py-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                          specialtyColors[provider.specialty?.toLowerCase() || "general"] ||
-                          specialtyColors.general
-                        }`}
-                      >
-                        {provider.specialty || "General"}
+                      <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                        provider.providerType === "vet" ? "bg-blue-100 text-blue-700" :
+                        provider.providerType === "shop" ? "bg-purple-100 text-purple-700" :
+                        provider.providerType === "babysitter" ? "bg-pink-100 text-pink-700" :
+                        "bg-gray-100 text-gray-700"
+                      }`}>
+                        {provider.providerType || "Not set"}
                       </span>
                     </td>
                     <td className="py-4 text-muted-foreground">
@@ -178,16 +198,36 @@ export default function ProvidersTable() {
                     <td className="py-4">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
-                          provider.isActive !== false
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                            : "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400"
+                          provider.status === "approved"
+                            ? "bg-green-100 text-green-700"
+                            : provider.status === "rejected"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {provider.isActive !== false ? "Active" : "Inactive"}
+                        {provider.status ? provider.status.charAt(0).toUpperCase() + provider.status.slice(1) : "Pending"}
                       </span>
                     </td>
                     <td className="py-4">
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
+                        {provider.status === "pending" && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(provider._id)}
+                              className="rounded-lg p-2 hover:bg-green-50"
+                              title="Approve"
+                            >
+                              <CheckCircle className="h-4 w-4 text-green-500" />
+                            </button>
+                            <button
+                              onClick={() => handleReject(provider._id)}
+                              className="rounded-lg p-2 hover:bg-red-50"
+                              title="Reject"
+                            >
+                              <XCircle className="h-4 w-4 text-red-500" />
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={() => handleEdit(provider)}
                           className="rounded-lg p-2 hover:bg-muted"
