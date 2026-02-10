@@ -164,3 +164,226 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Animations & Keyframes */
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes float-slow {
+
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+
+  33% {
+    transform: translateY(-15px) translateX(10px);
+  }
+
+  66% {
+    transform: translateY(-5px) translateX(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(251, 140, 0, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(251, 140, 0, 0.6);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    background: linear-gradient(135deg, #fb8c00 0%, #f57c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-vibrant {
+    background: linear-gradient(135deg, #fb8c00 0%, #ff6f00 50%, #f57c00 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(251, 140, 0, 0.4);
+  }
+
+  .glow-primary-strong {
+    box-shadow: 0 0 30px rgba(251, 140, 0, 0.6), 0 0 60px rgba(251, 140, 0, 0.3);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(66, 133, 244, 0.4);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.4);
+  }
+
+  /* Animations */
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.5s ease-out;
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-bounce {
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  /* 3D Effects */
+  .transform-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  /* Gradient Backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #fb8c00 0%, #f57c00 100%);
+  }
+
+  .bg-gradient-vibrant {
+    background: linear-gradient(135deg, #fb8c00 0%, #ff6f00 50%, #4285f4 100%);
+  }
+
+  .bg-gradient-mesh {
+    background:
+      radial-gradient(at 0% 0%, rgba(251, 140, 0, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(66, 133, 244, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(251, 140, 0, 0.15) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(66, 133, 244, 0.15) 0px, transparent 50%);
+  }
+}
