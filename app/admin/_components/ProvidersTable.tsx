@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   handleGetAllProviders,
@@ -10,6 +10,8 @@ import {
   handleDeleteProvider,
 } from "@/lib/actions/admin/provider-action";
 import ProviderModal from "./ProviderModal";
+import axios from "@/lib/api/axios";
+import { API } from "@/lib/api/endpoints";
 
 interface Provider {
   _id: string;
@@ -19,6 +21,8 @@ interface Provider {
   specialty?: string;
   address?: string;
   isActive?: boolean;
+  providerType?: "shop" | "vet" | "babysitter";
+  status?: "pending" | "approved" | "rejected";
 }
 
 export default function ProvidersTable() {
