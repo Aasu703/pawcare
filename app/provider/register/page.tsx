@@ -14,6 +14,7 @@ export default function ProviderRegisterPage() {
     email: "",
     password: "",
     confirmPassword: "",
+    providerType: "" as "shop" | "vet" | "babysitter" | "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ export default function ProviderRegisterPage() {
     setLoading(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -75,6 +76,21 @@ export default function ProviderRegisterPage() {
               />
             </div>
           ))}
+          <div>
+            <label className="block text-sm font-medium text-[#f8d548]">Provider Type</label>
+            <select
+              name="providerType"
+              value={form.providerType}
+              onChange={handleChange}
+              className="w-full mt-1 px-4 py-2 border border-[#f8d548]/60 rounded-lg bg-[#0b3238] text-white focus:outline-none focus:ring-2 focus:ring-[#f8d548]"
+              required
+            >
+              <option value="">Select provider type</option>
+              <option value="shop">Shop (Pet Products)</option>
+              <option value="vet">Veterinarian</option>
+              <option value="babysitter">Pet Babysitter</option>
+            </select>
+          </div>
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <button
             type="submit"

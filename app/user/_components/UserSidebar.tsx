@@ -4,13 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import { Home, PawPrint, Calendar, Star, MessageSquare, User, LogOut, Heart } from "lucide-react";
+import { Home, PawPrint, Calendar, Star, MessageSquare, User, LogOut, Heart, ShoppingCart, FileText } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/user/home", icon: Home },
   { label: "My Pets", href: "/user/pet", icon: PawPrint },
   { label: "Services", href: "/user/services", icon: Heart },
+  { label: "Shop", href: "/user/shop", icon: ShoppingCart },
   { label: "Bookings", href: "/user/bookings", icon: Calendar },
+  { label: "Orders", href: "/user/orders", icon: FileText },
   { label: "Reviews", href: "/user/reviews", icon: Star },
   { label: "Messages", href: "/user/messages", icon: MessageSquare },
   { label: "Profile", href: "/user/profile", icon: User },

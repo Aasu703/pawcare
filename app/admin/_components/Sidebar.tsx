@@ -17,6 +17,8 @@ import {
   HeartPulse,
   MessageCircle,
   Package,
+  ShoppingCart,
+  FileText,
 } from "lucide-react";
 
 const sidebarItems = [
@@ -49,6 +51,16 @@ const sidebarItems = [
     title: "Services",
     href: "/admin/services",
     icon: Store,
+  },
+  {
+    title: "Orders",
+    href: "/admin/orders",
+    icon: ShoppingCart,
+  },
+  {
+    title: "Posts",
+    href: "/admin/posts",
+    icon: FileText,
   },
   {
     title: "Reviews",
