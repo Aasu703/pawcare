@@ -78,6 +78,17 @@ export const API = {
         GET_BY_ID: (id: string) => `/api/admin/inventory/${id}`,
         DELETE: (id: string) => `/api/admin/inventory/${id}`,
     },
+    ORDER: {
+        GET_ALL: '/api/admin/order',
+        GET_BY_ID: (id: string) => `/api/admin/order/${id}`,
+        UPDATE: (id: string) => `/api/admin/order/${id}`,
+        DELETE: (id: string) => `/api/admin/order/${id}`,
+    },
+    POST: {
+        GET_ALL: '/api/admin/post',
+        GET_BY_ID: (id: string) => `/api/admin/post/${id}`,
+        DELETE: (id: string) => `/api/admin/post/${id}`,
+    },
  },
  USER:{
     PET: {
