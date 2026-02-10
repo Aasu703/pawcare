@@ -95,7 +95,7 @@ export default function PetsTable() {
   );
 
   const speciesColors: Record<string, string> = {
-    dog: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400",
+    dog: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-primary",
     cat: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
     bird: "bg-sky-100 text-sky-700 dark:bg-sky-900/20 dark:text-sky-400",
     rabbit: "bg-pink-100 text-pink-700 dark:bg-pink-900/20 dark:text-pink-400",
@@ -212,3 +212,4 @@ export default function PetsTable() {
     </div>
   );
 }
+

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Heart, Plus, Edit, Trash2, ArrowLeft, PawPrint } from 'lucide-react';
 import Link from 'next/link';
 import { getUserPets, deleteUserPet } from '@/lib/api/user/pet';
@@ -156,7 +155,7 @@ export default function PetListPage() {
                 {/* Pet Image */}
                 <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4">
                   {pet.imageUrl ? (
-                    <Image
+                    <img
                       src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
                       alt={pet.name}
                       width={96}

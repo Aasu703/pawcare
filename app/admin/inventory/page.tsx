@@ -16,7 +16,21 @@ export default function AdminInventoryPage() {
     setLoading(true);
     try {
       const res = await getAllInventory(1, 100);
-      setItems(res.data || res.inventory || []);
+      // Normalize response into an array of items. The admin API may return different shapes:
+      // - an array directly
+      // - { data: [...] }
+      // - { inventory: [...] }
+      // - { items: [...] }
+      let list: any = [];
+      if (Array.isArray(res)) list = res;
+      else if (Array.isArray(res?.data)) list = res.data;
+      else if (Array.isArray(res?.inventory)) list = res.inventory;
+      else if (Array.isArray(res?.items)) list = res.items;
+      else if (Array.isArray(res?.data?.items)) list = res.data.items;
+      else if (Array.isArray(res?.data?.inventory)) list = res.data.inventory;
+      else list = [];
+
+      setItems(list);
     } catch { /* empty */ }
     setLoading(false);
   };
@@ -44,7 +58,7 @@ export default function AdminInventoryPage() {
       {/* Low stock summary */}
       {items.filter(isLow).length > 0 && (
         <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-amber-500 mt-0.5" />
+          <AlertTriangle className="h-5 w-5 text-primary mt-0.5" />
           <div>
             <p className="font-semibold text-amber-800">Low Stock Items</p>
             <p className="text-sm text-amber-600">{items.filter(isLow).length} items are below their minimum threshold</p>
@@ -104,3 +118,4 @@ export default function AdminInventoryPage() {
     </div>
   );
 }
+

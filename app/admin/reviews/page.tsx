@@ -16,7 +16,7 @@ export default function AdminReviewsPage() {
     setLoading(true);
     try {
       const res = await getAllReviews(1, 100);
-      setReviews(res.data || res.reviews || []);
+      setReviews(res.data?.data || res.reviews || []);
     } catch { /* empty */ }
     setLoading(false);
   };

@@ -7,6 +7,8 @@ export interface Provider {
   email: string;
   rating?: number;
   role: "provider";
+  providerType?: "shop" | "vet" | "babysitter";
+  status?: "pending" | "approved" | "rejected";
   userId?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -19,6 +21,7 @@ export interface CreateProviderRequest {
   email: string;
   password: string;
   confirmPassword: string;
+  providerType?: "shop" | "vet" | "babysitter";
 }
 
 export interface LoginProviderRequest {

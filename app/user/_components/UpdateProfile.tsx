@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { handleUpdateProfile } from "@/lib/actions/auth-actions";
 import { UpdateUserData, updateUserSchema } from "../schema";
-import Image from "next/image";
 import { useState, useRef } from "react";
 import { Camera, Mail, Phone, User, UserCircle, ArrowLeft, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -95,7 +94,7 @@ export default function UpdateUserForm({
             {/* Animated background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div 
-                    className="absolute w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl"
+                    className="absolute w-96 h-96 bg-primary/20 rounded-full blur-3xl"
                     style={{
                         top: '20%',
                         left: `${10 + mousePosition.x * 0.01}%`,
@@ -117,7 +116,7 @@ export default function UpdateUserForm({
                 <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
                     <button 
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-gray-700 hover:text-yellow-600 transition-colors"
+                        className="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5" />
                         <span className="font-medium">Back</span>
@@ -142,7 +141,7 @@ export default function UpdateUserForm({
                                             className="w-full h-full object-cover"
                                         />
                                     ) : imageSrc ? (
-                                        <Image
+                                        <img
                                             src={imageSrc}
                                             alt="Profile"
                                             width={128}
@@ -150,7 +149,7 @@ export default function UpdateUserForm({
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center">
+                                        <div className="w-full h-full bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center">
                                             <UserCircle className="w-20 h-20 text-gray-900" />
                                         </div>
                                     )}
@@ -195,7 +194,7 @@ export default function UpdateUserForm({
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="mt-4 px-4 py-2 rounded-lg border border-gray-300 hover:border-yellow-500 hover:bg-yellow-50 transition-all text-sm font-medium text-gray-700 hover:text-yellow-600"
+                                className="mt-4 px-4 py-2 rounded-lg border border-gray-300 hover:border-yellow-500 hover:bg-yellow-50 transition-all text-sm font-medium text-gray-700 hover:text-primary"
                             >
                                 Change Photo
                             </button>
@@ -219,7 +218,7 @@ export default function UpdateUserForm({
                     {/* Personal Information Section */}
                     <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-8 shadow-xl">
                         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                            <User className="w-6 h-6 text-yellow-600" />
+                            <User className="w-6 h-6 text-primary" />
                             Personal Information
                         </h2>
 
@@ -335,7 +334,7 @@ export default function UpdateUserForm({
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:shadow-lg hover:shadow-amber-500/50 transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-primary to-orange-600 text-white font-semibold hover:shadow-lg hover:shadow-primary/50 transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {isSubmitting ? (
                                 <>

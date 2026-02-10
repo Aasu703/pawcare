@@ -116,7 +116,7 @@ export default function ProtectedHome() {
       icon: <Bell className="w-6 h-6" />,
       title: "Reminders",
       description: "Never miss important pet care tasks",
-      color: "from-amber-500 to-orange-500",
+      color: "from-primary to-orange-600",
       bgColor: "bg-amber-500/10",
       borderColor: "border-amber-500/30",
       hoverBorder: "group-hover:border-amber-500"
@@ -151,15 +151,15 @@ export default function ProtectedHome() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-900 overflow-hidden">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div 
-          className="absolute w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl"
+        <div
+          className="absolute w-96 h-96 bg-primary/20 rounded-full blur-3xl"
           style={{
             top: `${20 + scrollY * 0.1}%`,
             left: `${10 + mousePosition.x * 0.01}%`,
             transition: "all 0.3s ease-out"
           }}
         />
-        <div 
+        <div
           className="absolute w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"
           style={{
             bottom: `${10 + scrollY * 0.05}%`,
@@ -173,22 +173,22 @@ export default function ProtectedHome() {
       <header className="relative z-10 border-b border-gray-200 backdrop-blur-xl bg-white/80">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg">
-              <PawPrint className="w-6 h-6 text-gray-900" />
+            <div className="w-10 h-10 rounded-full overflow-hidden shadow-lg">
+              <Image src="/images/pawcare.png" alt="PawCare" width={40} height={40} className="object-cover" />
             </div>
             <span className="text-xl font-bold text-gray-900">PawCare</span>
           </div>
-          
+
           <div className="flex items-center gap-4">
             <button className="p-2 rounded-lg hover:bg-gray-100 transition">
               <Bell className="w-5 h-5 text-gray-700" />
             </button>
-            <button 
+            <button
               onClick={handleProfileClick}
               className="p-2 rounded-lg hover:bg-gray-100 transition group relative"
               title="Edit Profile"
             >
-              <User className="w-5 h-5 text-gray-700 group-hover:text-yellow-600 transition-colors" />
+              <User className="w-5 h-5 text-gray-700 group-hover:text-primary transition-colors" />
               {/* Optional tooltip */}
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Edit Profile
@@ -197,7 +197,7 @@ export default function ProtectedHome() {
             <button className="p-2 rounded-lg hover:bg-gray-100 transition">
               <Settings className="w-5 h-5 text-gray-700" />
             </button>
-            <button 
+            <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition"
             >
@@ -212,19 +212,19 @@ export default function ProtectedHome() {
         {/* Hero Section */}
         <div className="mb-16">
           <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="w-5 h-5 text-yellow-500" />
-            <span className="text-yellow-600 font-semibold">Welcome Back</span>
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="text-primary font-semibold">Welcome Back</span>
           </div>
-          
+
           <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent">
             {user?.Firstname ? `Hey ${user.Firstname}!` : "Your pet,"}<br />
             {user?.Firstname ? "Welcome back 👋" : "our priority 👋"}
           </h1>
-          
+
           <p className="text-xl text-gray-600 mb-8 max-w-2xl">
             {user?.Firstname && (
               <>
-                Logged in as <span className="text-yellow-600 font-semibold">{user.Firstname} {user.Lastname}</span>
+                Logged in as <span className="text-primary font-semibold">{user.Firstname} {user.Lastname}</span>
               </>
             )}
           </p>
@@ -236,7 +236,7 @@ export default function ProtectedHome() {
                 key={index}
                 className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition"
               >
-                <div className="text-amber-400">
+                <div className="text-primary">
                   {stat.icon}
                 </div>
                 <div>
@@ -249,11 +249,11 @@ export default function ProtectedHome() {
 
           <div className="flex gap-4">
             <Link href="/user/pet/add">
-              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 font-semibold hover:shadow-lg hover:shadow-amber-500/50 transform hover:scale-105 transition">
+              <button className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-orange-600 font-semibold hover:shadow-lg hover:shadow-primary/50 transform hover:scale-105 transition">
                 Add New Pet
               </button>
             </Link>
-            <button 
+            <button
               onClick={handleBackToLanding}
               className="px-6 py-3 rounded-xl border border-white/20 font-semibold hover:bg-white/5 transition flex items-center gap-2"
             >
@@ -333,7 +333,7 @@ export default function ProtectedHome() {
                   {/* Pet Image */}
                   <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4 group-hover:scale-110 transition-transform">
                     {pet.imageUrl ? (
-                      <Image
+                      <img
                         src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
                         alt={pet.name}
                         width={80}
@@ -418,16 +418,16 @@ export default function ProtectedHome() {
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}
                 />
-                
+
                 <div className="relative z-10">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                     {feature.icon}
                   </div>
-                  
-                  <h3 className="text-xl font-bold mb-2 group-hover:text-amber-400 transition-colors">
+
+                  <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
                     {feature.title}
                   </h3>
-                  
+
                   <p className="text-gray-400 text-sm">
                     {feature.description}
                   </p>
@@ -475,7 +475,7 @@ export default function ProtectedHome() {
             </div>
 
             <div className="group">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Sparkles className="w-8 h-8" />
               </div>
               <h3 className="text-xl font-bold mb-2">Smart reminders</h3>
