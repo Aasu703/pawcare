@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
   { label: "Services", href: "/provider/services", icon: Wrench },
   { label: "Inventory", href: "/provider/inventory", icon: Package },
+  { label: "Bookings", href: "/provider/bookings", icon: CalendarCheck },
+  { label: "Posts", href: "/provider/posts", icon: FileText },
   { label: "Feedback", href: "/provider/feedback", icon: MessageSquare },
 ];
 

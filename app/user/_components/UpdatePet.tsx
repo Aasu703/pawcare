@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { handleUpdateUserPet } from "@/lib/actions/user/pet-actions";
 import { UpdatePetData, updatePetSchema } from "../schema";
-import Image from "next/image";
 import { useState, useRef } from "react";
 import { Camera, Heart, PawPrint, ArrowLeft, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -147,7 +146,7 @@ export default function UpdatePetForm({ pet }: { pet: Pet }) {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : imageSrc ? (
-                                        <Image
+                                        <img
                                             src={imageSrc}
                                             alt="Pet"
                                             width={128}

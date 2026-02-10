@@ -46,3 +46,30 @@ export async function deleteReview(id: string): Promise<{ success: boolean; mess
     return { success: false, message: error.response?.data?.message || error.message || "Failed to delete review" };
   }
 }
+
+export async function getReviewsByProvider(providerId: string, page: number = 1, limit: number = 10): Promise<{ success: boolean; message: string; data?: { reviews: Review[]; total: number } }> {
+  try {
+    const response = await axios.get(API.REVIEW.GET_BY_PROVIDER(providerId), { params: { page, limit } });
+    return { success: true, message: "Reviews fetched", data: response.data.data };
+  } catch (error: any) {
+    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch reviews" };
+  }
+}
+
+export async function getReviewsByProduct(productId: string, page: number = 1, limit: number = 10): Promise<{ success: boolean; message: string; data?: { reviews: Review[]; total: number } }> {
+  try {
+    const response = await axios.get(API.REVIEW.GET_BY_PRODUCT(productId), { params: { page, limit } });
+    return { success: true, message: "Reviews fetched", data: response.data.data };
+  } catch (error: any) {
+    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch reviews" };
+  }
+}
+
+export async function getProviderRating(providerId: string): Promise<{ success: boolean; message: string; data?: { averageRating: number } }> {
+  try {
+    const response = await axios.get(API.REVIEW.GET_PROVIDER_RATING(providerId));
+    return { success: true, message: "Rating fetched", data: response.data.data };
+  } catch (error: any) {
+    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch rating" };
+  }
+}

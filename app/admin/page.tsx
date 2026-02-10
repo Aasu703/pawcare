@@ -170,7 +170,7 @@ export default function AdminDashboardPage() {
           value={(stats?.totalPets ?? 0).toLocaleString()}
           change={12.5}
           icon={PawPrint}
-          iconColor="text-orange-500"
+          iconColor="text-primary"
           isLoading={loading}
           onClick={() => router.push("/admin/pets")}
         />
@@ -179,7 +179,7 @@ export default function AdminDashboardPage() {
           value={(stats?.activeOwners ?? 0).toLocaleString()}
           change={8.2}
           icon={Users}
-          iconColor="text-teal-500"
+          iconColor="text-primary"
           isLoading={loading}
           onClick={() => router.push("/admin/users")}
         />
@@ -196,7 +196,7 @@ export default function AdminDashboardPage() {
           value={`$${(stats?.monthlyRevenue ?? 0).toLocaleString()}`}
           change={18.7}
           icon={DollarSign}
-          iconColor="text-yellow-500"
+          iconColor="text-primary"
           isLoading={loading}
         />
       </motion.div>
@@ -232,3 +232,4 @@ export default function AdminDashboardPage() {
     </motion.div>
   );
 }
+

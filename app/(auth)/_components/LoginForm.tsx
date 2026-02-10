@@ -6,6 +6,9 @@ import { loginSchema } from '../schema';
 import Link from 'next/link';
 import { handleLogin, handleProviderLogin } from '@/lib/actions/auth-actions';
 import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
+import { PawPrint, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import CursorAnimation from './CursorAnimation';
 
 export default function LoginForm() {
   const { checkAuth, isAuthenticated, user } = useAuth();
@@ -72,95 +75,121 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-black">
-      <div className="w-full max-w-md bg-gray-900 border border-primary/40 p-8 rounded-2xl shadow-xl shadow-primary/20">
-        <h1 className="text-2xl font-bold text-white mb-6">Login</h1>
+    <>
+      <CursorAnimation />
+      <div className="w-full bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Welcome Back!</h2>
+          <p className="text-gray-500 font-medium">Sign in to continue to your account</p>
+        </div>
 
         {/* Role Toggle */}
-        <div className="flex mb-6 bg-gray-800 rounded-lg p-1 border border-primary/30">
+        <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
+          <div
+            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
+          ></div>
           <button
             type="button"
             onClick={() => { setRole('user'); setErrors({}); }}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${role === 'user'
-                ? 'bg-primary text-white shadow-md'
-                : 'text-gray-300 hover:text-white'
-              }`}
+            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
           >
-            User
+            <span>🐕</span> Pet Owner
           </button>
           <button
             type="button"
             onClick={() => { setRole('provider'); setErrors({}); }}
-            className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-200 ${role === 'provider'
-                ? 'bg-primary text-white shadow-md'
-                : 'text-gray-300 hover:text-white'
-              }`}
+            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
           >
-            Provider
+            <span>🏥</span> Provider
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-primary">
-              Email
+          <div className="space-y-2">
+            <label htmlFor="email" className="block text-sm font-bold text-gray-700 ml-1">
+              Email Address
             </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 ${errors.email ? 'border-red-500 focus:ring-red-500' : 'border-primary/60 focus:ring-primary'
-                }`}
-              placeholder={role === 'provider' ? "Enter your business email" : "Enter your email"}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+              </div>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.email
+                  ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
+                  : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
+                  }`}
+                placeholder={role === 'provider' ? "provider@example.com" : "you@example.com"}
+              />
+            </div>
+            {errors.email && <p className="text-red-500 text-sm pl-1 font-medium flex items-center gap-1 animate-slide-up">⚠️ {errors.email}</p>}
           </div>
 
           {/* Password Field */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-primary">
+          <div className="space-y-2">
+            <label htmlFor="password" className="block text-sm font-bold text-gray-700 ml-1">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={`w-full mt-1 px-4 py-2 border rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 ${errors.password ? 'border-red-500 focus:ring-red-500' : 'border-primary/60 focus:ring-primary'
-                }`}
-              placeholder="Enter your password"
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+              </div>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
+                  ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
+                  : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
+                  }`}
+                placeholder="••••••••"
+              />
+            </div>
+            {errors.password && <p className="text-red-500 text-sm pl-1 font-medium flex items-center gap-1 animate-slide-up">⚠️ {errors.password}</p>}
+          </div>
+
+          {/* Forgot Password */}
+          <div className="flex justify-end">
+            <Link href="/forget-password" className="text-sm font-semibold text-primary hover:text-orange-600 transition-colors hover:underline decoration-2 underline-offset-4">
+              Forgot password?
+            </Link>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-white font-semibold py-2 rounded-lg transition"
+            className="group w-full bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-primary text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden"
           >
-            {loading ? 'Logging in...' : `Login as ${role === 'provider' ? 'Provider' : 'User'}`}
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span className="relative z-10">Signing in...</span>
+              </>
+            ) : (
+              <>
+                <span className="relative z-10">Sign In</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform relative z-10" />
+              </>
+            )}
           </button>
         </form>
 
-        {/* Forgot Password Link */}
-        <div className="text-right">
-          <Link href="/forget-password" className="text-primary hover:underline text-sm">
-            Forgot Password?
-          </Link>
-        </div>
-
         {/* Register Link */}
-        <p className="mt-6 text-center text-gray-200">
-          Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-primary hover:underline">
-            Register here
+        <p className="mt-8 text-center text-gray-500 font-medium">
+          Don't have an account?{' '}
+          <Link href="/register" className="font-bold text-primary hover:text-orange-600 transition-colors ml-1">
+            Create one now
           </Link>
         </p>
       </div>
-    </div>
+    </>
   );
 }
-

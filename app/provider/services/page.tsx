@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { getProviderServices, createProviderService, updateProviderService, deleteProviderService } from "@/lib/api/provider/provider";
 import { Service } from "@/lib/types/service";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ProviderServicesPage() {
+  const { user } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -34,6 +36,10 @@ export default function ProviderServicesPage() {
       ...form,
       catergory: form.catergory || undefined,
     };
+    // Ensure providerId is attached so backend can validate the provider
+    if (user?._id || user?.id) {
+      (payload as any).providerId = user._id || user.id;
+    }
     let res;
     if (editingId) {
       res = await updateProviderService(editingId, payload);

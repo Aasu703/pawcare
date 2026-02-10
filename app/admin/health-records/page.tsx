@@ -25,7 +25,16 @@ export default function AdminHealthRecordsPage() {
     setLoading(true);
     try {
       const res = await getAllHealthRecords(1, 100);
-      setRecords(res.data || res.healthRecords || []);
+      // Normalize response into an array of records
+      let list: any = [];
+      if (Array.isArray(res)) list = res;
+      else if (Array.isArray(res?.data)) list = res.data;
+      else if (Array.isArray(res?.healthRecords)) list = res.healthRecords;
+      else if (Array.isArray(res?.items)) list = res.items;
+      else if (Array.isArray(res?.data?.items)) list = res.data.items;
+      else list = [];
+
+      setRecords(list);
     } catch { /* empty */ }
     setLoading(false);
   };
