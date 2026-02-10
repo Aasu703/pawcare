@@ -4,6 +4,9 @@ export interface Review {
   rating: number;
   comment?: string;
   userId?: string;
+  providerId?: string;
+  productId?: string;
+  reviewType?: "provider" | "product" | "general";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -11,6 +14,9 @@ export interface Review {
 export interface CreateReviewRequest {
   rating: number;
   comment?: string;
+  providerId?: string;
+  productId?: string;
+  reviewType?: "provider" | "product" | "general";
 }
 
 export interface UpdateReviewRequest {

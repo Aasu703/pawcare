@@ -107,6 +107,9 @@ export const API = {
     GET_BY_ID: (id: string) => `/api/review/${id}`,
     UPDATE: (id: string) => `/api/review/${id}`,
     DELETE: (id: string) => `/api/review/${id}`,
+    GET_BY_PROVIDER: (providerId: string) => `/api/review/provider/${providerId}`,
+    GET_BY_PRODUCT: (productId: string) => `/api/review/product/${productId}`,
+    GET_PROVIDER_RATING: (providerId: string) => `/api/review/provider/${providerId}/rating`,
  },
  MESSAGE: {
     CREATE: '/api/message',
@@ -136,6 +139,10 @@ export const API = {
     GET_BY_ID: (id: string) => `/api/provider/${id}`,
     UPDATE: (id: string) => `/api/provider/${id}`,
     DELETE: (id: string) => `/api/provider/${id}`,
+    SET_TYPE: '/api/provider/set-type',
+    APPROVE: (id: string) => `/api/provider/approve/${id}`,
+    REJECT: (id: string) => `/api/provider/reject/${id}`,
+    GET_BY_STATUS: (status: string) => `/api/provider/status/${status}`,
     SERVICE: {
         CREATE: '/api/provider/service',
         GET_ALL: '/api/provider/service',
@@ -157,5 +164,33 @@ export const API = {
         UPDATE: (id: string) => `/api/feedback/${id}`,
         DELETE: (id: string) => `/api/feedback/${id}`,
     },
+    BOOKING: {
+        GET_MY: '/api/provider/booking/my',
+        UPDATE_STATUS: (id: string) => `/api/provider/booking/${id}/status`,
+        GET_BY_ID: (id: string) => `/api/provider/booking/${id}`,
+    },
+    POST: {
+        CREATE: '/api/provider/post',
+        GET_MY: '/api/provider/post/my',
+        UPDATE: (id: string) => `/api/provider/post/${id}`,
+        DELETE: (id: string) => `/api/provider/post/${id}`,
+    },
+ },
+ ORDER: {
+    CREATE: '/api/order',
+    GET_MY: '/api/order/my',
+    GET_BY_ID: (id: string) => `/api/order/${id}`,
+    UPDATE: (id: string) => `/api/order/${id}`,
+    DELETE: (id: string) => `/api/order/${id}`,
+ },
+ POST: {
+    GET_ALL: '/api/post',
+    GET_BY_ID: (id: string) => `/api/post/${id}`,
+    GET_BY_PROVIDER: (providerId: string) => `/api/post/provider/${providerId}`,
+ },
+ PRODUCT: {
+    GET_ALL: '/api/product',
+    GET_BY_ID: (id: string) => `/api/product/${id}`,
+    GET_BY_PROVIDER: (providerId: string) => `/api/product/provider/${providerId}`,
  },
 };

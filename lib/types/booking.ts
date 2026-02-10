@@ -9,6 +9,7 @@ export interface Booking {
   serviceId?: string;
   userId?: string;
   petId?: string;
+  providerId?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -19,6 +20,7 @@ export interface CreateBookingRequest {
   serviceId?: string;
   petId?: string;
   notes?: string;
+  providerId?: string;
 }
 
 export interface UpdateBookingRequest {
