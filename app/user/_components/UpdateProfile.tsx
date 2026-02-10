@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { handleUpdateProfile } from "@/lib/actions/auth-actions";
 import { UpdateUserData, updateUserSchema } from "../schema";
-import Image from "next/image";
 import { useState, useRef } from "react";
 import { Camera, Mail, Phone, User, UserCircle, ArrowLeft, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -142,7 +141,7 @@ export default function UpdateUserForm({
                                             className="w-full h-full object-cover"
                                         />
                                     ) : imageSrc ? (
-                                        <Image
+                                        <img
                                             src={imageSrc}
                                             alt="Profile"
                                             width={128}

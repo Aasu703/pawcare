@@ -333,7 +333,7 @@ export default function ProtectedHome() {
                   {/* Pet Image */}
                   <div className="relative w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4 group-hover:scale-110 transition-transform">
                     {pet.imageUrl ? (
-                      <Image
+                      <img
                         src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
                         alt={pet.name}
                         width={80}

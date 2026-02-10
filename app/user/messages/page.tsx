@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { getMyMessages, createMessage, deleteMessage } from "@/lib/api/user/message";
 import { Message } from "@/lib/types/message";
 import { MessageSquare, Send, Trash2, UserCircle } from "lucide-react";
-import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
@@ -103,8 +102,7 @@ export default function MessagesPage() {
                 <div className="flex gap-4 flex-1">
                   <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                     {imageSrc ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <Image src={imageSrc} alt={displayName} width={48} height={48} className="object-cover w-12 h-12" />
+                      <img src={imageSrc} alt={displayName} width={48} height={48} className="object-cover w-12 h-12" />
                     ) : (
                       <div className="w-12 h-12 bg-gray-100 flex items-center justify-center">
                         <UserCircle className="h-7 w-7 text-gray-400" />
