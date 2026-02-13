@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { providerRegister } from "@/lib/api/provider/provider";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProviderRegisterPage() {
-  const router = useRouter();
+  const { checkAuth } = useAuth();
   const [form, setForm] = useState({
     businessName: "",
     address: "",
@@ -35,7 +35,9 @@ export default function ProviderRegisterPage() {
         document.cookie = `auth_token=${res.token}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
       }
       if (res.data) {
-        document.cookie = `user_data=${encodeURIComponent(JSON.stringify({ ...res.data, role: "provider" }))}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
+        const providerUser = { ...res.data, role: "provider" };
+        document.cookie = `user_data=${encodeURIComponent(JSON.stringify(providerUser))}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
+        await checkAuth(providerUser);
       }
       window.location.href = "/provider/dashboard";
     } else {
