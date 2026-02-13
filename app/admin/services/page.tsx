@@ -16,7 +16,7 @@ export default function AdminServicesPage() {
     setLoading(true);
     try {
       const res = await getAllServices(1, 100);
-      setServices(res.data || res.services || []);
+      setServices(res.data?.services || res.data || res.services || []);
     } catch { /* empty */ }
     setLoading(false);
   };

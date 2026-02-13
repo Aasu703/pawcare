@@ -4,42 +4,44 @@ import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, Search, CheckCircle, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
-  handleGetAllProviders,
-  handleCreateProvider,
-  handleUpdateProvider,
-  handleDeleteProvider,
-} from "@/lib/actions/admin/provider-action";
-import ProviderModal from "./ProviderModal";
-import axios from "@/lib/api/axios";
-import { API } from "@/lib/api/endpoints";
+  handleGetAllProviderServices,
+  handleApproveProviderService,
+  handleRejectProviderService,
+} from "@/lib/actions/admin/provider-service-action";
 
-interface Provider {
+interface ProviderService {
   _id: string;
-  businessName: string;
-  email: string;
-  phone?: string;
-  specialty?: string;
-  address?: string;
-  isActive?: boolean;
-  providerType?: "shop" | "vet" | "babysitter";
-  status?: "pending" | "approved" | "rejected";
+  userId: {
+    _id: string;
+    email: string;
+    Firstname?: string;
+    Lastname?: string;
+  };
+  serviceType: string;
+  verificationStatus: "pending" | "approved" | "rejected";
+  documents: string[];
+  registrationNumber?: string;
+  bio?: string;
+  experience?: string;
+  createdAt: string;
 }
 
 export default function ProvidersTable() {
-  const [providers, setProviders] = useState<Provider[]>([]);
+  const [providers, setProviders] = useState<ProviderService[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState<Provider | null>(null);
-  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
 
   const fetchProviders = async () => {
     setLoading(true);
-    const result = await handleGetAllProviders();
+    const result = await handleGetAllProviderServices();
     if (result.success) {
-      setProviders(result.data || []);
+      const data = result.data || {};
+      // backend may return a paged object { items, total, page, ... }
+      const items = Array.isArray((data as any).items) ? (data as any).items : Array.isArray(data) ? data : [];
+      setProviders(items);
     } else {
       toast.error(result.message);
+      setProviders([]);
     }
     setLoading(false);
   };
@@ -49,21 +51,19 @@ export default function ProvidersTable() {
   }, []);
 
   const handleCreate = () => {
-    setSelectedProvider(null);
-    setModalMode("create");
-    setModalOpen(true);
+    // Provider services are created by providers, not admins
   };
 
-  const handleEdit = (provider: Provider) => {
-    setSelectedProvider(provider);
-    setModalMode("edit");
-    setModalOpen(true);
+  const handleEdit = (provider: ProviderService) => {
+    // Provider services are edited by providers, not admins
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this provider?")) return;
+    // Provider services are not deleted by admins
+  };
 
-    const result = await handleDeleteProvider(id);
+  const handleApprove = async (id: string) => {
+    const result = await handleApproveProviderService(id);
     if (result.success) {
       toast.success(result.message);
       fetchProviders();
@@ -72,23 +72,13 @@ export default function ProvidersTable() {
     }
   };
 
-  const handleApprove = async (id: string) => {
-    try {
-      await axios.put(API.PROVIDER.APPROVE(id));
-      toast.success("Provider approved");
-      fetchProviders();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to approve");
-    }
-  };
-
   const handleReject = async (id: string) => {
-    try {
-      await axios.put(API.PROVIDER.REJECT(id));
-      toast.success("Provider rejected");
+    const result = await handleRejectProviderService(id);
+    if (result.success) {
+      toast.success(result.message);
       fetchProviders();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to reject");
+    } else {
+      toast.error(result.message);
     }
   };
 
@@ -109,12 +99,13 @@ export default function ProvidersTable() {
     }
   };
 
-  const filteredProviders = providers.filter(
+  const filteredProviders = (providers || []).filter(
     (provider) =>
-      provider.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (provider.specialty &&
-        provider.specialty.toLowerCase().includes(searchTerm.toLowerCase()))
+      (provider.userId?.Firstname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       provider.userId?.Lastname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       provider.userId?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       provider.serviceType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       provider.verificationStatus?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const specialtyColors: Record<string, string> = {
@@ -130,25 +121,18 @@ export default function ProvidersTable() {
     <div className="rounded-xl border bg-card p-6 shadow-sm">
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-xl font-semibold">Providers Management</h2>
+        <h2 className="text-xl font-semibold">Provider Service Verifications</h2>
         <div className="flex gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search providers..."
+              placeholder="Search provider services..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
-          <button
-            onClick={handleCreate}
-            className="flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
-          >
-            <Plus className="h-4 w-4" />
-            Add Provider
-          </button>
         </div>
       </div>
 
@@ -164,9 +148,9 @@ export default function ProvidersTable() {
               <tr className="border-b text-left text-sm text-muted-foreground">
                 <th className="pb-3 font-medium">Name</th>
                 <th className="pb-3 font-medium">Email</th>
-                <th className="pb-3 font-medium">Type</th>
-                <th className="pb-3 font-medium">Phone</th>
-                <th className="pb-3 font-medium">Approval</th>
+                <th className="pb-3 font-medium">Service Type</th>
+                <th className="pb-3 font-medium">Status</th>
+                <th className="pb-3 font-medium">Submitted</th>
                 <th className="pb-3 font-medium">Actions</th>
               </tr>
             </thead>
@@ -174,43 +158,47 @@ export default function ProvidersTable() {
               {filteredProviders.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-muted-foreground">
-                    No providers found
+                    No provider services found
                   </td>
                 </tr>
               ) : (
                 filteredProviders.map((provider) => (
                   <tr key={provider._id} className="border-b last:border-0">
-                    <td className="py-4 font-medium">{provider.businessName}</td>
-                    <td className="py-4 text-muted-foreground">{provider.email}</td>
+                    <td className="py-4 font-medium">
+                      {provider.userId.Firstname && provider.userId.Lastname 
+                        ? `${provider.userId.Firstname} ${provider.userId.Lastname}`
+                        : provider.userId.email}
+                    </td>
+                    <td className="py-4 text-muted-foreground">{provider.userId.email}</td>
                     <td className="py-4">
                       <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                        provider.providerType === "vet" ? "bg-blue-100 text-blue-700" :
-                        provider.providerType === "shop" ? "bg-purple-100 text-purple-700" :
-                        provider.providerType === "babysitter" ? "bg-pink-100 text-pink-700" :
+                        provider.serviceType === "vet" ? "bg-blue-100 text-blue-700" :
+                        provider.serviceType === "shop" ? "bg-purple-100 text-purple-700" :
+                        provider.serviceType === "babysitter" ? "bg-pink-100 text-pink-700" :
                         "bg-gray-100 text-gray-700"
                       }`}>
-                        {provider.providerType || "Not set"}
+                        {provider.serviceType}
                       </span>
-                    </td>
-                    <td className="py-4 text-muted-foreground">
-                      {provider.phone || "-"}
                     </td>
                     <td className="py-4">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
-                          provider.status === "approved"
+                          provider.verificationStatus === "approved"
                             ? "bg-green-100 text-green-700"
-                            : provider.status === "rejected"
+                            : provider.verificationStatus === "rejected"
                             ? "bg-red-100 text-red-700"
                             : "bg-yellow-100 text-yellow-700"
                         }`}
                       >
-                        {provider.status ? provider.status.charAt(0).toUpperCase() + provider.status.slice(1) : "Pending"}
+                        {provider.verificationStatus.charAt(0).toUpperCase() + provider.verificationStatus.slice(1)}
                       </span>
+                    </td>
+                    <td className="py-4 text-muted-foreground">
+                      {new Date(provider.createdAt).toLocaleDateString()}
                     </td>
                     <td className="py-4">
                       <div className="flex gap-1">
-                        {provider.status === "pending" && (
+                        {provider.verificationStatus === "pending" && (
                           <>
                             <button
                               onClick={() => handleApprove(provider._id)}
@@ -228,20 +216,6 @@ export default function ProvidersTable() {
                             </button>
                           </>
                         )}
-                        <button
-                          onClick={() => handleEdit(provider)}
-                          className="rounded-lg p-2 hover:bg-muted"
-                          title="Edit"
-                        >
-                          <Pencil className="h-4 w-4 text-blue-500" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(provider._id)}
-                          className="rounded-lg p-2 hover:bg-muted"
-                          title="Delete"
-                        >
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -251,15 +225,6 @@ export default function ProvidersTable() {
           </table>
         </div>
       )}
-
-      {/* Modal */}
-      <ProviderModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleSubmit}
-        provider={selectedProvider}
-        mode={modalMode}
-      />
     </div>
   );
 }

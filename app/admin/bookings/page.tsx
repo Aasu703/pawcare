@@ -24,7 +24,7 @@ export default function AdminBookingsPage() {
     setLoading(true);
     try {
       const res = await getAllBookings(1, 100);
-      setBookings(res.data || res.bookings || []);
+      setBookings(res.data?.bookings || res.data || res.bookings || []);
     } catch { /* empty */ }
     setLoading(false);
   };

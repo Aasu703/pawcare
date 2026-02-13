@@ -51,13 +51,13 @@ export default function LoginForm() {
       console.log('🔐 Login response:', response);
 
       if (response.success) {
-        console.log('✅ Login successful, user role:', response.data?.role);
+        console.log('✅ Login successful, user role:', response.data?.user?.role);
 
         // Update auth context with user data
-        await checkAuth(response.data);
+        await checkAuth(response.data.user);
 
         // Hard redirect — ensures cookies are sent to server and middleware handles routing
-        const redirectPath = response.data.role === 'admin' ? '/admin' : response.data.role === 'provider' ? '/provider/dashboard' : '/user/home';
+        const redirectPath = response.data.user.role === 'admin' ? '/admin' : response.data.user.role === 'provider' ? '/provider/dashboard' : '/user/home';
         window.location.href = redirectPath;
         return; // Stop further execution
       } else {

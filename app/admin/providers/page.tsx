@@ -4,8 +4,8 @@ export default function ProvidersPage() {
   return (
     <div>
       <DashboardHeader
-        title="Service Providers"
-        subtitle="Manage all service providers in the system"
+        title="Provider Service Verifications"
+        subtitle="Review and approve provider service registrations"
       />
       <ProvidersTable />
     </div>

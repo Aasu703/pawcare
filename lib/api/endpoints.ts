@@ -33,6 +33,12 @@ export const API = {
         GET_BY_ID: (id: string) => `/api/admin/provider/${id}`,
         UPDATE: (id: string) => `/api/admin/provider/${id}`,
         DELETE: (id: string) => `/api/admin/provider/${id}`,
+        SERVICE: {
+            GET_ALL: '/api/admin/provider-service',
+            GET_BY_ID: (id: string) => `/api/admin/provider-service/${id}`,
+            APPROVE: (id: string) => `/api/admin/provider-service/${id}/approve`,
+            REJECT: (id: string) => `/api/admin/provider-service/${id}/reject`,
+        },
     },
     STATS: {
         DASHBOARD: '/api/admin/stats/dashboard',

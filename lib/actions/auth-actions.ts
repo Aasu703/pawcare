@@ -75,11 +75,11 @@ export const handleLogin = async (loginData: any) => {
         const result=await login(loginData);
         if(result.success){
             await setAuthToken(result.token);
-            await setUserData(result.data);
+            await setUserData(result.data.user);
             return {
                 success: true,
                 message: "Login successful",
-                data: result.data,
+                data: result.data.user,
                 token: result.token
                 };
         }
