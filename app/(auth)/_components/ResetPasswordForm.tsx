@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ResetPasswordData, resetPasswordSchema } from '../schema';
 import { handleResetPassword } from '@/lib/actions/auth-actions';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -16,14 +16,17 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
         resolver: zodResolver(resetPasswordSchema),
     });
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
 
     const onSubmit = async (values: ResetPasswordData) => {
         setLoading(true);
         try {
             const result = await handleResetPassword(token, values.password);
             if (result.success) {
-                toast.success("Password has been reset successfully.");
-                router.push('/login');
+                setSuccess(true);
+                toast.success('Password reset successful. Redirecting to login...');
+                // give user a moment to read the message
+                setTimeout(() => router.push('/login'), 1800);
             } else {
                 throw new Error(result.message || 'Failed to reset password');
             }
@@ -33,6 +36,27 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
             setLoading(false);
         }
     };
+
+    if (success) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-md w-full space-y-8">
+                    <div className="text-center">
+                        <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100">
+                            <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        <h2 className="mt-6 text-center text-2xl font-semibold text-gray-900">Password reset</h2>
+                        <p className="mt-2 text-center text-sm text-gray-600">Your password was updated. Redirecting to login…</p>
+                        <div className="mt-6 text-center">
+                            <Link href="/login" className="text-sm font-medium text-blue-600 hover:text-blue-500">Go to login</Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
