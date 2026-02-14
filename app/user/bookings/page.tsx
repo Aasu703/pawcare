@@ -92,9 +92,9 @@ export default function BookingsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((booking) => (
+          {filtered.map((booking, idx) => (
             <div
-              key={booking._id}
+              key={booking._id ?? `booking-${idx}`}
               className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between hover:shadow-md transition-shadow"
             >
               <div className="flex-1">

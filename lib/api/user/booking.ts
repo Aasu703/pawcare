@@ -50,7 +50,9 @@ export async function deleteBooking(id: string): Promise<{ success: boolean; mes
 export async function getBookingsByUser(userId: string): Promise<{ success: boolean; message: string; data?: Booking[] }> {
   try {
     const response = await axios.get(API.BOOKING.GET_BY_USER(userId));
-    return { success: true, message: "Bookings fetched", data: response.data.data };
+    const raw = response.data?.data;
+    const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    return { success: true, message: "Bookings fetched", data };
   } catch (error: any) {
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch bookings" };
   }

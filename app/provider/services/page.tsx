@@ -58,11 +58,11 @@ export default function ProviderServicesPage() {
   const handleEdit = (service: Service) => {
     setEditingId(service._id);
     setForm({
-      title: service.title,
-      description: service.description || "",
-      price: service.price,
-      duration_minutes: service.duration_minutes,
-      catergory: service.catergory || "",
+      title: service.title ?? "",
+      description: service.description ?? "",
+      price: service.price ?? 0,
+      duration_minutes: service.duration_minutes ?? 30,
+      catergory: service.catergory ?? "",
     });
     setShowForm(true);
   };
@@ -83,6 +83,8 @@ export default function ProviderServicesPage() {
     setEditingId(null);
     setForm({ title: "", description: "", price: 0, duration_minutes: 30, catergory: "" });
   };
+
+  const serviceList = Array.isArray(services) ? services : [];
 
   return (
     <div>
@@ -111,29 +113,29 @@ export default function ProviderServicesPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
+                <input type="text" value={form.title ?? ""} onChange={(e) => setForm({ ...form, title: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
+                <textarea value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
-                  <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: +e.target.value })}
+                  <input type="number" value={form.price ?? 0} onChange={(e) => setForm({ ...form, price: +e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Duration (min)</label>
-                  <input type="number" value={form.duration_minutes} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })}
+                  <input type="number" value={form.duration_minutes ?? 30} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })}
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="1" required />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select value={form.catergory} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
+                <select value={form.catergory ?? ""} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent">
                   <option value="">Select category</option>
                   <option value="grooming">Grooming</option>
@@ -155,7 +157,7 @@ export default function ProviderServicesPage() {
         <div className="flex justify-center py-20">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
         </div>
-      ) : services.length === 0 ? (
+      ) : serviceList.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
           <p className="text-lg text-gray-500">No services yet</p>
           <p className="text-sm text-gray-400 mt-1">Add your first service to get started</p>
@@ -173,7 +175,7 @@ export default function ProviderServicesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {services.map((s) => (
+              {serviceList.map((s) => (
                 <tr key={s._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">{s.title}</div>

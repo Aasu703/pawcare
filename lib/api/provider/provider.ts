@@ -36,7 +36,9 @@ export async function createProviderService(data: CreateServiceRequest): Promise
 export async function getProviderServices(): Promise<{ success: boolean; message: string; data?: Service[] }> {
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_ALL);
-    return { success: true, message: "Services fetched", data: response.data.data };
+    const raw = response.data?.data;
+    const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    return { success: true, message: "Services fetched", data };
   } catch (error: any) {
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch services" };
   }

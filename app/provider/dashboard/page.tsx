@@ -19,10 +19,11 @@ export default function ProviderDashboard() {
     setLoading(false);
   };
 
-  const totalRevenue = services.reduce((sum, s) => sum + (s.price || 0), 0);
+  const serviceList = Array.isArray(services) ? services : [];
+  const totalRevenue = serviceList.reduce((sum, s) => sum + (s.price || 0), 0);
 
   const stats = [
-    { label: "Total Services", value: services.length, icon: Wrench, color: "bg-blue-500" },
+    { label: "Total Services", value: serviceList.length, icon: Wrench, color: "bg-blue-500" },
     { label: "Total Revenue Potential", value: `$${totalRevenue}`, icon: DollarSign, color: "bg-green-500" },
   ];
 
@@ -75,7 +76,7 @@ export default function ProviderDashboard() {
           </div>
 
           {/* Recent Services */}
-          {services.length > 0 && (
+          {serviceList.length > 0 && (
             <div className="mt-10">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Services</h2>
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -89,8 +90,8 @@ export default function ProviderDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {services.slice(0, 5).map((s) => (
-                      <tr key={s._id} className="hover:bg-gray-50">
+                    {serviceList.slice(0, 5).map((s, idx) => (
+                      <tr key={s._id ?? `service-${idx}`} className="hover:bg-gray-50">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{s.title}</td>
                         <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || "-"}</td>
                         <td className="px-6 py-4 text-sm text-gray-500">${s.price}</td>

@@ -17,6 +17,7 @@ function NewBookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = searchParams.get("serviceId");
+  const normalizedServiceId = serviceId && serviceId !== "undefined" ? serviceId : undefined;
   const { user } = useAuth();
 
   const [service, setService] = useState<Service | null>(null);
@@ -38,7 +39,7 @@ function NewBookingForm() {
   const loadData = async () => {
     setLoading(true);
     const [serviceRes, petsRes] = await Promise.all([
-      serviceId ? getServiceById(serviceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
+      normalizedServiceId ? getServiceById(normalizedServiceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
       getUserPets(),
     ]);
 
@@ -58,7 +59,7 @@ function NewBookingForm() {
     const res = await createBooking({
       startTime: form.startTime,
       endTime: form.endTime,
-      serviceId: serviceId || undefined,
+      serviceId: normalizedServiceId,
       petId: form.petId || undefined,
       notes: form.notes || undefined,
     });

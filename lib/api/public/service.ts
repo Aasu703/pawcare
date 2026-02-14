@@ -5,13 +5,19 @@ import { Service } from "@/lib/types/service";
 export async function getAllServices(): Promise<{ success: boolean; message: string; data?: Service[] }> {
   try {
     const response = await axios.get(API.SERVICE.GET_ALL);
-    return { success: true, message: "Services fetched", data: response.data.data };
+    const raw = response.data?.data;
+    const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    return { success: true, message: "Services fetched", data };
   } catch (error: any) {
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch services" };
   }
 }
 
 export async function getServiceById(id: string): Promise<{ success: boolean; message: string; data?: Service }> {
+  if (!id || id === 'undefined') {
+    return { success: false, message: "No service id provided" };
+  }
+
   try {
     const response = await axios.get(API.SERVICE.GET_BY_ID(id));
     return { success: true, message: "Service fetched", data: response.data.data };

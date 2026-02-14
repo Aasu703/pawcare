@@ -51,13 +51,20 @@ export default function LoginForm() {
       console.log('🔐 Login response:', response);
 
       if (response.success) {
-        console.log('✅ Login successful, user role:', response.data?.user?.role);
+        const userData = response.data?.user ?? response.data ?? null;
+        console.log('✅ Login successful, user role:', userData?.role);
+
+        if (!userData) {
+          setErrors({ email: 'Login succeeded but user data missing' });
+          setLoading(false);
+          return;
+        }
 
         // Update auth context with user data
-        await checkAuth(response.data.user);
+        await checkAuth(userData);
 
         // Hard redirect — ensures cookies are sent to server and middleware handles routing
-        const redirectPath = response.data.user.role === 'admin' ? '/admin' : response.data.user.role === 'provider' ? '/provider/dashboard' : '/user/home';
+        const redirectPath = userData.role === 'admin' ? '/admin' : userData.role === 'provider' ? '/provider/dashboard' : '/user/home';
         window.location.href = redirectPath;
         return; // Stop further execution
       } else {
