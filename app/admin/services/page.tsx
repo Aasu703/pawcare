@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices, deleteService } from "@/lib/api/admin/service";
-import { Service } from "@/lib/types/service";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,7 +20,7 @@ export default function AdminServicesPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this service?")) return;
     try {
       await deleteService(id);
@@ -85,3 +84,4 @@ export default function AdminServicesPage() {
     </div>
   );
 }
+

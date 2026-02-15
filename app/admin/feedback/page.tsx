@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllFeedback, deleteFeedback } from "@/lib/api/admin/feedback";
-import { Feedback } from "@/lib/types/provider";
 import { Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,7 +29,7 @@ export default function AdminFeedbackPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this feedback?")) return;
     try {
       await deleteFeedback(id);
@@ -95,3 +94,4 @@ export default function AdminFeedbackPage() {
     </div>
   );
 }
+

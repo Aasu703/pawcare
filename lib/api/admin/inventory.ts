@@ -10,7 +10,7 @@ export const getAllInventory = async (page: number = 1, limit: number = 10) => {
     }
 };
 
-export const getInventoryByProvider = async (providerId: string) => {
+export const getInventoryByProvider = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.INVENTORY.GET_BY_PROVIDER(providerId));
         return response.data;
@@ -19,7 +19,7 @@ export const getInventoryByProvider = async (providerId: string) => {
     }
 };
 
-export const deleteInventory = async (id: string) => {
+export const deleteInventory = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.INVENTORY.DELETE(id));
         return response.data;
@@ -27,3 +27,5 @@ export const deleteInventory = async (id: string) => {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete inventory item');
     }
 };
+
+

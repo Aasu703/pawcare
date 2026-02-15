@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
-import { OrderItem } from "@/lib/types/order";
 import { toast } from "sonner";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -138,3 +137,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

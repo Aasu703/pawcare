@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllReviews, deleteReview } from "@/lib/api/admin/review";
-import { Review } from "@/lib/types/review";
 import { Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,7 +20,7 @@ export default function AdminReviewsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this review?")) return;
     try {
       await deleteReview(id);
@@ -78,3 +77,4 @@ export default function AdminReviewsPage() {
     </div>
   );
 }
+

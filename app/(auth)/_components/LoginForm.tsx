@@ -8,7 +8,6 @@ import { handleLogin, handleProviderLogin } from '@/lib/actions/auth-actions';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { PawPrint, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
-import CursorAnimation from './CursorAnimation';
 
 export default function LoginForm() {
   const { checkAuth, isAuthenticated, user } = useAuth();
@@ -73,7 +72,7 @@ export default function LoginForm() {
         setErrors({ email: errorMessage });
       }
       setLoading(false);
-    } catch (error: any) {
+    } catch (data: any) {
       console.error('Login error:', error);
       const errorMessage = error.message === "Error" ? "Login failed. Please check your credentials." : error.message || 'Login failed';
       setErrors({ email: errorMessage });
@@ -83,7 +82,6 @@ export default function LoginForm() {
 
   return (
     <>
-      <CursorAnimation />
       <div className="w-full bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -200,3 +198,4 @@ export default function LoginForm() {
     </>
   );
 }
+

@@ -11,7 +11,7 @@ export const getAllProvidersServer = async () => {
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -28,7 +28,7 @@ export const getAllProvidersServer = async () => {
     } catch (err: Error | any) {
         console.error('Get all providers error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch providers"
@@ -36,13 +36,13 @@ export const getAllProvidersServer = async () => {
     }
 };
 
-export const getProviderByIdServer = async (id: string) => {
+export const getProviderByIdServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -58,7 +58,7 @@ export const getProviderByIdServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch provider"
@@ -66,13 +66,13 @@ export const getProviderByIdServer = async (id: string) => {
     }
 };
 
-export const createProviderServer = async (providerData: FormData) => {
+export const createProviderServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -96,7 +96,7 @@ export const createProviderServer = async (providerData: FormData) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to create provider"
@@ -104,13 +104,13 @@ export const createProviderServer = async (providerData: FormData) => {
     }
 };
 
-export const updateProviderServer = async (id: string, providerData: FormData) => {
+export const updateProviderServer = async (id: any, providerData: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -134,7 +134,7 @@ export const updateProviderServer = async (id: string, providerData: FormData) =
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to update provider"
@@ -142,13 +142,13 @@ export const updateProviderServer = async (id: string, providerData: FormData) =
     }
 };
 
-export const deleteProviderServer = async (id: string) => {
+export const deleteProviderServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -164,10 +164,12 @@ export const deleteProviderServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to delete provider"
         };
     }
 };
+
+

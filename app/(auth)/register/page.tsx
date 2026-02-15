@@ -23,8 +23,8 @@ export default function RegisterPage() {
     <main style={{ fontFamily: 'Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial' }} className="min-h-screen bg-background flex">
       {/* Left Side - Branding */}
       <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: any, x: -50 }}
+        animate={{ opacity: any, x: 0 }}
         transition={{ duration: 0.8 }}
         className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-blue-600 to-primary relative overflow-hidden"
       >
@@ -93,8 +93,8 @@ export default function RegisterPage() {
       {/* Right Side - Register Form */}
       <div className="flex-1 flex flex-col justify-center items-center p-8 bg-white lg:bg-background">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: any, y: 30 }}
+          animate={{ opacity: any, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="w-full max-w-md space-y-8"
         >
@@ -146,3 +146,4 @@ export default function RegisterPage() {
     </main>
   );
 }
+

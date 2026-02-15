@@ -11,7 +11,7 @@ export const getAllUsersServer = async (page: number = 1, limit: number = 10) =>
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -28,7 +28,7 @@ export const getAllUsersServer = async (page: number = 1, limit: number = 10) =>
     } catch (err: Error | any) {
         console.error('Get all users error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch users"
@@ -36,13 +36,13 @@ export const getAllUsersServer = async (page: number = 1, limit: number = 10) =>
     }
 };
 
-export const getUserByIdServer = async (id: string) => {
+export const getUserByIdServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -58,7 +58,7 @@ export const getUserByIdServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch user"
@@ -66,13 +66,13 @@ export const getUserByIdServer = async (id: string) => {
     }
 };
 
-export const createUserServer = async (userData: FormData) => {
+export const createUserServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -117,7 +117,7 @@ export const createUserServer = async (userData: FormData) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to create user"
@@ -125,13 +125,13 @@ export const createUserServer = async (userData: FormData) => {
     }
 };
 
-export const updateUserServer = async (id: string, userData: FormData) => {
+export const updateUserServer = async (id: any, userData: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -175,7 +175,7 @@ export const updateUserServer = async (id: string, userData: FormData) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to update user"
@@ -183,13 +183,13 @@ export const updateUserServer = async (id: string, userData: FormData) => {
     }
 };
 
-export const deleteUserServer = async (id: string) => {
+export const deleteUserServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -205,10 +205,12 @@ export const deleteUserServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to delete user"
         };
     }
 };
+
+

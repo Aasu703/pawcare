@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getMyOrders, deleteOrder } from "@/lib/api/user/order";
-import { Order } from "@/lib/types/order";
 import { toast } from "sonner";
 import { Package, Clock, Truck, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -35,7 +34,7 @@ export default function OrdersPage() {
     setLoading(false);
   };
 
-  const handleCancel = async (id: string) => {
+  const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this order?")) return;
     const res = await deleteOrder(id);
     if (res.success) {
@@ -147,3 +146,4 @@ export default function OrdersPage() {
     </div>
   );
 }
+

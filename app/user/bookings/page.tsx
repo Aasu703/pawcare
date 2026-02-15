@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getBookingsByUser, deleteBooking } from "@/lib/api/user/booking";
-import { Booking } from "@/lib/types/booking";
 import { Calendar, Clock, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -34,7 +33,7 @@ export default function BookingsPage() {
     setLoading(false);
   };
 
-  const handleCancel = async (id: string) => {
+  const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
     const res = await deleteBooking(id);
     if (res.success) {
@@ -133,3 +132,4 @@ export default function BookingsPage() {
     </div>
   );
 }
+

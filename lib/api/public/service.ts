@@ -1,36 +1,36 @@
 import axios from "../axios";
 import { API } from "../endpoints";
-import { Service } from "@/lib/types/service";
-
-export async function getAllServices(): Promise<{ success: boolean; message: string; data?: Service[] }> {
+export async function getAllServices(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.SERVICE.GET_ALL);
     const raw = response.data?.data;
     const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
-    return { success: true, message: "Services fetched", data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch services" };
+    return { success: boolean, message: "Services fetched", data };
+  } catch (data: any) {
+    return { success: boolean, message: error.response?.data?.message || error.message || "Failed to fetch services" };
   }
 }
 
-export async function getServiceById(id: string): Promise<{ success: boolean; message: string; data?: Service }> {
+export async function getServiceById(data: any): Promise<{ success: boolean; message: string; data?: Service }> {
   if (!id || id === 'undefined') {
-    return { success: false, message: "No service id provided" };
+    return { success: boolean, message: "No service id provided" };
   }
 
   try {
     const response = await axios.get(API.SERVICE.GET_BY_ID(id));
-    return { success: true, message: "Service fetched", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch service" };
+    return { success: boolean, message: "Service fetched", data: response.data.data };
+  } catch (data: any) {
+    return { success: boolean, message: error.response?.data?.message || error.message || "Failed to fetch service" };
   }
 }
 
-export async function getServicesByProvider(providerId: string): Promise<{ success: boolean; message: string; data?: Service[] }> {
+export async function getServicesByProvider(data: any): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.SERVICE.GET_BY_PROVIDER(providerId));
-    return { success: true, message: "Services fetched", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch services" };
+    return { success: boolean, message: "Services fetched", data: response.data.data };
+  } catch (data: any) {
+    return { success: boolean, message: error.response?.data?.message || error.message || "Failed to fetch services" };
   }
 }
+
+

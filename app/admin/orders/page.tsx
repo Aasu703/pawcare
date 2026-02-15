@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getAllOrders, updateOrder, deleteOrder } from "@/lib/api/admin/order";
-import { Order } from "@/lib/types/order";
 import { toast } from "sonner";
 import { ShoppingCart, Trash2, Package, Clock, Truck, CheckCircle, XCircle } from "lucide-react";
 
@@ -37,7 +36,7 @@ export default function AdminOrdersPage() {
     setLoading(false);
   };
 
-  const handleStatusUpdate = async (id: string, status: string) => {
+  const handleStatusUpdate = async (id: any, status: any) => {
     const res = await updateOrder(id, { status: status as any });
     if (res.success) {
       toast.success(`Order status updated to ${status}`);
@@ -47,7 +46,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this order?")) return;
     const res = await deleteOrder(id);
     if (res.success) {
@@ -148,3 +147,4 @@ export default function AdminOrdersPage() {
     </div>
   );
 }
+

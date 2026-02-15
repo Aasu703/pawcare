@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getProviderBookings, updateBookingStatus } from "@/lib/api/provider/booking";
-import { Booking } from "@/lib/types/booking";
 import { toast } from "sonner";
 import { Calendar, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
@@ -34,7 +33,7 @@ export default function ProviderBookingsPage() {
     setLoading(false);
   };
 
-  const handleStatusChange = async (bookingId: string, status: string) => {
+  const handleStatusChange = async (bookingId: any, status: any) => {
     setUpdating(bookingId);
     const res = await updateBookingStatus(bookingId, status);
     if (res.success) {
@@ -156,3 +155,4 @@ export default function ProviderBookingsPage() {
     </div>
   );
 }
+

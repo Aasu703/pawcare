@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getAllProducts, getProductById } from "@/lib/api/public/product";
-import { Inventory } from "@/lib/types/provider";
 import { toast } from "sonner";
 import { ShoppingCart, Plus, Minus, Search, Package } from "lucide-react";
 import Link from "next/link";
@@ -34,7 +33,7 @@ export default function ShopPage() {
     setLoading(false);
   };
 
-  const addToCart = (product: Inventory) => {
+  const addToCart = (data: any) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.product._id === product._id);
       if (existing) {
@@ -53,7 +52,7 @@ export default function ShopPage() {
     toast.success(`${product.product_name} added to cart`);
   };
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = (data: any) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.product._id === productId);
       if (existing && existing.quantity > 1) {
@@ -220,3 +219,4 @@ export default function ShopPage() {
     </div>
   );
 }
+

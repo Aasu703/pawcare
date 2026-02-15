@@ -15,7 +15,7 @@ interface User {
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
   user?: User | null;
   mode: "create" | "edit";
 }
@@ -26,7 +26,7 @@ export default function UserModal({
   onSubmit,
   user,
   mode,
-}: UserModalProps) {
+}: any) {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -166,3 +166,4 @@ export default function UserModal({
     </div>
   );
 }
+

@@ -1,8 +1,7 @@
 import axios from "../axios";
 import { API } from "../endpoints";
-import { Booking, CreateBookingRequest, UpdateBookingRequest } from "@/lib/types/booking";
 
-export async function createBooking(data: CreateBookingRequest): Promise<{ success: boolean; message: string; data?: Booking }> {
+export async function createBooking(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.post(API.BOOKING.CREATE, data);
     return { success: true, message: response.data.message || "Booking created", data: response.data.data };
@@ -11,7 +10,7 @@ export async function createBooking(data: CreateBookingRequest): Promise<{ succe
   }
 }
 
-export async function getAllBookings(): Promise<{ success: boolean; message: string; data?: Booking[] }> {
+export async function getAllBookings(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.BOOKING.GET_ALL);
     return { success: true, message: "Bookings fetched", data: response.data.data };
@@ -20,7 +19,7 @@ export async function getAllBookings(): Promise<{ success: boolean; message: str
   }
 }
 
-export async function getBookingById(id: string): Promise<{ success: boolean; message: string; data?: Booking }> {
+export async function getBookingById(id: string): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.get(API.BOOKING.GET_BY_ID(id));
     return { success: true, message: "Booking fetched", data: response.data.data };
@@ -29,7 +28,7 @@ export async function getBookingById(id: string): Promise<{ success: boolean; me
   }
 }
 
-export async function updateBooking(id: string, data: UpdateBookingRequest): Promise<{ success: boolean; message: string; data?: Booking }> {
+export async function updateBooking(id: string, data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.put(API.BOOKING.UPDATE(id), data);
     return { success: true, message: response.data.message || "Booking updated", data: response.data.data };
@@ -47,7 +46,7 @@ export async function deleteBooking(id: string): Promise<{ success: boolean; mes
   }
 }
 
-export async function getBookingsByUser(userId: string): Promise<{ success: boolean; message: string; data?: Booking[] }> {
+export async function getBookingsByUser(userId: string): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.BOOKING.GET_BY_USER(userId));
     const raw = response.data?.data;
@@ -57,3 +56,5 @@ export async function getBookingsByUser(userId: string): Promise<{ success: bool
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch bookings" };
   }
 }
+
+

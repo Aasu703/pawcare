@@ -74,3 +74,4 @@ export default function UserSidebar() {
     </aside>
   );
 }
+

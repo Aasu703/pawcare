@@ -10,7 +10,7 @@ export const getAllProviderServices = async (page: number = 1, limit: number = 1
     }
 };
 
-export const getProviderServiceById = async (id: string) => {
+export const getProviderServiceById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.PROVIDER.SERVICE.GET_BY_ID(id));
         return response.data;
@@ -19,7 +19,7 @@ export const getProviderServiceById = async (id: string) => {
     }
 };
 
-export const approveProviderService = async (id: string) => {
+export const approveProviderService = async (data: any) => {
     try {
         const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.APPROVE(id));
         return response.data;
@@ -28,7 +28,7 @@ export const approveProviderService = async (id: string) => {
     }
 };
 
-export const rejectProviderService = async (id: string) => {
+export const rejectProviderService = async (data: any) => {
     try {
         const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.REJECT(id));
         return response.data;
@@ -36,3 +36,4 @@ export const rejectProviderService = async (id: string) => {
         throw new Error(error.response?.data?.message || error.message || 'Failed to reject provider service');
     }
 };
+

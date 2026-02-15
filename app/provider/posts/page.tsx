@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getMyProviderPosts, createProviderPost, updateProviderPost, deleteProviderPost } from "@/lib/api/provider/post";
-import { Post, CreatePostRequest, UpdatePostRequest } from "@/lib/types/post";
 import { toast } from "sonner";
 import { FileText, Plus, Pencil, Trash2, Globe, Lock, X } from "lucide-react";
 
@@ -35,7 +34,7 @@ export default function ProviderPostsPage() {
     setShowModal(true);
   };
 
-  const openEdit = (post: Post) => {
+  const openEdit = (data: any) => {
     setEditingPost(post);
     setForm({ title: post.title, content: post.content, isPublic: post.isPublic });
     setShowModal(true);
@@ -70,7 +69,7 @@ export default function ProviderPostsPage() {
     setSubmitting(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this post?")) return;
     const res = await deleteProviderPost(id);
     if (res.success) {
@@ -207,3 +206,4 @@ export default function ProviderPostsPage() {
     </div>
   );
 }
+

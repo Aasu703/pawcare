@@ -1,7 +1,7 @@
 import { API } from "../endpoints";
 import axios from "../axios";
 
-export const createUser = async (userData: any) => {
+export const createUser = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.USER.CREATE,
@@ -29,7 +29,7 @@ export const getAllUsers = async (page: number = 1, limit: number = 10) => {
     }
 }
 
-export const getUserById = async (id: string) => {
+export const getUserById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.USER.GET_BY_ID(id));
         return response.data;
@@ -39,7 +39,7 @@ export const getUserById = async (id: string) => {
     }
 }
 
-export const updateUser = async (id: string, userData: any) => {
+export const updateUser = async (id: any, userData: any) => {
     try {
         const response = await axios.put(
             API.ADMIN.USER.UPDATE(id),
@@ -57,7 +57,7 @@ export const updateUser = async (id: string, userData: any) => {
     }
 }
 
-export const deleteUser = async (id: string) => {
+export const deleteUser = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.USER.DELETE(id));
         return response.data;
@@ -66,3 +66,4 @@ export const deleteUser = async (id: string) => {
             || error.message || 'Failed to delete user');
     }
 }
+

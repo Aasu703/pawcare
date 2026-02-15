@@ -1,6 +1,4 @@
 import { createUserPet, updateUserPet, deleteUserPet } from '@/lib/api/user/pet';
-import { PetFormData } from '@/lib/types/pet';
-
 export async function handleCreateUserPet(formData: PetFormData) {
   try {
     // Create FormData for file upload

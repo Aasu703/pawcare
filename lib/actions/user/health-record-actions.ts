@@ -1,10 +1,9 @@
 "use server";
 
 import { createHealthRecord, getHealthRecordsByPet, getHealthRecordById, updateHealthRecord, deleteHealthRecord, createAttachment, getAttachmentsByHealthRecord, deleteAttachment } from "@/lib/api/user/health-record";
-import { CreateHealthRecordRequest, UpdateHealthRecordRequest, CreateAttachmentRequest } from "@/lib/types/health-record";
 import { revalidatePath } from "next/cache";
 
-export async function handleCreateHealthRecord(data: CreateHealthRecordRequest) {
+export async function handleCreateHealthRecord(data: any) {
   try {
     const response = await createHealthRecord(data);
     if (response.success) {
@@ -37,7 +36,7 @@ export async function handleGetHealthRecordById(id: string) {
   }
 }
 
-export async function handleUpdateHealthRecord(id: string, data: UpdateHealthRecordRequest) {
+export async function handleUpdateHealthRecord(id: string, data: any) {
   try {
     const response = await updateHealthRecord(id, data);
     if (response.success) {
@@ -59,7 +58,7 @@ export async function handleDeleteHealthRecord(id: string) {
   }
 }
 
-export async function handleCreateAttachment(data: CreateAttachmentRequest) {
+export async function handleCreateAttachment(data: any) {
   try {
     const response = await createAttachment(data);
     if (response.success) return { success: true, message: "Attachment added!", data: response.data };
@@ -88,3 +87,4 @@ export async function handleDeleteAttachment(id: string) {
     return { success: false, message: error.message };
   }
 }
+

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getAllPosts } from "@/lib/api/public/post";
-import { Post } from "@/lib/types/post";
 import { toast } from "sonner";
 import { FileText, User, Calendar } from "lucide-react";
 
@@ -71,3 +70,4 @@ export default function UserPostsPage() {
     </div>
   );
 }
+

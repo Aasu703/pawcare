@@ -28,7 +28,7 @@ export default function AboutPage() {
       {/* ================= NAVBAR ================= */}
       <motion.nav
         initial={{ y: -60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        animate={{ y: any, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/40"
       >
@@ -64,8 +64,8 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-4xl mx-auto mb-16">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: any, y: 20 }}
+              animate={{ opacity: any, y: 0 }}
               transition={{ duration: 0.8 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-6"
             >
@@ -74,8 +74,8 @@ export default function AboutPage() {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: any, y: 20 }}
+              animate={{ opacity: any, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
               className="text-5xl lg:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6"
             >
@@ -86,8 +86,8 @@ export default function AboutPage() {
             </motion.h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: any, y: 20 }}
+              animate={{ opacity: any, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
             >
@@ -98,8 +98,8 @@ export default function AboutPage() {
           {/* Mission & Vision */}
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: any, x: -30 }}
+              whileInView={{ opacity: any, x: 0 }}
               viewport={{ once: true }}
               className="bg-white p-8 rounded-2xl shadow-sm border border-border"
             >
@@ -113,8 +113,8 @@ export default function AboutPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: any, x: 30 }}
+              whileInView={{ opacity: any, x: 0 }}
               viewport={{ once: true }}
               className="bg-white p-8 rounded-2xl shadow-sm border border-border"
             >
@@ -166,8 +166,8 @@ export default function AboutPage() {
             ].map((member, i) => (
               <motion.div
                 key={member.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: any, y: 30 }}
+                whileInView={{ opacity: any, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="bg-card p-8 rounded-2xl shadow-sm border border-border hover:shadow-xl transition-all duration-300"
@@ -200,30 +200,30 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                icon: Shield,
+                icon: any,
                 title: "Clinical Accuracy",
                 desc: "Every feature is validated by veterinary professionals and backed by scientific evidence."
               },
               {
-                icon: Heart,
+                icon: any,
                 title: "Compassion First",
                 desc: "We prioritize the wellbeing of pets and the peace of mind of their human families."
               },
               {
-                icon: Users,
+                icon: any,
                 title: "Collaborative Care",
                 desc: "We bridge the gap between pet parents, veterinarians, and care providers."
               },
               {
-                icon: Award,
+                icon: any,
                 title: "Excellence",
                 desc: "We continuously innovate and maintain the highest standards in pet health technology."
               },
             ].map((value, i) => (
               <motion.div
                 key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: any, y: 30 }}
+                whileInView={{ opacity: any, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="text-center"
@@ -258,8 +258,8 @@ export default function AboutPage() {
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: any, scale: 0.8 }}
+                whileInView={{ opacity: any, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="text-center p-6 bg-card rounded-2xl border border-border"
@@ -277,8 +277,8 @@ export default function AboutPage() {
       <section className="py-24 bg-gradient-to-r from-primary via-blue-600 to-primary">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: any, y: 30 }}
+            whileInView={{ opacity: any, y: 0 }}
             viewport={{ once: true }}
             className="text-center max-w-4xl mx-auto text-white"
           >
@@ -311,8 +311,8 @@ export default function AboutPage() {
       {/* ================= CALL TO ACTION ================= */}
       <section className="py-24 bg-white">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: any, scale: 0.95 }}
+          whileInView={{ opacity: any, scale: 1 }}
           viewport={{ once: true }}
           className="max-w-4xl mx-auto bg-primary rounded-3xl p-12 md:p-16 text-center text-primary-foreground relative overflow-hidden"
         >
@@ -402,3 +402,4 @@ export default function AboutPage() {
     </main>
   );
 }
+

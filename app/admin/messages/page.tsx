@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllMessages, deleteMessage } from "@/lib/api/admin/message";
-import { Message } from "@/lib/types/message";
 import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,7 +21,7 @@ export default function AdminMessagesPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this message?")) return;
     try {
       await deleteMessage(id);
@@ -101,3 +100,4 @@ export default function AdminMessagesPage() {
     </div>
   );
 }
+

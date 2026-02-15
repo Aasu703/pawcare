@@ -11,11 +11,11 @@ interface Appointment {
 }
 
 interface RecentAppointmentsProps {
-  appointments?: Appointment[];
+  appointments?: any[];
   isLoading?: boolean;
 }
 
-const defaultAppointments: Appointment[] = [
+const defaultAppointments: any[] = [
   {
     id: "1",
     petName: "Max",
@@ -68,7 +68,7 @@ const statusColors = {
 export default function RecentAppointments({
   appointments = defaultAppointments,
   isLoading = false,
-}: RecentAppointmentsProps) {
+}: any) {
   if (isLoading) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -114,8 +114,8 @@ export default function RecentAppointments({
               <motion.tr
                 key={appointment.id}
                 className="border-b last:border-0 hover:bg-muted/50 transition-colors"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: any, x: -20 }}
+                animate={{ opacity: any, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 whileHover={{ scale: 1.01 }}
               >
@@ -142,3 +142,4 @@ export default function RecentAppointments({
     </div>
   );
 }
+

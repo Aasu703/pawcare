@@ -19,7 +19,7 @@ interface ProviderService {
   };
   serviceType: string;
   verificationStatus: "pending" | "approved" | "rejected";
-  documents: string[];
+  documents: any[];
   registrationNumber?: string;
   bio?: string;
   experience?: string;
@@ -54,15 +54,15 @@ export default function ProvidersTable() {
     // Provider services are created by providers, not admins
   };
 
-  const handleEdit = (provider: ProviderService) => {
+  const handleEdit = (data: any) => {
     // Provider services are edited by providers, not admins
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     // Provider services are not deleted by admins
   };
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (data: any) => {
     const result = await handleApproveProviderService(id);
     if (result.success) {
       toast.success(result.message);
@@ -72,7 +72,7 @@ export default function ProvidersTable() {
     }
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (data: any) => {
     const result = await handleRejectProviderService(id);
     if (result.success) {
       toast.success(result.message);
@@ -82,7 +82,7 @@ export default function ProvidersTable() {
     }
   };
 
-  const handleSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: any) => {
     let result;
     if (modalMode === "create") {
       result = await handleCreateProvider(data);
@@ -228,4 +228,5 @@ export default function ProvidersTable() {
     </div>
   );
 }
+
 

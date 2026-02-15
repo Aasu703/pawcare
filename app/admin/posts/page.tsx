@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { getAllPosts, deletePost } from "@/lib/api/admin/post";
-import { Post } from "@/lib/types/post";
 import { toast } from "sonner";
 import { FileText, Trash2, Globe, Lock } from "lucide-react";
 
@@ -28,7 +27,7 @@ export default function AdminPostsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this post?")) return;
     const res = await deletePost(id);
     if (res.success) {
@@ -124,3 +123,4 @@ export default function AdminPostsPage() {
     </div>
   );
 }
+

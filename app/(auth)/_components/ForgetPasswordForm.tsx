@@ -19,11 +19,11 @@ const ForgetPasswordForm = () => {
     const [emailSent, setEmailSent] = useState(false);
     const [error, setErrorState] = useState<string | null>(null);
     const email = watch('email', '');
-    const onSubmit = async (values: ForgotPasswordData) => {
+    const onSubmit = async (data: any) => {
       setErrorState(null);
       setLoading(true);
       try {
-        const response = await handleForgotPassword(values.email);
+        const response = await handleForgotPassword(data.email);
         if (response.success) {
           setEmailSent(true);
           toast.success('Password reset link sent — check your Gmail.');
@@ -140,3 +140,4 @@ const ForgetPasswordForm = () => {
   );
 };
 export default ForgetPasswordForm;
+

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllBookings, updateBooking, deleteBooking } from "@/lib/api/admin/booking";
-import { Booking } from "@/lib/types/booking";
 import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -29,7 +28,7 @@ export default function AdminBookingsPage() {
     setLoading(false);
   };
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const handleStatusChange = async (id: any, status: any) => {
     try {
       await updateBooking(id, { status });
       toast.success("Booking status updated");
@@ -39,7 +38,7 @@ export default function AdminBookingsPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this booking?")) return;
     try {
       await deleteBooking(id);
@@ -126,3 +125,4 @@ export default function AdminBookingsPage() {
     </div>
   );
 }
+

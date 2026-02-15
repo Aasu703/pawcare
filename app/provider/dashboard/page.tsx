@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { getProviderServices } from "@/lib/api/provider/provider";
-import { Service } from "@/lib/types/service";
 import { Wrench, Package, MessageSquare, DollarSign } from "lucide-react";
 import Link from "next/link";
+import ProviderNearbyShopsMap from "@/components/ProviderNearbyShopsMap";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ProviderDashboard() {
-  const [services, setServices] = useState<Service[]>([]);
+  const { user } = useAuth();
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { loadData(); }, []);
@@ -23,8 +25,8 @@ export default function ProviderDashboard() {
   const totalRevenue = serviceList.reduce((sum, s) => sum + (s.price || 0), 0);
 
   const stats = [
-    { label: "Total Services", value: serviceList.length, icon: Wrench, color: "bg-blue-500" },
-    { label: "Total Revenue Potential", value: `$${totalRevenue}`, icon: DollarSign, color: "bg-green-500" },
+    { label: "Total Services", value: serviceList.length, icon: any, color: "bg-blue-500" },
+    { label: "Total Revenue Potential", value: `$${totalRevenue}`, icon: any, color: "bg-green-500" },
   ];
 
   return (
@@ -108,3 +110,4 @@ export default function ProviderDashboard() {
     </div>
   );
 }
+

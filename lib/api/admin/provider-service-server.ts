@@ -11,7 +11,7 @@ export const getAllProviderServicesServer = async () => {
 
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -28,7 +28,7 @@ export const getAllProviderServicesServer = async () => {
     } catch (err: Error | any) {
         console.error('Get all provider services error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to fetch provider services"
@@ -36,13 +36,13 @@ export const getAllProviderServicesServer = async () => {
     }
 };
 
-export const approveProviderServiceServer = async (id: string) => {
+export const approveProviderServiceServer = async (data: any) => {
     try {
         const token = await getAuthToken();
 
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -60,7 +60,7 @@ export const approveProviderServiceServer = async (id: string) => {
     } catch (err: Error | any) {
         console.error('Approve provider service error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to approve provider service"
@@ -68,13 +68,13 @@ export const approveProviderServiceServer = async (id: string) => {
     }
 };
 
-export const rejectProviderServiceServer = async (id: string) => {
+export const rejectProviderServiceServer = async (data: any) => {
     try {
         const token = await getAuthToken();
 
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -92,10 +92,11 @@ export const rejectProviderServiceServer = async (id: string) => {
     } catch (err: Error | any) {
         console.error('Reject provider service error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to reject provider service"
         };
     }
 };
+

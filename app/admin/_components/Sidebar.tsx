@@ -25,67 +25,67 @@ const sidebarItems = [
   {
     title: "Overview",
     href: "/admin",
-    icon: LayoutDashboard,
+    icon: any,
   },
   {
     title: "Users",
     href: "/admin/users",
-    icon: Users,
+    icon: any,
   },
   {
     title: "Pets",
     href: "/admin/pets",
-    icon: PawPrint,
+    icon: any,
   },
   {
     title: "Providers",
     href: "/admin/providers",
-    icon: UserCog,
+    icon: any,
   },
   {
     title: "Bookings",
     href: "/admin/bookings",
-    icon: Calendar,
+    icon: any,
   },
   {
     title: "Services",
     href: "/admin/services",
-    icon: Store,
+    icon: any,
   },
   {
     title: "Orders",
     href: "/admin/orders",
-    icon: ShoppingCart,
+    icon: any,
   },
   {
     title: "Posts",
     href: "/admin/posts",
-    icon: FileText,
+    icon: any,
   },
   {
     title: "Reviews",
     href: "/admin/reviews",
-    icon: Star,
+    icon: any,
   },
   {
     title: "Messages",
     href: "/admin/messages",
-    icon: MessageSquare,
+    icon: any,
   },
   {
     title: "Health Records",
     href: "/admin/health-records",
-    icon: HeartPulse,
+    icon: any,
   },
   {
     title: "Feedback",
     href: "/admin/feedback",
-    icon: MessageCircle,
+    icon: any,
   },
   {
     title: "Inventory",
     href: "/admin/inventory",
-    icon: Package,
+    icon: any,
   },
 ];
 
@@ -146,3 +146,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

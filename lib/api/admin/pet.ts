@@ -1,7 +1,7 @@
 import { API } from "../endpoints";
 import axios from "../axios";
 
-export const createPet = async (petData: any) => {
+export const createPet = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.PET.CREATE,
@@ -29,7 +29,7 @@ export const getAllPets = async () => {
     }
 }
 
-export const getPetById = async (id: string) => {
+export const getPetById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.PET.GET_BY_ID(id));
         return response.data;
@@ -39,7 +39,7 @@ export const getPetById = async (id: string) => {
     }
 }
 
-export const updatePet = async (id: string, petData: any) => {
+export const updatePet = async (id: any, petData: any) => {
     try {
         const response = await axios.put(
             API.ADMIN.PET.UPDATE(id),
@@ -52,7 +52,7 @@ export const updatePet = async (id: string, petData: any) => {
     }
 }
 
-export const deletePet = async (id: string) => {
+export const deletePet = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.PET.DELETE(id));
         return response.data;
@@ -61,3 +61,5 @@ export const deletePet = async (id: string) => {
             || error.message || 'Failed to delete pet');
     }
 }
+
+

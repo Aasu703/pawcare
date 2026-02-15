@@ -10,7 +10,7 @@ export const getAllFeedback = async (page: number = 1, limit: number = 10) => {
     }
 };
 
-export const getFeedbackByProvider = async (providerId: string) => {
+export const getFeedbackByProvider = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.FEEDBACK.GET_BY_PROVIDER(providerId));
         return response.data;
@@ -19,7 +19,7 @@ export const getFeedbackByProvider = async (providerId: string) => {
     }
 };
 
-export const deleteFeedback = async (id: string) => {
+export const deleteFeedback = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.FEEDBACK.DELETE(id));
         return response.data;
@@ -27,3 +27,5 @@ export const deleteFeedback = async (id: string) => {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete feedback');
     }
 };
+
+

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Service } from "@/lib/types/service";
 import { Search, Clock, DollarSign, Stethoscope, Scissors, Home, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -32,7 +31,7 @@ export default function PublicServicesPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (data: any) => {
     switch (category) {
       case "grooming": return Scissors;
       case "boarding": return Home;
@@ -46,7 +45,7 @@ export default function PublicServicesPage() {
       {/* ================= NAVBAR ================= */}
       <motion.nav
         initial={{ y: -60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        animate={{ y: any, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/40"
       >
@@ -81,8 +80,8 @@ export default function PublicServicesPage() {
 
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: any, y: 30 }}
+            animate={{ opacity: any, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto mb-16"
           >
@@ -131,8 +130,8 @@ export default function PublicServicesPage() {
               return (
                 <motion.button
                   key={cat.key}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: any, scale: 0.9 }}
+                  animate={{ opacity: any, scale: 1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCategory(cat.key)}
@@ -175,8 +174,8 @@ export default function PublicServicesPage() {
                 return (
                   <motion.div
                     key={service._id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: any, y: 30 }}
+                    animate={{ opacity: any, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     whileHover={{ y: -8 }}
                     className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden hover:shadow-xl transition-all duration-300"
@@ -241,8 +240,8 @@ export default function PublicServicesPage() {
       <section className="py-24 bg-gradient-to-r from-primary via-blue-600 to-primary">
         <div className="max-w-4xl mx-auto px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: any, y: 30 }}
+            whileInView={{ opacity: any, y: 0 }}
             viewport={{ once: true }}
             className="text-center text-white"
           >
@@ -332,3 +331,4 @@ export default function PublicServicesPage() {
     </main>
   );
 }
+

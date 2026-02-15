@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getProviderServices, createProviderService, updateProviderService, deleteProviderService } from "@/lib/api/provider/provider";
-import { Service } from "@/lib/types/service";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -16,8 +15,8 @@ export default function ProviderServicesPage() {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    price: 0,
-    duration_minutes: 30,
+    price: any,
+    duration_minutes: any,
     catergory: "" as "" | "grooming" | "boarding" | "vet",
   });
 
@@ -55,7 +54,7 @@ export default function ProviderServicesPage() {
     }
   };
 
-  const handleEdit = (service: Service) => {
+  const handleEdit = (data: any) => {
     setEditingId(service._id);
     setForm({
       title: service.title ?? "",
@@ -67,7 +66,7 @@ export default function ProviderServicesPage() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this service?")) return;
     const res = await deleteProviderService(id);
     if (res.success) {
@@ -81,7 +80,7 @@ export default function ProviderServicesPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ title: "", description: "", price: 0, duration_minutes: 30, catergory: "" });
+    setForm({ title: "", description: "", price: any, duration_minutes: any, catergory: "" });
   };
 
   const serviceList = Array.isArray(services) ? services : [];
@@ -199,3 +198,4 @@ export default function ProviderServicesPage() {
     </div>
   );
 }
+

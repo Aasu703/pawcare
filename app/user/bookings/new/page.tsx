@@ -7,8 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import { getServiceById } from "@/lib/api/public/service";
 import { getUserPets } from "@/lib/api/user/pet";
 import { createBooking } from "@/lib/api/user/booking";
-import { Service } from "@/lib/types/service";
-import { Pet } from "@/lib/types/pet";
 import { toast } from "sonner";
 import { ArrowLeft, Calendar, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
@@ -59,7 +57,7 @@ function NewBookingForm() {
     const res = await createBooking({
       startTime: form.startTime,
       endTime: form.endTime,
-      serviceId: normalizedServiceId,
+      serviceId: any,
       petId: form.petId || undefined,
       notes: form.notes || undefined,
     });
@@ -176,3 +174,4 @@ export default function NewBookingPage() {
     </Suspense>
   );
 }
+

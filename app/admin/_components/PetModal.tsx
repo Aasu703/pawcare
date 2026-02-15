@@ -19,7 +19,7 @@ interface Pet {
 interface PetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
   pet?: Pet | null;
   mode: "create" | "edit";
 }
@@ -30,7 +30,7 @@ export default function PetModal({
   onSubmit,
   pet,
   mode,
-}: PetModalProps) {
+}: any) {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -160,3 +160,4 @@ export default function PetModal({
     </div>
   );
 }
+

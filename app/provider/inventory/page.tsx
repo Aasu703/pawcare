@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getInventoryByProvider, createInventory, updateInventory, deleteInventory } from "@/lib/api/provider/provider";
-import { Inventory } from "@/lib/types/provider";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { toast } from "sonner";
 
@@ -26,8 +25,8 @@ export default function ProviderInventoryPage() {
   const [form, setForm] = useState({
     product_name: "",
     description: "",
-    quantity: 0,
-    price: 0,
+    quantity: any,
+    price: any,
     category: "",
   });
 
@@ -59,7 +58,7 @@ export default function ProviderInventoryPage() {
     }
   };
 
-  const handleEdit = (item: Inventory) => {
+  const handleEdit = (data: any) => {
     setEditingId(item._id);
     setForm({
       product_name: item.product_name,
@@ -71,7 +70,7 @@ export default function ProviderInventoryPage() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this inventory item?")) return;
     const res = await deleteInventory(id);
     if (res.success) {
@@ -85,7 +84,7 @@ export default function ProviderInventoryPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ product_name: "", description: "", quantity: 0, price: 0, category: "" });
+    setForm({ product_name: "", description: "", quantity: any, price: any, category: "" });
   };
 
   return (
@@ -186,3 +185,4 @@ export default function ProviderInventoryPage() {
     </div>
   );
 }
+

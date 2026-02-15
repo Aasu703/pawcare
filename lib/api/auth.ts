@@ -51,7 +51,7 @@ export const logout = async () => {
     }
 }
 
-export const updateProfile = async ( userId: string, updateData : any ) => {
+export const updateProfile = async ( userId: any, updateData : any ) => {
     try{
         const response = await axios.put(
             `${API.AUTH.UPDATEPROFILE}`,
@@ -72,7 +72,7 @@ export const updateProfile = async ( userId: string, updateData : any ) => {
     }
 }   
 
-export const createUserByAdmin = async (formData: FormData) => {
+export const createUserByAdmin = async (data: any) => {
     try {
         const response = await axios.post(
             API.AUTH.CREATEUSER,
@@ -93,7 +93,7 @@ export const createUserByAdmin = async (formData: FormData) => {
     }
 }
 
-export const requestPasswordReset = async (email: string) => {
+export const requestPasswordReset = async (data: any) => {
     try {
         const response = await axios.post(API.AUTH.REQUEST_PASSWORD_RESET, { email });
         return response.data;
@@ -106,7 +106,7 @@ export const requestPasswordReset = async (email: string) => {
     }
 }
 
-export const resetPassword = async (token: string, newPassword: string) => {
+export const resetPassword = async (token: any, newPassword: any) => {
     try {
         const response = await axios.post(API.AUTH.RESET_PASSWORD(token), { newPassword });
         return response.data;
@@ -118,3 +118,4 @@ export const resetPassword = async (token: string, newPassword: string) => {
         );
     }
 }
+

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllHealthRecords, deleteHealthRecord } from "@/lib/api/admin/health-record";
-import { HealthRecord } from "@/lib/types/health-record";
 import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -39,7 +38,7 @@ export default function AdminHealthRecordsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this health record?")) return;
     try {
       await deleteHealthRecord(id);
@@ -119,3 +118,4 @@ export default function AdminHealthRecordsPage() {
     </div>
   );
 }
+

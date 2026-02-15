@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getMyReviews, createReview, updateReview, deleteReview } from "@/lib/api/user/review";
-import { Review } from "@/lib/types/review";
 import { Star, Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -11,7 +10,7 @@ export default function ReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ rating: 5, comment: "" });
+  const [form, setForm] = useState({ rating: any, comment: "" });
 
   useEffect(() => { loadReviews(); }, []);
 
@@ -39,13 +38,13 @@ export default function ReviewsPage() {
     }
   };
 
-  const handleEdit = (review: Review) => {
+  const handleEdit = (data: any) => {
     setEditingId(review._id);
     setForm({ rating: review.rating, comment: review.comment || "" });
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this review?")) return;
     const res = await deleteReview(id);
     if (res.success) {
@@ -59,10 +58,10 @@ export default function ReviewsPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ rating: 5, comment: "" });
+    setForm({ rating: any, comment: "" });
   };
 
-  const renderStars = (rating: number, interactive = false) => {
+  const renderStars = (rating: any, interactive = false) => {
     return (
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -167,3 +166,4 @@ export default function ReviewsPage() {
     </div>
   );
 }
+

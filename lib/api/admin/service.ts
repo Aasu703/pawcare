@@ -10,7 +10,7 @@ export const getAllServices = async (page: number = 1, limit: number = 10) => {
     }
 };
 
-export const getServiceById = async (id: string) => {
+export const getServiceById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.SERVICE.GET_BY_ID(id));
         return response.data;
@@ -19,7 +19,7 @@ export const getServiceById = async (id: string) => {
     }
 };
 
-export const deleteService = async (id: string) => {
+export const deleteService = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.SERVICE.DELETE(id));
         return response.data;
@@ -27,3 +27,5 @@ export const deleteService = async (id: string) => {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete service');
     }
 };
+
+

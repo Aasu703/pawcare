@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllInventory, deleteInventory } from "@/lib/api/admin/inventory";
-import { Inventory } from "@/lib/types/provider";
 import { Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,7 +34,7 @@ export default function AdminInventoryPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this inventory item?")) return;
     try {
       await deleteInventory(id);
@@ -46,7 +45,7 @@ export default function AdminInventoryPage() {
     }
   };
 
-  const isLow = (item: Inventory) => item.minThreshold && item.quantity <= item.minThreshold;
+  const isLow = (data: any) => item.minThreshold && item.quantity <= item.minThreshold;
 
   return (
     <div>
@@ -118,4 +117,5 @@ export default function AdminInventoryPage() {
     </div>
   );
 }
+
 

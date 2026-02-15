@@ -10,7 +10,7 @@ export const getAllBookings = async (page: number = 1, limit: number = 10) => {
     }
 };
 
-export const getBookingById = async (id: string) => {
+export const getBookingById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.BOOKING.GET_BY_ID(id));
         return response.data;
@@ -19,7 +19,7 @@ export const getBookingById = async (id: string) => {
     }
 };
 
-export const updateBooking = async (id: string, data: any) => {
+export const updateBooking = async (id: any, data: any) => {
     try {
         const response = await axios.put(API.ADMIN.BOOKING.UPDATE(id), data);
         return response.data;
@@ -28,7 +28,7 @@ export const updateBooking = async (id: string, data: any) => {
     }
 };
 
-export const deleteBooking = async (id: string) => {
+export const deleteBooking = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.BOOKING.DELETE(id));
         return response.data;
@@ -36,3 +36,5 @@ export const deleteBooking = async (id: string) => {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete booking');
     }
 };
+
+

@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { getAllMessages, createMessage, deleteMessage } from "@/lib/api/user/message";
-import { Message } from "@/lib/types/message";
 import { MessageSquare, Send, Trash2, UserCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
 export default function MessagesPage() {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
@@ -44,7 +43,7 @@ export default function MessagesPage() {
     setSending(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this message?")) return;
     const res = await deleteMessage(id);
     if (res.success) {
@@ -143,3 +142,4 @@ export default function MessagesPage() {
     </div>
   );
 }
+

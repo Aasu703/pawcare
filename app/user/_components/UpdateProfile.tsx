@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function UpdateUserForm({
     user
-}: {user : any}) {
+}: {user: any}) {
     const router = useRouter();
     const { register, handleSubmit, control, formState: {errors, isSubmitting} } = useForm<UpdateUserData>({
         resolver: zodResolver(updateUserSchema),
@@ -25,7 +25,7 @@ export default function UpdateUserForm({
 
     const [error, setError] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: any, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
@@ -63,7 +63,7 @@ export default function UpdateUserForm({
         }
     };
 
-    const onSubmit = async (data: UpdateUserData) => {
+    const onSubmit = async (data: any) => {
         setError(null);
         try{
             if (!user?._id) {
@@ -84,7 +84,7 @@ export default function UpdateUserForm({
             }
             toast.success("Profile updated successfully.");
             router.refresh();
-        } catch (error: any) {
+        } catch (data: any) {
             setError(error.message || "An unexpected error occurred."); 
         }
     };
@@ -362,3 +362,4 @@ export default function UpdateUserForm({
         </div>
     );
 }
+

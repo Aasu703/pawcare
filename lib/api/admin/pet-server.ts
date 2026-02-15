@@ -13,7 +13,7 @@ export const getAllPetsServer = async () => {
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -30,7 +30,7 @@ export const getAllPetsServer = async () => {
     } catch (err: Error | any) {
         console.error('Get all pets error:', err);
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch pets"
@@ -38,13 +38,13 @@ export const getAllPetsServer = async () => {
     }
 };
 
-export const getPetByIdServer = async (id: string) => {
+export const getPetByIdServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -60,7 +60,7 @@ export const getPetByIdServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch pet"
@@ -68,13 +68,13 @@ export const getPetByIdServer = async (id: string) => {
     }
 };
 
-export const createPetServer = async (petData: FormData) => {
+export const createPetServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -118,7 +118,7 @@ export const createPetServer = async (petData: FormData) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to create pet"
@@ -126,13 +126,13 @@ export const createPetServer = async (petData: FormData) => {
     }
 };
 
-export const updatePetServer = async (id: string, petData: FormData) => {
+export const updatePetServer = async (id: any, petData: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -176,7 +176,7 @@ export const updatePetServer = async (id: string, petData: FormData) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to update pet"
@@ -184,13 +184,13 @@ export const updatePetServer = async (id: string, petData: FormData) => {
     }
 };
 
-export const deletePetServer = async (id: string) => {
+export const deletePetServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
         if (!token) {
             return {
-                success: false,
+                success: boolean,
                 message: "No auth token found"
             };
         }
@@ -206,10 +206,12 @@ export const deletePetServer = async (id: string) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: false,
+            success: boolean,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to delete pet"
         };
     }
 };
+
+

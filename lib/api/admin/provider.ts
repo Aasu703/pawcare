@@ -1,7 +1,7 @@
 import { API } from "../endpoints";
 import axios from "../axios";
 
-export const createProvider = async (providerData: any) => {
+export const createProvider = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
@@ -29,7 +29,7 @@ export const getAllProviders = async () => {
     }
 }
 
-export const getProviderById = async (id: string) => {
+export const getProviderById = async (data: any) => {
     try {
         const response = await axios.get(API.ADMIN.PROVIDER.GET_BY_ID(id));
         return response.data;
@@ -39,7 +39,7 @@ export const getProviderById = async (id: string) => {
     }
 }
 
-export const updateProvider = async (id: string, providerData: any) => {
+export const updateProvider = async (id: any, providerData: any) => {
     try {
         const response = await axios.put(
             API.ADMIN.PROVIDER.UPDATE(id),
@@ -52,7 +52,7 @@ export const updateProvider = async (id: string, providerData: any) => {
     }
 }
 
-export const deleteProvider = async (id: string) => {
+export const deleteProvider = async (data: any) => {
     try {
         const response = await axios.delete(API.ADMIN.PROVIDER.DELETE(id));
         return response.data;
@@ -61,3 +61,5 @@ export const deleteProvider = async (id: string) => {
             || error.message || 'Failed to delete provider');
     }
 }
+
+
