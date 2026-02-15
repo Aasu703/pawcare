@@ -128,7 +128,7 @@ export default function ShopPage() {
   };
 
   const cartTotal = cart.reduce(
-    (sum, item) => sum + (item.product.price || 0) * item.quantity,
+    (sum, item) => sum + (item.unitPrice || 0) * item.quantity,
     0
   );
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
