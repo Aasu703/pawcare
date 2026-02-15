@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText } from "lucide-react";
-import { handleLogout } from "@/lib/actions/auth-actions";
+import { useAuth } from '@/context/AuthContext';
 
 const navItems = [
   { label: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
@@ -19,18 +19,21 @@ const navItems = [
 export default function ProviderSidebar() {
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logout } = useAuth();
 
   const onLogout = async () => {
     if (isLoggingOut) return;
 
     setIsLoggingOut(true);
     try {
-      await handleLogout();
+      await logout();
     } catch (_) {
-    } finally {
+      // Ensure client-side cleanup if context logout fails
       document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "user_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      window.location.href = "/provider/login";
+      window.location.href = "/";
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 

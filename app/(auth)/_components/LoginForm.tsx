@@ -9,21 +9,32 @@ import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { PawPrint, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 
-export default function LoginForm() {
+type AuthRole = 'user' | 'provider';
+
+interface LoginFormProps {
+  defaultRole?: AuthRole;
+  hideRoleToggle?: boolean;
+}
+
+export default function LoginForm(props: LoginFormProps = {}) {
+  const { defaultRole, hideRoleToggle } = props;
   const { checkAuth, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'user' | 'provider'>('user');
+  const [role, setRole] = useState<AuthRole>(defaultRole ?? 'user');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // apply default role when prop changes
+    if (defaultRole) setRole(defaultRole);
+
     if (isAuthenticated && user) {
       const redirectPath = user.role === 'admin' ? '/admin' : user.role === 'provider' ? '/provider/dashboard' : '/user/home';
       window.location.href = redirectPath;
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, defaultRole]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,25 +101,27 @@ export default function LoginForm() {
         </div>
 
         {/* Role Toggle */}
-        <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
-          <div
-            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
-          ></div>
-          <button
-            type="button"
-            onClick={() => { setRole('user'); setErrors({}); }}
-            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            <span>🐕</span> Pet Owner
-          </button>
-          <button
-            type="button"
-            onClick={() => { setRole('provider'); setErrors({}); }}
-            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            <span>🏥</span> Provider
-          </button>
-        </div>
+        {!hideRoleToggle && (
+          <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
+            <div
+              className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
+            ></div>
+            <button
+              type="button"
+              onClick={() => { setRole('user'); setErrors({}); }}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              <span>🐕</span> Pet Owner
+            </button>
+            <button
+              type="button"
+              onClick={() => { setRole('provider'); setErrors({}); }}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              <span>🏥</span> Provider
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Field */}

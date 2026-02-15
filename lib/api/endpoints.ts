@@ -211,6 +211,13 @@ export const API = {
     GET_BY_ID: (data: any) => `/api/product/${data}`,
     GET_BY_PROVIDER: (data: any) => `/api/product/provider/${data}`,
  },
+ CART: {
+    GET_MY: '/api/cart',
+    ADD_ITEM: '/api/cart/add',
+    UPDATE_ITEM: (data: any) => `/api/cart/item/${data}`,
+    REMOVE_ITEM: (data: any) => `/api/cart/item/${data}`,
+    CLEAR: '/api/cart',
+ },
 };
 
 

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import ProviderSidebar from "./_components/ProviderSidebar";
 
-const authPages = ["/provider/login", "/provider/register"];
+const authPages = ["/provider/login", "/provider/register", "/provider/select-type"];
 
 export default function ProviderLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -26,7 +26,14 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
 
     if (user?.role === "provider") {
       if (isAuthPage) {
-        router.replace("/provider/dashboard");
+        // Check if provider has set their type
+        if (!user.providerType) {
+          router.replace("/provider/select-type");
+        } else {
+          router.replace("/provider/dashboard");
+        }
+      } else if (!user.providerType && pathname !== "/provider/select-type") {
+        router.replace("/provider/select-type");
       }
       return;
     }
@@ -64,11 +71,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
   }
 
   if (isAuthPage) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground">
-        Redirecting...
-      </div>
-    );
+    return <>{children}</>;
   }
 
   return (
