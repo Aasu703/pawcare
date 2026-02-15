@@ -130,6 +130,7 @@ export const API = {
  },
  MESSAGE: {
     CREATE: '/api/message',
+    GET_ALL: '/api/message',
     GET_MY: '/api/message/my',
     GET_BY_ID: (id: string) => `/api/message/${id}`,
     UPDATE: (id: string) => `/api/message/${id}`,
