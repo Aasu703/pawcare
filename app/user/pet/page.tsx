@@ -54,10 +54,10 @@ export default function PetListPage() {
     }
 
     try {
-      const response = await deleteUserPet(petId);
+      const response = await deleteUserPet(data);
 
       if (response.success) {
-        setPets(pets.filter(pet => pet._id !== petId));
+        setPets(pets.filter(pet => pet._id !== data));
       } else {
         alert(response.message || 'Failed to delete pet');
       }
@@ -104,12 +104,12 @@ export default function PetListPage() {
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           className="absolute w-96 h-96 bg-green-300/20 rounded-full blur-3xl top-20 left-10"
         />
         <motion.div
           animate={{ x: [0, -30, 0], y: [0, 30, 0] }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
           className="absolute w-96 h-96 bg-blue-300/20 rounded-full blur-3xl bottom-10 right-10"
         />
       </div>
@@ -117,7 +117,7 @@ export default function PetListPage() {
       {/* Header */}
       <motion.header
         initial={{ y: -50, opacity: 0 }}
-        animate={{ y: any, opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
         className="relative z-10 border-b border-gray-200 backdrop-blur-xl bg-white/80"
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -143,8 +143,8 @@ export default function PetListPage() {
       <main className="relative z-10 max-w-6xl mx-auto px-6 py-12">
         {pets.length === 0 ? (
           <motion.div
-            initial={{ opacity: any, scale: 0.9 }}
-            animate={{ opacity: any, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             className="text-center py-16"
           >
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-200">
@@ -171,9 +171,9 @@ export default function PetListPage() {
               {pets.map((pet) => (
                 <motion.div
                   layout
-                  initial={{ opacity: any, scale: 0.8 }}
-                  animate={{ opacity: any, scale: 1 }}
-                  exit={{ opacity: any, scale: 0.8 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
                   whileHover={{ y: -5 }}
                   key={pet._id}
                   className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 group"

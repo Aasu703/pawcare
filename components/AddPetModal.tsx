@@ -12,7 +12,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { handleCreateUserPet } from '@/lib/actions/user/pet-actions';
-import { PetFormData } from '@/lib/types/pet';
 import { toast } from 'sonner';
 
 const petSchema = z.object({
@@ -58,7 +57,7 @@ export function AddPetModal({ children }: AddPetModalProps) {
   const onSubmit = async (data: PetFormValues) => {
     setIsSubmitting(true);
     try {
-      const formData: PetFormData = {
+      const formData = {
         name: data.name,
         species: data.species,
         breed: data.breed,

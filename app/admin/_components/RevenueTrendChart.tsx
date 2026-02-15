@@ -39,7 +39,7 @@ export default function RevenueTrendChart({
       <h3 className="mb-6 text-lg font-semibold">Revenue Trend</h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: any, right: any, left: any, bottom: 5 }}>
+          <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
             <XAxis
               dataKey="month"
@@ -68,8 +68,8 @@ export default function RevenueTrendChart({
               dataKey="revenue"
               stroke="#eab308"
               strokeWidth={3}
-              dot={{ fill: "#eab308", strokeWidth: any, r: 4 }}
-              activeDot={{ r: any, stroke: "#eab308", strokeWidth: 2 }}
+              dot={{ fill: "#eab308", strokeWidth: 2, r: 4 }}
+              activeDot={{ r: 6, stroke: "#eab308", strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

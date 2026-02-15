@@ -12,7 +12,7 @@ export const getAllReviews = async (page: number = 1, limit: number = 10) => {
 
 export const getReviewById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.REVIEW.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.REVIEW.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to fetch review');
@@ -21,7 +21,7 @@ export const getReviewById = async (data: any) => {
 
 export const deleteReview = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.REVIEW.DELETE(id));
+        const response = await axios.delete(API.ADMIN.REVIEW.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete review');

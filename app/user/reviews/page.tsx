@@ -6,11 +6,11 @@ import { Star, Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function ReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ rating: any, comment: "" });
+  const [form, setForm] = useState({ rating: 5, comment: "" });
 
   useEffect(() => { loadReviews(); }, []);
 
@@ -39,14 +39,14 @@ export default function ReviewsPage() {
   };
 
   const handleEdit = (data: any) => {
-    setEditingId(review._id);
-    setForm({ rating: review.rating, comment: review.comment || "" });
+    setEditingId(data._id);
+    setForm({ rating: data.rating, comment: data.comment || "" });
     setShowForm(true);
   };
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this review?")) return;
-    const res = await deleteReview(id);
+    const res = await deleteReview(data);
     if (res.success) {
       toast.success("Review deleted");
       loadReviews();
@@ -58,7 +58,7 @@ export default function ReviewsPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ rating: any, comment: "" });
+    setForm({ rating: 5, comment: "" });
   };
 
   const renderStars = (rating: any, interactive = false) => {

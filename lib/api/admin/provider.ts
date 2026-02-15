@@ -5,7 +5,7 @@ export const createProvider = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
-            providerData,
+            data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -31,7 +31,7 @@ export const getAllProviders = async () => {
 
 export const getProviderById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.PROVIDER.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.PROVIDER.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message
@@ -54,7 +54,7 @@ export const updateProvider = async (id: any, providerData: any) => {
 
 export const deleteProvider = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.PROVIDER.DELETE(id));
+        const response = await axios.delete(API.ADMIN.PROVIDER.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message

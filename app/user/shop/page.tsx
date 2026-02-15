@@ -7,12 +7,12 @@ import { ShoppingCart, Plus, Minus, Search, Package } from "lucide-react";
 import Link from "next/link";
 
 interface CartItem {
-  product: Inventory;
+  product: any;
   quantity: number;
 }
 
 export default function ShopPage() {
-  const [products, setProducts] = useState<Inventory[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
@@ -35,34 +35,34 @@ export default function ShopPage() {
 
   const addToCart = (data: any) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.product._id === product._id);
+      const existing = prev.find((item) => item.product._id === data._id);
       if (existing) {
-        if (existing.quantity >= product.quantity) {
+        if (existing.quantity >= data.quantity) {
           toast.error("Maximum stock reached");
           return prev;
         }
         return prev.map((item) =>
-          item.product._id === product._id
+          item.product._id === data._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product: data, quantity: 1 }];
     });
-    toast.success(`${product.product_name} added to cart`);
+    toast.success(`${data.product_name} added to cart`);
   };
 
   const removeFromCart = (data: any) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.product._id === productId);
+      const existing = prev.find((item) => item.product._id === data);
       if (existing && existing.quantity > 1) {
         return prev.map((item) =>
-          item.product._id === productId
+          item.product._id === data
             ? { ...item, quantity: item.quantity - 1 }
             : item
         );
       }
-      return prev.filter((item) => item.product._id !== productId);
+      return prev.filter((item) => item.product._id !== data);
     });
   };
 

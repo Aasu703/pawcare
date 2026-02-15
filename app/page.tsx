@@ -33,7 +33,7 @@ export default function Page() {
       {/* ================= NAVBAR ================= */}
       <motion.nav
         initial={{ y: -60, opacity: 0 }}
-        animate={{ y: any, opacity: 1 }}
+        animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6 }}
         className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/40"
       >
@@ -75,7 +75,7 @@ export default function Page() {
             x: [0, 50, 0],
             y: [0, -30, 0],
           }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-0 right-0 -z-10 w-[800px] h-[800px] bg-gradient-to-br from-primary/20 to-orange-200/30 rounded-full blur-3xl"
         ></motion.div>
         <motion.div
@@ -83,7 +83,7 @@ export default function Page() {
             x: [0, -30, 0],
             y: [0, 50, 0],
           }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/30 to-primary/20 rounded-full blur-3xl"
         ></motion.div>
         <motion.div
@@ -91,7 +91,7 @@ export default function Page() {
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
           }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"
         ></motion.div>
 
@@ -99,8 +99,8 @@ export default function Page() {
 
           {/* TEXT */}
           <motion.div
-            initial={{ opacity: any, x: -50 }}
-            animate={{ opacity: any, x: 0 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="space-y-8"
           >
@@ -162,15 +162,15 @@ export default function Page() {
 
           {/* IMAGE */}
           <motion.div
-            initial={{ opacity: any, scale: 0.8 }}
-            animate={{ opacity: any, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
             <div className="relative z-10 w-full max-w-[600px] mx-auto">
               <motion.div
                 animate={{ y: [0, -15, 0] }}
-                transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Image
                   src="/images/cat.png"
@@ -185,8 +185,8 @@ export default function Page() {
 
             {/* Floating Cards */}
             <motion.div
-              initial={{ opacity: any, y: 20 }}
-              animate={{ opacity: any, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="absolute top-10 right-10 bg-white rounded-2xl p-4 shadow-xl border border-border"
             >
@@ -202,8 +202,8 @@ export default function Page() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: any, y: 20 }}
-              animate={{ opacity: any, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7 }}
               className="absolute bottom-20 left-10 bg-white rounded-2xl p-4 shadow-xl border border-border"
             >
@@ -230,16 +230,16 @@ export default function Page() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.h2
-              initial={{ opacity: any, y: 20 }}
-              whileInView={{ opacity: any, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               className="text-4xl lg:text-5xl font-bold mb-6"
             >
               Comprehensive <span className="gradient-text">Pet Care Services</span>
             </motion.h2>
             <motion.p
-              initial={{ opacity: any, y: 20 }}
-              whileInView={{ opacity: any, y: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
               className="text-xl text-muted-foreground"
@@ -252,7 +252,7 @@ export default function Page() {
             {[
               {
                 title: "Health Monitoring",
-                icon: any,
+                icon: Activity,
                 color: "text-blue-600",
                 bg: "bg-blue-100/50",
                 border: "border-blue-200",
@@ -261,7 +261,7 @@ export default function Page() {
               },
               {
                 title: "Medication Management",
-                icon: any,
+                icon: Pill,
                 color: "text-green-600",
                 bg: "bg-green-100/50",
                 border: "border-green-200",
@@ -270,7 +270,7 @@ export default function Page() {
               },
               {
                 title: "Appointment Scheduling",
-                icon: any,
+                icon: Calendar,
                 color: "text-purple-600",
                 bg: "bg-purple-100/50",
                 border: "border-purple-200",
@@ -279,7 +279,7 @@ export default function Page() {
               },
               {
                 title: "Emergency Support",
-                icon: any,
+                icon: Phone,
                 color: "text-red-600",
                 bg: "bg-red-100/50",
                 border: "border-red-200",
@@ -289,8 +289,8 @@ export default function Page() {
             ].map((service, i) => (
               <motion.div
                 key={service.title}
-                initial={{ opacity: any, y: 30 }}
-                whileInView={{ opacity: any, y: 0 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -10 }}
@@ -342,7 +342,7 @@ export default function Page() {
                 role: "Veterinarian",
                 image: "/images/vet1.jpg",
                 quote: "PawCare has revolutionized how I communicate with pet owners. The health tracking features are incredibly accurate and help me provide better care.",
-                rating: any,
+                rating: 5,
                 color: "bg-blue-50 border-blue-100"
               },
               {
@@ -350,7 +350,7 @@ export default function Page() {
                 role: "Dog Owner",
                 image: "/images/owner1.jpg",
                 quote: "Since using PawCare, Max's health has improved dramatically. The medication reminders and vet appointment scheduling saved us so much stress.",
-                rating: any,
+                rating: 5,
                 color: "bg-orange-50 border-orange-100"
               },
               {
@@ -358,14 +358,14 @@ export default function Page() {
                 role: "Cat Mom",
                 image: "/images/owner2.jpg",
                 quote: "The emergency support feature was a lifesaver when Luna ate something she shouldn't have. Quick access to poison control information made all the difference.",
-                rating: any,
+                rating: 5,
                 color: "bg-purple-50 border-purple-100"
               },
             ].map((testimonial, i) => (
               <motion.div
                 key={testimonial.name}
-                initial={{ opacity: any, scale: 0.9 }}
-                whileInView={{ opacity: any, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -5 }}
@@ -377,8 +377,8 @@ export default function Page() {
                   {[1, 2, 3, 4, 5].map((star) => (
                     <motion.div
                       key={star}
-                      initial={{ opacity: any, scale: 0 }}
-                      whileInView={{ opacity: any, scale: 1 }}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.5 + (star * 0.1) }}
                     >
                       <Star className={`w-5 h-5 ${star <= testimonial.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
@@ -422,42 +422,42 @@ export default function Page() {
             {[
               {
                 title: "Veterinary-Grade Accuracy",
-                icon: any,
+                icon: Stethoscope,
                 color: "text-blue-600",
                 bg: "bg-blue-50",
                 desc: "Medical-grade health monitoring with clinically validated algorithms."
               },
               {
                 title: "24/7 Emergency Support",
-                icon: any,
+                icon: Phone,
                 color: "text-red-600",
                 bg: "bg-red-50",
                 desc: "Round-the-clock access to emergency veterinary services and hotlines."
               },
               {
                 title: "Smart Medication Tracking",
-                icon: any,
+                icon: Pill,
                 color: "text-green-600",
                 bg: "bg-green-50",
                 desc: "Intelligent reminders and dosage tracking to ensure treatment compliance."
               },
               {
                 title: "Integrated Health Records",
-                icon: any,
+                icon: Activity,
                 color: "text-purple-600",
                 bg: "bg-purple-50",
                 desc: "Complete digital health records accessible anywhere, anytime."
               },
               {
                 title: "Expert Care Network",
-                icon: any,
+                icon: Users,
                 color: "text-orange-600",
                 bg: "bg-orange-50",
                 desc: "Connect with certified veterinarians and pet care specialists."
               },
               {
                 title: "Preventive Care Reminders",
-                icon: any,
+                icon: Calendar,
                 color: "text-yellow-600",
                 bg: "bg-yellow-50",
                 desc: "Never miss vaccinations, check-ups, or preventive treatments."
@@ -465,8 +465,8 @@ export default function Page() {
             ].map((item, i) => (
               <motion.div
                 key={item.title}
-                initial={{ opacity: any, scale: 0.9 }}
-                whileInView={{ opacity: any, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
                 whileHover={{ y: -5, scale: 1.02 }}
@@ -492,14 +492,14 @@ export default function Page() {
           animate={{
             backgroundPosition: ['0% 0%', '100% 100%'],
           }}
-          transition={{ duration: any, repeat: any, repeatType: "reverse" }}
+          transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 opacity-30"
           style={{ backgroundSize: '200% 200%' }}
         />
 
         <motion.div
-          initial={{ opacity: any, scale: 0.95 }}
-          whileInView={{ opacity: any, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           className="max-w-7xl mx-auto glass-strong rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden border border-white/20 shadow-2xl"
         >
@@ -511,7 +511,7 @@ export default function Page() {
             <div className="flex justify-center mb-6">
               <motion.div
                 animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                transition={{ duration: any, repeat: Infinity }}
+                transition={{ duration: 3, repeat: Infinity }}
                 className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30"
               >
                 <Heart className="text-white w-10 h-10 fill-white/50" />
@@ -557,8 +557,8 @@ export default function Page() {
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: any, y: 20 }}
-                whileInView={{ opacity: any, y: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 className="space-y-4 px-4"

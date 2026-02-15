@@ -21,7 +21,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
     const onSubmit = async (data: any) => {
         setLoading(true);
         try {
-            const result = await handleResetPassword(token, values.password);
+            const result = await handleResetPassword(token, data.password);
             if (result.success) {
                 setSuccess(true);
                 toast.success('Password reset successful. Redirecting to login...');
@@ -30,8 +30,8 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
             } else {
                 throw new Error(result.message || 'Failed to reset password');
             }
-        } catch (data: any) {
-            toast.error(err.message || 'Failed to reset password');
+        } catch (error: any) {
+            toast.error(error.message || 'Failed to reset password');
         } finally {
             setLoading(false);
         }

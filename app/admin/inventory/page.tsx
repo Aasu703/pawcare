@@ -6,7 +6,7 @@ import { Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminInventoryPage() {
-  const [items, setItems] = useState<Inventory[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -37,7 +37,7 @@ export default function AdminInventoryPage() {
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this inventory item?")) return;
     try {
-      await deleteInventory(id);
+      await deleteInventory(data);
       toast.success("Item deleted");
       load();
     } catch {
@@ -45,7 +45,7 @@ export default function AdminInventoryPage() {
     }
   };
 
-  const isLow = (data: any) => item.minThreshold && item.quantity <= item.minThreshold;
+  const isLow = (data: any) => data.minThreshold && data.quantity <= data.minThreshold;
 
   return (
     <div>

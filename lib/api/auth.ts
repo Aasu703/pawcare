@@ -76,7 +76,7 @@ export const createUserByAdmin = async (data: any) => {
     try {
         const response = await axios.post(
             API.AUTH.CREATEUSER,
-            formData,
+            data,
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -95,7 +95,7 @@ export const createUserByAdmin = async (data: any) => {
 
 export const requestPasswordReset = async (data: any) => {
     try {
-        const response = await axios.post(API.AUTH.REQUEST_PASSWORD_RESET, { email });
+        const response = await axios.post(API.AUTH.REQUEST_PASSWORD_RESET, data);
         return response.data;
     } catch (err: Error | any) {
         throw new Error(

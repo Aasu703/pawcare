@@ -14,9 +14,9 @@ const recordTypeColors: Record<string, string> = {
 };
 
 export default function AdminHealthRecordsPage() {
-  const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<HealthRecord | null>(null);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -38,7 +38,7 @@ export default function AdminHealthRecordsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (data: any) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this health record?")) return;
     try {
       await deleteHealthRecord(id);

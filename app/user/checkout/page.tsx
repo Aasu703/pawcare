@@ -10,7 +10,7 @@ import Link from "next/link";
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [items, setItems] = useState<OrderItem[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [shippingAddress, setShippingAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);

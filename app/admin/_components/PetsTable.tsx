@@ -53,7 +53,7 @@ export default function PetsTable() {
   };
 
   const handleEdit = (data: any) => {
-    setSelectedPet(pet);
+    setSelectedPet(data);
     setModalMode("edit");
     setModalOpen(true);
   };
@@ -61,7 +61,7 @@ export default function PetsTable() {
   const handleDelete = async (data: any) => {
     if (!confirm("Are you sure you want to delete this pet?")) return;
 
-    const result = await handleDeletePet(id);
+    const result = await handleDeletePet(data);
     if (result.success) {
       toast.success(result.message);
       fetchPets();

@@ -59,7 +59,7 @@ export default function UsersTable() {
   };
 
   const handleEdit = (data: any) => {
-    setSelectedUser(user);
+    setSelectedUser(data);
     setModalMode("edit");
     setModalOpen(true);
   };
@@ -67,7 +67,7 @@ export default function UsersTable() {
   const handleDelete = async (data: any) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
-    const result = await handleDeleteUser(id);
+    const result = await handleDeleteUser(data);
     if (result.success) {
       toast.success(result.message);
       fetchUsers();

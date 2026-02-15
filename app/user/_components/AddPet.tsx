@@ -17,14 +17,14 @@ export default function AddPetForm() {
             name: "",
             species: "",
             breed: "",
-            age: any,
-            weight: any,
+            age: 0,
+            weight: 0,
         }
     });
 
     const [error, setError] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [mousePosition, setMousePosition] = useState({ x: any, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleImageChange = (file: File | undefined, onChange: (file: File | undefined) => void) => {
@@ -69,7 +69,7 @@ export default function AddPetForm() {
             toast.success("Pet added successfully!");
             router.push("/user/pet");
         } catch (data: any) {
-            setError(error.message || "An unexpected error occurred.");
+            setError(data.message || "An unexpected error occurred.");
         }
     };
 

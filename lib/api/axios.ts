@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Client-safe cookie helper
-function getCookie(data: any): string | null {
+function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
@@ -20,7 +20,7 @@ const BASE_URL =
 const normalizedBaseUrl = BASE_URL.replace(/\/+$/, "");
 
 const axiosInstance = axios.create({
-  baseURL: any,
+  baseURL: normalizedBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },

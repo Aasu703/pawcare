@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { FileText, Trash2, Globe, Lock } from "lucide-react";
 
 export default function AdminPostsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -29,7 +29,7 @@ export default function AdminPostsPage() {
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this post?")) return;
-    const res = await deletePost(id);
+    const res = await deletePost(data);
     if (res.success) {
       toast.success("Post deleted");
       fetchPosts();

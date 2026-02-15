@@ -15,7 +15,7 @@ const statusConfig: Record<string, { color: string }> = {
 };
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -48,7 +48,7 @@ export default function AdminOrdersPage() {
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this order?")) return;
-    const res = await deleteOrder(id);
+    const res = await deleteOrder(data);
     if (res.success) {
       toast.success("Order deleted");
       fetchOrders();

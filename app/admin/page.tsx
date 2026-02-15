@@ -47,10 +47,10 @@ export default function AdminDashboardPage() {
       toast.error("Failed to load dashboard data");
       // Set mock data as fallback
       setStats({
-        totalPets: any,
-        activeOwners: any,
-        appointmentsToday: any,
-        monthlyRevenue: any,
+        totalPets: 0,
+        activeOwners: 0,
+        appointmentsToday: 0,
+        monthlyRevenue: 0,
         weeklyAppointments: [
           { day: "Mon", count: 18 },
           { day: "Tue", count: 24 },
@@ -137,8 +137,8 @@ export default function AdminDashboardPage() {
 
   return (
     <motion.div
-      initial={{ opacity: any, y: 20 }}
-      animate={{ opacity: any, y: 0 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <div className="mb-6 flex items-center justify-between">
@@ -161,8 +161,8 @@ export default function AdminDashboardPage() {
       {/* Stats Cards */}
       <motion.div
         className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        initial={{ opacity: any, y: 20 }}
-        animate={{ opacity: any, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         <StatsCard
@@ -204,8 +204,8 @@ export default function AdminDashboardPage() {
       {/* Charts */}
       <motion.div
         className="mb-8 grid gap-6 lg:grid-cols-2"
-        initial={{ opacity: any, y: 20 }}
-        animate={{ opacity: any, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <WeeklyAppointmentsChart
@@ -220,8 +220,8 @@ export default function AdminDashboardPage() {
 
       {/* Recent Appointments Table */}
       <motion.div
-        initial={{ opacity: any, y: 20 }}
-        animate={{ opacity: any, y: 0 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
         <RecentAppointments

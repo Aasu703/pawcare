@@ -15,7 +15,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
@@ -36,7 +36,7 @@ export default function OrdersPage() {
 
   const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this order?")) return;
-    const res = await deleteOrder(id);
+    const res = await deleteOrder(data);
     if (res.success) {
       toast.success("Order cancelled");
       fetchOrders();
@@ -114,7 +114,7 @@ export default function OrdersPage() {
                 </div>
 
                 <div className="space-y-2 mb-4">
-                  {order.items?.map((item, idx) => (
+                  {order.items?.map((item: any, idx: number) => (
                     <div key={idx} className="flex justify-between text-sm">
                       <span>
                         {item.productName} x {item.quantity}

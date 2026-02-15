@@ -12,7 +12,7 @@ export const getAllProviderServices = async (page: number = 1, limit: number = 1
 
 export const getProviderServiceById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.PROVIDER.SERVICE.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.PROVIDER.SERVICE.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to fetch provider service');
@@ -21,7 +21,7 @@ export const getProviderServiceById = async (data: any) => {
 
 export const approveProviderService = async (data: any) => {
     try {
-        const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.APPROVE(id));
+        const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.APPROVE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to approve provider service');
@@ -30,7 +30,7 @@ export const approveProviderService = async (data: any) => {
 
 export const rejectProviderService = async (data: any) => {
     try {
-        const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.REJECT(id));
+        const response = await axios.put(API.ADMIN.PROVIDER.SERVICE.REJECT(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to reject provider service');

@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { FileText, Plus, Pencil, Trash2, Globe, Lock, X } from "lucide-react";
 
 export default function ProviderPostsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [editingPost, setEditingPost] = useState<any>(null);
   const [form, setForm] = useState({ title: "", content: "", isPublic: true });
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,8 +35,8 @@ export default function ProviderPostsPage() {
   };
 
   const openEdit = (data: any) => {
-    setEditingPost(post);
-    setForm({ title: post.title, content: post.content, isPublic: post.isPublic });
+    setEditingPost(data);
+    setForm({ title: data.title, content: data.content, isPublic: data.isPublic });
     setShowModal(true);
   };
 
@@ -48,7 +48,7 @@ export default function ProviderPostsPage() {
     setSubmitting(true);
 
     if (editingPost) {
-      const res = await updateProviderPost(editingPost._id, form as UpdatePostRequest);
+      const res = await updateProviderPost(editingPost._id, form);
       if (res.success) {
         toast.success("Post updated");
         fetchPosts();
@@ -57,7 +57,7 @@ export default function ProviderPostsPage() {
         toast.error(res.message);
       }
     } else {
-      const res = await createProviderPost(form as CreatePostRequest);
+      const res = await createProviderPost(form);
       if (res.success) {
         toast.success("Post created");
         fetchPosts();
@@ -71,7 +71,7 @@ export default function ProviderPostsPage() {
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this post?")) return;
-    const res = await deleteProviderPost(id);
+    const res = await deleteProviderPost(data);
     if (res.success) {
       toast.success("Post deleted");
       fetchPosts();

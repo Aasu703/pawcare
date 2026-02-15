@@ -110,12 +110,12 @@ export default function RecentAppointments({
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment, index) => (
+            {appointments.map((appointment: any, index: number) => (
               <motion.tr
                 key={appointment.id}
                 className="border-b last:border-0 hover:bg-muted/50 transition-colors"
-                initial={{ opacity: any, x: -20 }}
-                animate={{ opacity: any, x: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 whileHover={{ scale: 1.01 }}
               >
@@ -129,7 +129,7 @@ export default function RecentAppointments({
                 </td>
                 <td className="py-4">
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[appointment.status]}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[appointment.status as keyof typeof statusColors]}`}
                   >
                     {appointment.status}
                   </span>

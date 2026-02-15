@@ -12,7 +12,7 @@ export const getAllFeedback = async (page: number = 1, limit: number = 10) => {
 
 export const getFeedbackByProvider = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.FEEDBACK.GET_BY_PROVIDER(providerId));
+        const response = await axios.get(API.ADMIN.FEEDBACK.GET_BY_PROVIDER(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to fetch feedback');
@@ -21,7 +21,7 @@ export const getFeedbackByProvider = async (data: any) => {
 
 export const deleteFeedback = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.FEEDBACK.DELETE(id));
+        const response = await axios.delete(API.ADMIN.FEEDBACK.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete feedback');

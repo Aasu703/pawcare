@@ -13,9 +13,9 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminBookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Booking | null>(null);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -38,7 +38,7 @@ export default function AdminBookingsPage() {
     }
   };
 
-  const handleDelete = async (data: any) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this booking?")) return;
     try {
       await deleteBooking(id);

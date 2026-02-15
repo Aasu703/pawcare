@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { FileText, User, Calendar } from "lucide-react";
 
 export default function UserPostsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

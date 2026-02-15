@@ -18,8 +18,8 @@ function NewBookingForm() {
   const normalizedServiceId = serviceId && serviceId !== "undefined" ? serviceId : undefined;
   const { user } = useAuth();
 
-  const [service, setService] = useState<Service | null>(null);
-  const [pets, setPets] = useState<Pet[]>([]);
+  const [service, setService] = useState<any>(null);
+  const [pets, setPets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -57,7 +57,7 @@ function NewBookingForm() {
     const res = await createBooking({
       startTime: form.startTime,
       endTime: form.endTime,
-      serviceId: any,
+      serviceId: normalizedServiceId,
       petId: form.petId || undefined,
       notes: form.notes || undefined,
     });

@@ -6,7 +6,7 @@ import { Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminFeedbackPage() {
-  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [feedback, setFeedback] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -29,7 +29,7 @@ export default function AdminFeedbackPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (data: any) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this feedback?")) return;
     try {
       await deleteFeedback(id);

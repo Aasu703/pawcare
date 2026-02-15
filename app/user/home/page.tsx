@@ -25,9 +25,9 @@ export default function ProtectedHome() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: any, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
-  const [pets, setPets] = useState<Pet[]>([]);
+  const [pets, setPets] = useState<any[]>([]);
   const [petsLoading, setPetsLoading] = useState(true);
   const [petsError, setPetsError] = useState<string | null>(null);
 
@@ -47,7 +47,7 @@ export default function ProtectedHome() {
 
   useEffect(() => {
     const handleMouseMove = (data: any) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      setMousePosition({ x: data.clientX, y: data.clientY });
     };
 
     const handleScroll = () => {
@@ -158,7 +158,7 @@ export default function ProtectedHome() {
             y: [0, 30, 0],
             opacity: [0.3, 0.5, 0.3]
           }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]"
         />
         <motion.div
@@ -166,7 +166,7 @@ export default function ProtectedHome() {
             x: [0, -50, 0],
             y: [0, -30, 0],
           }}
-          transition={{ duration: any, repeat: any, ease: "easeInOut" }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-300/20 rounded-full blur-[100px]"
         />
       </div>
@@ -216,8 +216,8 @@ export default function ProtectedHome() {
         {/* Hero Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <motion.div
-            initial={{ opacity: any, x: -50 }}
-            animate={{ opacity: any, x: 0 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
             <div className="flex items-center gap-2 mb-6">
@@ -256,8 +256,8 @@ export default function ProtectedHome() {
 
           {/* Stats Grid */}
           <motion.div
-            initial={{ opacity: any, scale: 0.9 }}
-            animate={{ opacity: any, scale: 1 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="grid grid-cols-2 gap-4"
           >
@@ -317,8 +317,8 @@ export default function ProtectedHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {pets.slice(0, 3).map((pet, index) => (
                 <motion.div
-                  initial={{ opacity: any, y: 20 }}
-                  animate={{ opacity: any, y: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   key={pet._id}
                   onClick={() => router.push(`/user/pet/${pet._id}/edit`)}
@@ -362,8 +362,8 @@ export default function ProtectedHome() {
               ))}
               {pets.length > 3 && (
                 <motion.div
-                  initial={{ opacity: any, y: 20 }}
-                  animate={{ opacity: any, y: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   onClick={() => router.push('/user/pet')}
                   className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-[2rem] flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-white hover:border-primary/50 hover:shadow-xl transition-all duration-300 group"

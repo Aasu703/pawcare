@@ -15,7 +15,7 @@ export default function StatsCard({
   title,
   value,
   change,
-  icon: any,
+  icon: Icon,
   iconColor = "text-orange-500",
   isLoading = false,
   onClick,

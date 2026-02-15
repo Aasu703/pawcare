@@ -45,7 +45,7 @@ export default function MessagesPage() {
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this message?")) return;
-    const res = await deleteMessage(id);
+    const res = await deleteMessage(data);
     if (res.success) {
       toast.success("Message deleted");
       loadMessages();

@@ -56,7 +56,7 @@ export default function PetHealthPage() {
     }
   };
 
-  const handleEdit = (record: HealthRecord) => {
+  const handleEdit = (record: any) => {
     setEditingId(record._id);
     setForm({
       recordType: record.recordType || "",

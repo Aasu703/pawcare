@@ -110,7 +110,7 @@ export default function RegisterForm() {
         }
       }
       setLoading(false);
-    } catch (data: any) {
+    } catch (error: any) {
       console.error('Register error:', error);
       const errorKey = role === 'provider' ? 'businessName' : 'Firstname';
       setErrors({ [errorKey]: error.message || 'Registration failed' });

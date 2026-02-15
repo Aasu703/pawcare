@@ -7,8 +7,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [filtered, setFiltered] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -57,8 +57,8 @@ export default function ServicesPage() {
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-12 relative z-10">
         <motion.div
-          initial={{ opacity: any, y: -20 }}
-          animate={{ opacity: any, y: 0 }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
           className="text-center mb-10"
         >
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
@@ -71,8 +71,8 @@ export default function ServicesPage() {
 
         {/* Filters & Search */}
         <motion.div
-          initial={{ opacity: any, y: 20 }}
-          animate={{ opacity: any, y: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white/70 backdrop-blur-xl rounded-2xl p-4 shadow-lg shadow-gray-200/50 border border-white/50 mb-10 flex flex-col md:flex-row gap-4 items-center justify-between"
         >
@@ -128,9 +128,9 @@ export default function ServicesPage() {
               {filtered.map((service) => (
                 <motion.div
                   layout
-                  initial={{ opacity: any, scale: 0.9 }}
-                  animate={{ opacity: any, scale: 1 }}
-                  exit={{ opacity: any, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
                   key={service._id}
                   className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full"
                 >

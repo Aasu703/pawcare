@@ -63,7 +63,7 @@ export default function ProvidersTable() {
   };
 
   const handleApprove = async (data: any) => {
-    const result = await handleApproveProviderService(id);
+    const result = await handleApproveProviderService(data);
     if (result.success) {
       toast.success(result.message);
       fetchProviders();
@@ -73,7 +73,7 @@ export default function ProvidersTable() {
   };
 
   const handleReject = async (data: any) => {
-    const result = await handleRejectProviderService(id);
+    const result = await handleRejectProviderService(data);
     if (result.success) {
       toast.success(result.message);
       fetchProviders();
@@ -82,22 +82,7 @@ export default function ProvidersTable() {
     }
   };
 
-  const handleSubmit = async (data: any) => {
-    let result;
-    if (modalMode === "create") {
-      result = await handleCreateProvider(data);
-    } else if (selectedProvider) {
-      result = await handleUpdateProvider(selectedProvider._id, data);
-    }
 
-    if (result?.success) {
-      toast.success(result.message);
-      setModalOpen(false);
-      fetchProviders();
-    } else {
-      toast.error(result?.message || "Operation failed");
-    }
-  };
 
   const filteredProviders = (providers || []).filter(
     (provider) =>

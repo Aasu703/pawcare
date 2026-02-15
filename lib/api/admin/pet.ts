@@ -5,7 +5,7 @@ export const createPet = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.PET.CREATE,
-            petData,
+            data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -31,7 +31,7 @@ export const getAllPets = async () => {
 
 export const getPetById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.PET.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.PET.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message
@@ -54,7 +54,7 @@ export const updatePet = async (id: any, petData: any) => {
 
 export const deletePet = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.PET.DELETE(id));
+        const response = await axios.delete(API.ADMIN.PET.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message

@@ -34,7 +34,7 @@ export default function UpdatePetForm({ pet }: { pet: Pet }) {
 
     const [error, setError] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [mousePosition, setMousePosition] = useState({ x: any, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
@@ -90,7 +90,7 @@ export default function UpdatePetForm({ pet }: { pet: Pet }) {
             toast.success("Pet updated successfully!");
             router.push("/user/pet");
         } catch (data: any) {
-            setError(error.message || "An unexpected error occurred.");
+            setError(data.message || "An unexpected error occurred.");
         }
     };
 

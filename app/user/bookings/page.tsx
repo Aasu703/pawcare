@@ -16,7 +16,7 @@ const statusColors: Record<string, string> = {
 
 export default function BookingsPage() {
   const { user } = useAuth();
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
@@ -35,7 +35,7 @@ export default function BookingsPage() {
 
   const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
-    const res = await deleteBooking(id);
+    const res = await deleteBooking(data);
     if (res.success) {
       toast.success("Booking cancelled");
       loadBookings();

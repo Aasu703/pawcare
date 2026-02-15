@@ -72,7 +72,7 @@ export default function LoginForm() {
         setErrors({ email: errorMessage });
       }
       setLoading(false);
-    } catch (data: any) {
+    } catch (error: any) {
       console.error('Login error:', error);
       const errorMessage = error.message === "Error" ? "Login failed. Please check your credentials." : error.message || 'Login failed';
       setErrors({ email: errorMessage });

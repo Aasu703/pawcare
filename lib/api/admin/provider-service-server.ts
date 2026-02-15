@@ -11,7 +11,7 @@ export const getAllProviderServicesServer = async () => {
 
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
@@ -28,7 +28,7 @@ export const getAllProviderServicesServer = async () => {
     } catch (err: Error | any) {
         console.error('Get all provider services error:', err);
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to fetch provider services"
@@ -42,13 +42,13 @@ export const approveProviderServiceServer = async (data: any) => {
 
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
         const response = await axios.put(
-            API.ADMIN.PROVIDER.SERVICE.APPROVE(id),
+            API.ADMIN.PROVIDER.SERVICE.APPROVE(data),
             {},
             {
                 headers: {
@@ -60,7 +60,7 @@ export const approveProviderServiceServer = async (data: any) => {
     } catch (err: Error | any) {
         console.error('Approve provider service error:', err);
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to approve provider service"
@@ -74,13 +74,13 @@ export const rejectProviderServiceServer = async (data: any) => {
 
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
         const response = await axios.put(
-            API.ADMIN.PROVIDER.SERVICE.REJECT(id),
+            API.ADMIN.PROVIDER.SERVICE.REJECT(data),
             {},
             {
                 headers: {
@@ -92,7 +92,7 @@ export const rejectProviderServiceServer = async (data: any) => {
     } catch (err: Error | any) {
         console.error('Reject provider service error:', err);
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message
                 || err.message
                 || "Failed to reject provider service"

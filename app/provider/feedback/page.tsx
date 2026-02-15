@@ -17,7 +17,7 @@ function getProviderId(): string {
 }
 
 export default function ProviderFeedbackPage() {
-  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [feedback, setFeedback] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const providerId = getProviderId();
 

@@ -25,67 +25,67 @@ const sidebarItems = [
   {
     title: "Overview",
     href: "/admin",
-    icon: any,
+    icon: LayoutDashboard,
   },
   {
     title: "Users",
     href: "/admin/users",
-    icon: any,
+    icon: Users,
   },
   {
     title: "Pets",
     href: "/admin/pets",
-    icon: any,
+    icon: PawPrint,
   },
   {
     title: "Providers",
     href: "/admin/providers",
-    icon: any,
+    icon: UserCog,
   },
   {
     title: "Bookings",
     href: "/admin/bookings",
-    icon: any,
+    icon: Calendar,
   },
   {
     title: "Services",
     href: "/admin/services",
-    icon: any,
+    icon: HeartPulse,
   },
   {
     title: "Orders",
     href: "/admin/orders",
-    icon: any,
+    icon: ShoppingCart,
   },
   {
     title: "Posts",
     href: "/admin/posts",
-    icon: any,
+    icon: FileText,
   },
   {
     title: "Reviews",
     href: "/admin/reviews",
-    icon: any,
+    icon: Star,
   },
   {
     title: "Messages",
     href: "/admin/messages",
-    icon: any,
+    icon: MessageSquare,
   },
   {
     title: "Health Records",
     href: "/admin/health-records",
-    icon: any,
+    icon: HeartPulse,
   },
   {
     title: "Feedback",
     href: "/admin/feedback",
-    icon: any,
+    icon: MessageCircle,
   },
   {
     title: "Inventory",
     href: "/admin/inventory",
-    icon: any,
+    icon: Package,
   },
 ];
 

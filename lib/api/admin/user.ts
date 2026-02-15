@@ -5,7 +5,7 @@ export const createUser = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.USER.CREATE,
-            userData,
+            data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data', // for file upload/multer
@@ -31,7 +31,7 @@ export const getAllUsers = async (page: number = 1, limit: number = 10) => {
 
 export const getUserById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.USER.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.USER.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message
@@ -59,7 +59,7 @@ export const updateUser = async (id: any, userData: any) => {
 
 export const deleteUser = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.USER.DELETE(id));
+        const response = await axios.delete(API.ADMIN.USER.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message

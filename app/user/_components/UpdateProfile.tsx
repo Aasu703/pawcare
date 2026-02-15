@@ -25,7 +25,7 @@ export default function UpdateUserForm({
 
     const [error, setError] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [mousePosition, setMousePosition] = useState({ x: any, y: 0 });
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
@@ -85,7 +85,7 @@ export default function UpdateUserForm({
             toast.success("Profile updated successfully.");
             router.refresh();
         } catch (data: any) {
-            setError(error.message || "An unexpected error occurred."); 
+            setError(data.message || "An unexpected error occurred."); 
         }
     };
 

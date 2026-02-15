@@ -6,9 +6,9 @@ import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminMessagesPage() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Message | null>(null);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -24,7 +24,7 @@ export default function AdminMessagesPage() {
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this message?")) return;
     try {
-      await deleteMessage(id);
+      await deleteMessage(data);
       toast.success("Message deleted");
       setSelected(null);
       load();

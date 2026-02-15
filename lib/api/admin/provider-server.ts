@@ -11,7 +11,7 @@ export const getAllProvidersServer = async () => {
         
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
@@ -28,7 +28,7 @@ export const getAllProvidersServer = async () => {
     } catch (err: Error | any) {
         console.error('Get all providers error:', err);
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch providers"
@@ -42,13 +42,13 @@ export const getProviderByIdServer = async (data: any) => {
         
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
         const response = await axios.get(
-            API.ADMIN.PROVIDER.GET_BY_ID(id),
+            API.ADMIN.PROVIDER.GET_BY_ID(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -58,7 +58,7 @@ export const getProviderByIdServer = async (data: any) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to fetch provider"
@@ -72,16 +72,22 @@ export const createProviderServer = async (data: any) => {
         
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
-        // Convert FormData to JSON object
+        // Convert FormData-like or plain object to JSON
         const jsonData: any = {};
-        providerData.forEach((value, key) => {
-            jsonData[key] = value;
-        });
+        if (typeof (data as any).forEach === 'function') {
+            (data as any).forEach((value: any, key: string) => {
+                jsonData[key] = value;
+            });
+        } else if (data && typeof data === 'object') {
+            Object.keys(data).forEach((key) => {
+                jsonData[key] = (data as any)[key];
+            });
+        }
 
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
@@ -96,7 +102,7 @@ export const createProviderServer = async (data: any) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to create provider"
@@ -110,16 +116,21 @@ export const updateProviderServer = async (id: any, providerData: any) => {
         
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
-        // Convert FormData to JSON object
         const jsonData: any = {};
-        providerData.forEach((value, key) => {
-            jsonData[key] = value;
-        });
+        if (typeof (providerData as any).forEach === 'function') {
+            (providerData as any).forEach((value: any, key: string) => {
+                jsonData[key] = value;
+            });
+        } else if (providerData && typeof providerData === 'object') {
+            Object.keys(providerData).forEach((key) => {
+                jsonData[key] = (providerData as any)[key];
+            });
+        }
 
         const response = await axios.put(
             API.ADMIN.PROVIDER.UPDATE(id),
@@ -134,7 +145,7 @@ export const updateProviderServer = async (id: any, providerData: any) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to update provider"
@@ -148,13 +159,13 @@ export const deleteProviderServer = async (data: any) => {
         
         if (!token) {
             return {
-                success: boolean,
+                success: false,
                 message: "No auth token found"
             };
         }
 
         const response = await axios.delete(
-            API.ADMIN.PROVIDER.DELETE(id),
+            API.ADMIN.PROVIDER.DELETE(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -164,7 +175,7 @@ export const deleteProviderServer = async (data: any) => {
         return response.data;
     } catch (err: Error | any) {
         return {
-            success: boolean,
+            success: false,
             message: err.response?.data?.message 
                 || err.message 
                 || "Failed to delete provider"

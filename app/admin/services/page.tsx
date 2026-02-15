@@ -6,7 +6,7 @@ import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -23,7 +23,7 @@ export default function AdminServicesPage() {
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this service?")) return;
     try {
-      await deleteService(id);
+      await deleteService(data);
       toast.success("Service deleted");
       load();
     } catch {

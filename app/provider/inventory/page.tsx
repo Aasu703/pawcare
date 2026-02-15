@@ -18,15 +18,15 @@ function getProviderId(): string {
 }
 
 export default function ProviderInventoryPage() {
-  const [items, setItems] = useState<Inventory[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     product_name: "",
     description: "",
-    quantity: any,
-    price: any,
+    quantity: 0,
+    price: 0,
     category: "",
   });
 
@@ -59,20 +59,20 @@ export default function ProviderInventoryPage() {
   };
 
   const handleEdit = (data: any) => {
-    setEditingId(item._id);
+    setEditingId(data._id);
     setForm({
-      product_name: item.product_name,
-      description: item.description || "",
-      quantity: item.quantity || 0,
-      price: item.price || 0,
-      category: item.category || "",
+      product_name: data.product_name,
+      description: data.description || "",
+      quantity: data.quantity || 0,
+      price: data.price || 0,
+      category: data.category || "",
     });
     setShowForm(true);
   };
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this inventory item?")) return;
-    const res = await deleteInventory(id);
+    const res = await deleteInventory(data);
     if (res.success) {
       toast.success("Item deleted");
       loadItems();
@@ -84,7 +84,7 @@ export default function ProviderInventoryPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ product_name: "", description: "", quantity: any, price: any, category: "" });
+    setForm({ product_name: "", description: "", quantity: 0, price: 0, category: "" });
   };
 
   return (

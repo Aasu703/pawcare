@@ -8,15 +8,15 @@ import { toast } from "sonner";
 
 export default function ProviderServicesPage() {
   const { user } = useAuth();
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: "",
     description: "",
-    price: any,
-    duration_minutes: any,
+    price: 0,
+    duration_minutes: 0,
     catergory: "" as "" | "grooming" | "boarding" | "vet",
   });
 
@@ -55,20 +55,20 @@ export default function ProviderServicesPage() {
   };
 
   const handleEdit = (data: any) => {
-    setEditingId(service._id);
+    setEditingId(data._id);
     setForm({
-      title: service.title ?? "",
-      description: service.description ?? "",
-      price: service.price ?? 0,
-      duration_minutes: service.duration_minutes ?? 30,
-      catergory: service.catergory ?? "",
+      title: data.title ?? "",
+      description: data.description ?? "",
+      price: data.price ?? 0,
+      duration_minutes: data.duration_minutes ?? 30,
+      catergory: data.catergory ?? "",
     });
     setShowForm(true);
   };
 
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this service?")) return;
-    const res = await deleteProviderService(id);
+    const res = await deleteProviderService(data);
     if (res.success) {
       toast.success("Service deleted");
       loadServices();
@@ -80,7 +80,7 @@ export default function ProviderServicesPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ title: "", description: "", price: any, duration_minutes: any, catergory: "" });
+    setForm({ title: "", description: "", price: 0, duration_minutes: 0, catergory: "" });
   };
 
   const serviceList = Array.isArray(services) ? services : [];

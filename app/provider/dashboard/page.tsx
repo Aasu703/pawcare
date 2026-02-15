@@ -25,8 +25,8 @@ export default function ProviderDashboard() {
   const totalRevenue = serviceList.reduce((sum, s) => sum + (s.price || 0), 0);
 
   const stats = [
-    { label: "Total Services", value: serviceList.length, icon: any, color: "bg-blue-500" },
-    { label: "Total Revenue Potential", value: `$${totalRevenue}`, icon: any, color: "bg-green-500" },
+    { label: "Total Services", value: serviceList.length, icon: Wrench, color: "bg-blue-500" },
+    { label: "Total Revenue Potential", value: `$${totalRevenue}`, icon: DollarSign, color: "bg-green-500" },
   ];
 
   return (

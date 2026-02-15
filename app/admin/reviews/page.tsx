@@ -6,7 +6,7 @@ import { Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminReviewsPage() {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -23,7 +23,7 @@ export default function AdminReviewsPage() {
   const handleDelete = async (data: any) => {
     if (!confirm("Delete this review?")) return;
     try {
-      await deleteReview(id);
+      await deleteReview(data);
       toast.success("Review deleted");
       load();
     } catch {

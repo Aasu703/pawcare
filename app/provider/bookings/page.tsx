@@ -13,7 +13,7 @@ const statusConfig: Record<string, { label: string; color: string; bgColor: stri
 };
 
 export default function ProviderBookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [updating, setUpdating] = useState<string | null>(null);
