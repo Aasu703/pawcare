@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getFeedbackByProvider } from "@/lib/api/provider/provider";
-import { Feedback } from "@/lib/types/provider";
 import { MessageCircle } from "lucide-react";
 
 function getProviderId(): string {
@@ -18,7 +17,7 @@ function getProviderId(): string {
 }
 
 export default function ProviderFeedbackPage() {
-  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [feedback, setFeedback] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const providerId = getProviderId();
 
@@ -81,3 +80,4 @@ export default function ProviderFeedbackPage() {
     </div>
   );
 }
+

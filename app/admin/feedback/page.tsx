@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { getAllFeedback, deleteFeedback } from "@/lib/api/admin/feedback";
-import { Feedback } from "@/lib/types/provider";
 import { Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminFeedbackPage() {
-  const [feedback, setFeedback] = useState<Feedback[]>([]);
+  const [feedback, setFeedback] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -95,3 +94,4 @@ export default function AdminFeedbackPage() {
     </div>
   );
 }
+

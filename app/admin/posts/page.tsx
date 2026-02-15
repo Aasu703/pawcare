@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { getAllPosts, deletePost } from "@/lib/api/admin/post";
-import { Post } from "@/lib/types/post";
 import { toast } from "sonner";
 import { FileText, Trash2, Globe, Lock } from "lucide-react";
 
 export default function AdminPostsPage() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -28,9 +27,9 @@ export default function AdminPostsPage() {
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this post?")) return;
-    const res = await deletePost(id);
+    const res = await deletePost(data);
     if (res.success) {
       toast.success("Post deleted");
       fetchPosts();
@@ -124,3 +123,4 @@ export default function AdminPostsPage() {
     </div>
   );
 }
+

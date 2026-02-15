@@ -170,7 +170,7 @@ export default function Page() {
             <div className="relative z-10 w-full max-w-[600px] mx-auto">
               <motion.div
                 animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
                 <Image
                   src="/images/cat.png"
@@ -457,7 +457,7 @@ export default function Page() {
               },
               {
                 title: "Preventive Care Reminders",
-                icon: Clock,
+                icon: Calendar,
                 color: "text-yellow-600",
                 bg: "bg-yellow-50",
                 desc: "Never miss vaccinations, check-ups, or preventive treatments."
@@ -511,7 +511,7 @@ export default function Page() {
             <div className="flex justify-center mb-6">
               <motion.div
                 animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
+                transition={{ duration: 3, repeat: Infinity }}
                 className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-md border border-white/30"
               >
                 <Heart className="text-white w-10 h-10 fill-white/50" />
@@ -650,3 +650,4 @@ export default function Page() {
     </main>
   );
 }
+

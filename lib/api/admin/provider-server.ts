@@ -36,7 +36,7 @@ export const getAllProvidersServer = async () => {
     }
 };
 
-export const getProviderByIdServer = async (id: string) => {
+export const getProviderByIdServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -48,7 +48,7 @@ export const getProviderByIdServer = async (id: string) => {
         }
 
         const response = await axios.get(
-            API.ADMIN.PROVIDER.GET_BY_ID(id),
+            API.ADMIN.PROVIDER.GET_BY_ID(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -66,7 +66,7 @@ export const getProviderByIdServer = async (id: string) => {
     }
 };
 
-export const createProviderServer = async (providerData: FormData) => {
+export const createProviderServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -77,11 +77,17 @@ export const createProviderServer = async (providerData: FormData) => {
             };
         }
 
-        // Convert FormData to JSON object
+        // Convert FormData-like or plain object to JSON
         const jsonData: any = {};
-        providerData.forEach((value, key) => {
-            jsonData[key] = value;
-        });
+        if (typeof (data as any).forEach === 'function') {
+            (data as any).forEach((value: any, key: string) => {
+                jsonData[key] = value;
+            });
+        } else if (data && typeof data === 'object') {
+            Object.keys(data).forEach((key) => {
+                jsonData[key] = (data as any)[key];
+            });
+        }
 
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
@@ -104,7 +110,7 @@ export const createProviderServer = async (providerData: FormData) => {
     }
 };
 
-export const updateProviderServer = async (id: string, providerData: FormData) => {
+export const updateProviderServer = async (id: any, providerData: any) => {
     try {
         const token = await getAuthToken();
         
@@ -115,11 +121,16 @@ export const updateProviderServer = async (id: string, providerData: FormData) =
             };
         }
 
-        // Convert FormData to JSON object
         const jsonData: any = {};
-        providerData.forEach((value, key) => {
-            jsonData[key] = value;
-        });
+        if (typeof (providerData as any).forEach === 'function') {
+            (providerData as any).forEach((value: any, key: string) => {
+                jsonData[key] = value;
+            });
+        } else if (providerData && typeof providerData === 'object') {
+            Object.keys(providerData).forEach((key) => {
+                jsonData[key] = (providerData as any)[key];
+            });
+        }
 
         const response = await axios.put(
             API.ADMIN.PROVIDER.UPDATE(id),
@@ -142,7 +153,7 @@ export const updateProviderServer = async (id: string, providerData: FormData) =
     }
 };
 
-export const deleteProviderServer = async (id: string) => {
+export const deleteProviderServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -154,7 +165,7 @@ export const deleteProviderServer = async (id: string) => {
         }
 
         const response = await axios.delete(
-            API.ADMIN.PROVIDER.DELETE(id),
+            API.ADMIN.PROVIDER.DELETE(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -171,3 +182,5 @@ export const deleteProviderServer = async (id: string) => {
         };
     }
 };
+
+

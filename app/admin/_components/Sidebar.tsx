@@ -50,7 +50,7 @@ const sidebarItems = [
   {
     title: "Services",
     href: "/admin/services",
-    icon: Store,
+    icon: HeartPulse,
   },
   {
     title: "Orders",
@@ -146,3 +146,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

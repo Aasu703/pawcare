@@ -8,11 +8,11 @@ interface AppointmentData {
 }
 
 interface WeeklyAppointmentsChartProps {
-  data?: AppointmentData[];
+  data?: any[];
   isLoading?: boolean;
 }
 
-const defaultData: AppointmentData[] = [
+const defaultData: any[] = [
   { day: "Mon", count: 18 },
   { day: "Tue", count: 24 },
   { day: "Wed", count: 15 },
@@ -25,7 +25,7 @@ const defaultData: AppointmentData[] = [
 export default function WeeklyAppointmentsChart({
   data = defaultData,
   isLoading = false,
-}: WeeklyAppointmentsChartProps) {
+}: any) {
   if (isLoading) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -74,3 +74,4 @@ export default function WeeklyAppointmentsChart({
     </div>
   );
 }
+

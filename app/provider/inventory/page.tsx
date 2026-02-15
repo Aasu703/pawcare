@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getInventoryByProvider, createInventory, updateInventory, deleteInventory } from "@/lib/api/provider/provider";
-import { Inventory } from "@/lib/types/provider";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,7 +18,7 @@ function getProviderId(): string {
 }
 
 export default function ProviderInventoryPage() {
-  const [items, setItems] = useState<Inventory[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -59,21 +58,21 @@ export default function ProviderInventoryPage() {
     }
   };
 
-  const handleEdit = (item: Inventory) => {
-    setEditingId(item._id);
+  const handleEdit = (data: any) => {
+    setEditingId(data._id);
     setForm({
-      product_name: item.product_name,
-      description: item.description || "",
-      quantity: item.quantity || 0,
-      price: item.price || 0,
-      category: item.category || "",
+      product_name: data.product_name,
+      description: data.description || "",
+      quantity: data.quantity || 0,
+      price: data.price || 0,
+      category: data.category || "",
     });
     setShowForm(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this inventory item?")) return;
-    const res = await deleteInventory(id);
+    const res = await deleteInventory(data);
     if (res.success) {
       toast.success("Item deleted");
       loadItems();
@@ -186,3 +185,4 @@ export default function ProviderInventoryPage() {
     </div>
   );
 }
+

@@ -47,10 +47,10 @@ export default function AdminDashboardPage() {
       toast.error("Failed to load dashboard data");
       // Set mock data as fallback
       setStats({
-        totalPets: 1284,
-        activeOwners: 892,
-        appointmentsToday: 24,
-        monthlyRevenue: 48532,
+        totalPets: 0,
+        activeOwners: 0,
+        appointmentsToday: 0,
+        monthlyRevenue: 0,
         weeklyAppointments: [
           { day: "Mon", count: 18 },
           { day: "Tue", count: 24 },
@@ -232,4 +232,5 @@ export default function AdminDashboardPage() {
     </motion.div>
   );
 }
+
 

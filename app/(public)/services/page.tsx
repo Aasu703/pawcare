@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Service } from "@/lib/types/service";
 import { Search, Clock, DollarSign, Stethoscope, Scissors, Home, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
 export default function PublicServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -32,7 +31,7 @@ export default function PublicServicesPage() {
     return matchesSearch && matchesCategory;
   });
 
-  const getCategoryIcon = (category: string) => {
+  const getCategoryIcon = (data: any) => {
     switch (category) {
       case "grooming": return Scissors;
       case "boarding": return Home;
@@ -132,7 +131,7 @@ export default function PublicServicesPage() {
                 <motion.button
                   key={cat.key}
                   initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  animate={{ opacity: 0, scale: 1 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setCategory(cat.key)}
@@ -176,7 +175,7 @@ export default function PublicServicesPage() {
                   <motion.div
                     key={service._id}
                     initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    animate={{ opacity: 0, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     whileHover={{ y: -8 }}
                     className="bg-white rounded-2xl shadow-sm border border-border overflow-hidden hover:shadow-xl transition-all duration-300"
@@ -242,7 +241,7 @@ export default function PublicServicesPage() {
         <div className="max-w-4xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 0, y: 0 }}
             viewport={{ once: true }}
             className="text-center text-white"
           >
@@ -332,3 +331,4 @@ export default function PublicServicesPage() {
     </main>
   );
 }
+

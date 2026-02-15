@@ -36,7 +36,7 @@ export const getAllUsersServer = async (page: number = 1, limit: number = 10) =>
     }
 };
 
-export const getUserByIdServer = async (id: string) => {
+export const getUserByIdServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -48,7 +48,7 @@ export const getUserByIdServer = async (id: string) => {
         }
 
         const response = await axios.get(
-            API.ADMIN.USER.GET_BY_ID(id),
+            API.ADMIN.USER.GET_BY_ID(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -66,7 +66,7 @@ export const getUserByIdServer = async (id: string) => {
     }
 };
 
-export const createUserServer = async (userData: FormData) => {
+export const createUserServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -78,14 +78,16 @@ export const createUserServer = async (userData: FormData) => {
         }
 
         // Check if FormData contains a file
-        const hasFile = Array.from(userData.values()).some(value => value instanceof File && value.size > 0);
+        const hasFile = data && typeof (data as any).values === 'function'
+            ? Array.from((data as any).values()).some((value: any) => value instanceof File && value.size > 0)
+            : false;
 
         let response;
         if (hasFile) {
             // Send as FormData if there's a file
             response = await axios.post(
                 API.ADMIN.USER.CREATE,
-                userData,
+                data,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -96,11 +98,18 @@ export const createUserServer = async (userData: FormData) => {
         } else {
             // Convert FormData to JSON object if no file
             const jsonData: any = {};
-            userData.forEach((value, key) => {
-                if (!(value instanceof File)) {
-                    jsonData[key] = value;
-                }
-            });
+            if (typeof (data as any).forEach === 'function') {
+                (data as any).forEach((value: any, key: string) => {
+                    if (!(value instanceof File)) {
+                        jsonData[key] = value;
+                    }
+                });
+            } else if (data && typeof data === 'object') {
+                Object.keys(data).forEach((key) => {
+                    const value = (data as any)[key];
+                    if (!(value instanceof File)) jsonData[key] = value;
+                });
+            }
 
             response = await axios.post(
                 API.ADMIN.USER.CREATE,
@@ -125,7 +134,7 @@ export const createUserServer = async (userData: FormData) => {
     }
 };
 
-export const updateUserServer = async (id: string, userData: FormData) => {
+export const updateUserServer = async (id: any, userData: any) => {
     try {
         const token = await getAuthToken();
         
@@ -137,7 +146,9 @@ export const updateUserServer = async (id: string, userData: FormData) => {
         }
 
         // Check if FormData contains a file
-        const hasFile = Array.from(userData.values()).some(value => value instanceof File && value.size > 0);
+        const hasFile = userData && typeof (userData as any).values === 'function'
+            ? Array.from((userData as any).values()).some((value: any) => value instanceof File && value.size > 0)
+            : false;
 
         let response;
         if (hasFile) {
@@ -154,11 +165,16 @@ export const updateUserServer = async (id: string, userData: FormData) => {
         } else {
             // Convert FormData to JSON object if no file
             const jsonData: any = {};
-            userData.forEach((value, key) => {
-                if (!(value instanceof File)) {
-                    jsonData[key] = value;
-                }
-            });
+            if (typeof (userData as any).forEach === 'function') {
+                (userData as any).forEach((value: any, key: string) => {
+                    if (!(value instanceof File)) jsonData[key] = value;
+                });
+            } else if (userData && typeof userData === 'object') {
+                Object.keys(userData).forEach((key) => {
+                    const value = (userData as any)[key];
+                    if (!(value instanceof File)) jsonData[key] = value;
+                });
+            }
 
             response = await axios.put(
                 API.ADMIN.USER.UPDATE(id),
@@ -183,7 +199,7 @@ export const updateUserServer = async (id: string, userData: FormData) => {
     }
 };
 
-export const deleteUserServer = async (id: string) => {
+export const deleteUserServer = async (data: any) => {
     try {
         const token = await getAuthToken();
         
@@ -195,7 +211,7 @@ export const deleteUserServer = async (id: string) => {
         }
 
         const response = await axios.delete(
-            API.ADMIN.USER.DELETE(id),
+            API.ADMIN.USER.DELETE(data),
             {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -212,3 +228,5 @@ export const deleteUserServer = async (id: string) => {
         };
     }
 };
+
+

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
-import { OrderItem } from "@/lib/types/order";
 import { toast } from "sonner";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +10,7 @@ import Link from "next/link";
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [items, setItems] = useState<OrderItem[]>([]);
+  const [items, setItems] = useState<any[]>([]);
   const [shippingAddress, setShippingAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
@@ -138,3 +137,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

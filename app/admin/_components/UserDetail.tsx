@@ -21,7 +21,7 @@ interface UserDetailProps {
   userId: string;
 }
 
-export default function UserDetail({ userId }: UserDetailProps) {
+export default function UserDetail({ userId }: any) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 

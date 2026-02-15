@@ -48,7 +48,7 @@ export default function AddPetForm() {
         }
     };
 
-    const onSubmit = async (data: AddPetData) => {
+    const onSubmit = async (data: any) => {
         setError(null);
         try {
             const formData = {
@@ -68,8 +68,8 @@ export default function AddPetForm() {
 
             toast.success("Pet added successfully!");
             router.push("/user/pet");
-        } catch (error: any) {
-            setError(error.message || "An unexpected error occurred.");
+        } catch (data: any) {
+            setError(data.message || "An unexpected error occurred.");
         }
     };
 

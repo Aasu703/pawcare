@@ -200,7 +200,7 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               {
-                icon: Shield,
+                icon: Microscope,
                 title: "Clinical Accuracy",
                 desc: "Every feature is validated by veterinary professionals and backed by scientific evidence."
               },
@@ -402,3 +402,4 @@ export default function AboutPage() {
     </main>
   );
 }
+

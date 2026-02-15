@@ -87,6 +87,8 @@ export const handleUpdatePet = async (id: string, data: FormData) => {
     }
 };
 
+
+
 export const handleDeletePet = async (id: string) => {
     try {
         const response = await deletePetServer(id);
@@ -106,3 +108,4 @@ export const handleDeletePet = async (id: string) => {
         };
     }
 };
+

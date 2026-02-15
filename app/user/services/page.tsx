@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Service } from "@/lib/types/service";
 import { Search, Clock, DollarSign, Tag, Calendar, ChevronRight, Star, Activity, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [filtered, setFiltered] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
+  const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
@@ -185,3 +184,4 @@ export default function ServicesPage() {
     </div>
   );
 }
+

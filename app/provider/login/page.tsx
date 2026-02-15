@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { providerLogin } from "@/lib/api/provider/provider";
 import { useAuth } from "@/context/AuthContext";
 
 export default function ProviderLoginPage() {
-  const router = useRouter();
   const { checkAuth } = useAuth();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
@@ -25,7 +23,9 @@ export default function ProviderLoginPage() {
         document.cookie = `auth_token=${res.token}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
       }
       if (res.data) {
-        document.cookie = `user_data=${encodeURIComponent(JSON.stringify({ ...res.data, role: "provider" }))}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
+        const providerUser = { ...res.data, role: "provider" };
+        document.cookie = `user_data=${encodeURIComponent(JSON.stringify(providerUser))}; path=/; max-age=${60 * 60 * 24 * 30}; samesite=lax`;
+        await checkAuth(providerUser);
       }
       window.location.href = "/provider/dashboard";
     } else {
@@ -88,4 +88,5 @@ export default function ProviderLoginPage() {
     </div>
   );
 }
+
 

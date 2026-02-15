@@ -1,77 +1,77 @@
 import axios from "../axios";
 import { API } from "../endpoints";
-import { HealthRecord, CreateHealthRecordRequest, UpdateHealthRecordRequest, Attachment, CreateAttachmentRequest, UpdateAttachmentRequest } from "@/lib/types/health-record";
-
 // Health Records
-export async function createHealthRecord(data: CreateHealthRecordRequest): Promise<{ success: boolean; message: string; data?: HealthRecord }> {
+export async function createHealthRecord(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.post(API.HEALTH_RECORD.CREATE, data);
     return { success: true, message: response.data.message || "Health record created", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to create health record" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to create health record" };
   }
 }
 
-export async function getHealthRecordsByPet(petId: string): Promise<{ success: boolean; message: string; data?: HealthRecord[] }> {
+export async function getHealthRecordsByPet(data: any): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
-    const response = await axios.get(API.HEALTH_RECORD.GET_BY_PET(petId));
+    const response = await axios.get(API.HEALTH_RECORD.GET_BY_PET(data));
     return { success: true, message: "Health records fetched", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch health records" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch health records" };
   }
 }
 
-export async function getHealthRecordById(id: string): Promise<{ success: boolean; message: string; data?: HealthRecord }> {
+export async function getHealthRecordById(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
-    const response = await axios.get(API.HEALTH_RECORD.GET_BY_ID(id));
+    const response = await axios.get(API.HEALTH_RECORD.GET_BY_ID(data));
     return { success: true, message: "Health record fetched", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch health record" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch health record" };
   }
 }
 
-export async function updateHealthRecord(id: string, data: UpdateHealthRecordRequest): Promise<{ success: boolean; message: string; data?: HealthRecord }> {
+export async function updateHealthRecord(id: any, data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.put(API.HEALTH_RECORD.UPDATE(id), data);
     return { success: true, message: response.data.message || "Health record updated", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to update health record" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to update health record" };
   }
 }
 
-export async function deleteHealthRecord(id: string): Promise<{ success: boolean; message: string }> {
+export async function deleteHealthRecord(data: any): Promise<{ success: boolean; message: string }> {
   try {
-    const response = await axios.delete(API.HEALTH_RECORD.DELETE(id));
+    const response = await axios.delete(API.HEALTH_RECORD.DELETE(data));
     return { success: true, message: response.data.message || "Health record deleted" };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to delete health record" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to delete health record" };
   }
 }
 
 // Attachments
-export async function createAttachment(data: CreateAttachmentRequest): Promise<{ success: boolean; message: string; data?: Attachment }> {
+export async function createAttachment(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.post(API.ATTACHMENT.CREATE, data);
     return { success: true, message: response.data.message || "Attachment created", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to create attachment" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to create attachment" };
   }
 }
 
-export async function getAttachmentsByHealthRecord(healthRecordId: string): Promise<{ success: boolean; message: string; data?: Attachment[] }> {
+export async function getAttachmentsByHealthRecord(data: any): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
-    const response = await axios.get(API.ATTACHMENT.GET_BY_HEALTH_RECORD(healthRecordId));
+    const response = await axios.get(API.ATTACHMENT.GET_BY_HEALTH_RECORD(data));
     return { success: true, message: "Attachments fetched", data: response.data.data };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch attachments" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch attachments" };
   }
 }
 
-export async function deleteAttachment(id: string): Promise<{ success: boolean; message: string }> {
+export async function deleteAttachment(data: any): Promise<{ success: boolean; message: string }> {
   try {
-    const response = await axios.delete(API.ATTACHMENT.DELETE(id));
+    const response = await axios.delete(API.ATTACHMENT.DELETE(data));
     return { success: true, message: response.data.message || "Attachment deleted" };
-  } catch (error: any) {
-    return { success: false, message: error.response?.data?.message || error.message || "Failed to delete attachment" };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to delete attachment" };
   }
 }
+
+

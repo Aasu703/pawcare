@@ -8,7 +8,6 @@ import { handleLogin, handleProviderLogin } from '@/lib/actions/auth-actions';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { PawPrint, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
-import CursorAnimation from './CursorAnimation';
 
 export default function LoginForm() {
   const { checkAuth, isAuthenticated, user } = useAuth();
@@ -51,13 +50,20 @@ export default function LoginForm() {
       console.log('🔐 Login response:', response);
 
       if (response.success) {
-        console.log('✅ Login successful, user role:', response.data?.role);
+        const userData = response.data?.user ?? response.data ?? null;
+        console.log('✅ Login successful, user role:', userData?.role);
+
+        if (!userData) {
+          setErrors({ email: 'Login succeeded but user data missing' });
+          setLoading(false);
+          return;
+        }
 
         // Update auth context with user data
-        await checkAuth(response.data);
+        await checkAuth(userData);
 
         // Hard redirect — ensures cookies are sent to server and middleware handles routing
-        const redirectPath = response.data.role === 'admin' ? '/admin' : response.data.role === 'provider' ? '/provider/dashboard' : '/user/home';
+        const redirectPath = userData.role === 'admin' ? '/admin' : userData.role === 'provider' ? '/provider/dashboard' : '/user/home';
         window.location.href = redirectPath;
         return; // Stop further execution
       } else {
@@ -76,7 +82,6 @@ export default function LoginForm() {
 
   return (
     <>
-      <CursorAnimation />
       <div className="w-full bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -193,3 +198,4 @@ export default function LoginForm() {
     </>
   );
 }
+

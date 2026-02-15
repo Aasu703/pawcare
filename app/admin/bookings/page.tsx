@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllBookings, updateBooking, deleteBooking } from "@/lib/api/admin/booking";
-import { Booking } from "@/lib/types/booking";
 import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,9 +13,9 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminBookingsPage() {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Booking | null>(null);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -24,12 +23,12 @@ export default function AdminBookingsPage() {
     setLoading(true);
     try {
       const res = await getAllBookings(1, 100);
-      setBookings(res.data || res.bookings || []);
+      setBookings(res.data?.bookings || res.data || res.bookings || []);
     } catch { /* empty */ }
     setLoading(false);
   };
 
-  const handleStatusChange = async (id: string, status: string) => {
+  const handleStatusChange = async (id: any, status: any) => {
     try {
       await updateBooking(id, { status });
       toast.success("Booking status updated");
@@ -126,3 +125,4 @@ export default function AdminBookingsPage() {
     </div>
   );
 }
+
