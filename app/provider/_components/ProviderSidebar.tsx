@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText } from "lucide-react";
+import { handleLogout } from "@/lib/actions/auth-actions";
 
 const navItems = [
   { label: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
@@ -16,11 +18,20 @@ const navItems = [
 
 export default function ProviderSidebar() {
   const pathname = usePathname();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "user_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "/provider/login";
+  const onLogout = async () => {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    try {
+      await handleLogout();
+    } catch (_) {
+    } finally {
+      document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "user_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      window.location.href = "/provider/login";
+    }
   };
 
   return (
@@ -55,13 +66,15 @@ export default function ProviderSidebar() {
 
       <div className="px-3 py-4 border-t border-[#f8d548]/20">
         <button
-          onClick={handleLogout}
+          onClick={onLogout}
+          disabled={isLoggingOut}
           className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"
         >
           <LogOut className="h-5 w-5" />
-          Logout
+          {isLoggingOut ? "Logging out..." : "Logout"}
         </button>
       </div>
     </aside>
   );
 }
+

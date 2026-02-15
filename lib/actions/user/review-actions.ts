@@ -1,10 +1,9 @@
 "use server";
 
 import { createReview, getMyReviews, getReviewById, updateReview, deleteReview } from "@/lib/api/user/review";
-import { CreateReviewRequest, UpdateReviewRequest } from "@/lib/types/review";
 import { revalidatePath } from "next/cache";
 
-export async function handleCreateReview(data: CreateReviewRequest) {
+export async function handleCreateReview(data: any) {
   try {
     const response = await createReview(data);
     if (response.success) {
@@ -37,7 +36,7 @@ export async function handleGetReviewById(id: string) {
   }
 }
 
-export async function handleUpdateReview(id: string, data: UpdateReviewRequest) {
+export async function handleUpdateReview(id: string, data: any) {
   try {
     const response = await updateReview(id, data);
     if (response.success) {
@@ -62,3 +61,4 @@ export async function handleDeleteReview(id: string) {
     return { success: false, message: error.message };
   }
 }
+

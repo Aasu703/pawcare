@@ -1,11 +1,11 @@
 import { API } from "../endpoints";
 import axios from "../axios";
 
-export const createProvider = async (providerData: any) => {
+export const createProvider = async (data: any) => {
     try {
         const response = await axios.post(
             API.ADMIN.PROVIDER.CREATE,
-            providerData,
+            data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
@@ -29,9 +29,9 @@ export const getAllProviders = async () => {
     }
 }
 
-export const getProviderById = async (id: string) => {
+export const getProviderById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.PROVIDER.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.PROVIDER.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message
@@ -39,7 +39,7 @@ export const getProviderById = async (id: string) => {
     }
 }
 
-export const updateProvider = async (id: string, providerData: any) => {
+export const updateProvider = async (id: any, providerData: any) => {
     try {
         const response = await axios.put(
             API.ADMIN.PROVIDER.UPDATE(id),
@@ -52,12 +52,14 @@ export const updateProvider = async (id: string, providerData: any) => {
     }
 }
 
-export const deleteProvider = async (id: string) => {
+export const deleteProvider = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.PROVIDER.DELETE(id));
+        const response = await axios.delete(API.ADMIN.PROVIDER.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message
             || error.message || 'Failed to delete provider');
     }
 }
+
+

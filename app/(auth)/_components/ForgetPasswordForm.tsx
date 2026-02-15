@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ForgotPasswordData, forgotPasswordSchema } from '../schema';
 import { handleForgotPassword } from '@/lib/actions/auth-actions';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -19,23 +19,23 @@ const ForgetPasswordForm = () => {
     const [emailSent, setEmailSent] = useState(false);
     const [error, setErrorState] = useState<string | null>(null);
     const email = watch('email', '');
-    const onSubmit = async (values: ForgotPasswordData) => {
-        setErrorState(null);
-        setLoading(true);
-        try {
-                const response = await handleForgotPassword(values.email);
-                if(response.success){
-                    toast.success('Password reset email sent! Check your inbox.');
-                    return router.push('/login');
-                }else{
-                    setErrorState(response.message || 'Failed to send password reset email');
-                }
-            } catch (error) {
-                setErrorState('An unexpected error occurred. Please try again.');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const onSubmit = async (data: any) => {
+      setErrorState(null);
+      setLoading(true);
+      try {
+        const response = await handleForgotPassword(data.email);
+        if (response.success) {
+          setEmailSent(true);
+          toast.success('Password reset link sent — check your Gmail.');
+        } else {
+          setErrorState(response.message || 'Failed to send password reset email');
+        }
+      } catch (error) {
+        setErrorState('An unexpected error occurred. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
         if (emailSent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -140,3 +140,4 @@ const ForgetPasswordForm = () => {
   );
 };
 export default ForgetPasswordForm;
+

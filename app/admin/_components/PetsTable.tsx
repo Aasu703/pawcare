@@ -52,16 +52,16 @@ export default function PetsTable() {
     setModalOpen(true);
   };
 
-  const handleEdit = (pet: Pet) => {
-    setSelectedPet(pet);
+  const handleEdit = (data: any) => {
+    setSelectedPet(data);
     setModalMode("edit");
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Are you sure you want to delete this pet?")) return;
 
-    const result = await handleDeletePet(id);
+    const result = await handleDeletePet(data);
     if (result.success) {
       toast.success(result.message);
       fetchPets();
@@ -70,7 +70,7 @@ export default function PetsTable() {
     }
   };
 
-  const handleSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: any) => {
     let result;
     if (modalMode === "create") {
       result = await handleCreatePet(data);
@@ -212,4 +212,5 @@ export default function PetsTable() {
     </div>
   );
 }
+
 

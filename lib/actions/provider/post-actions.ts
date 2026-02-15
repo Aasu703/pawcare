@@ -1,10 +1,9 @@
 "use server";
 
 import { createProviderPost, getMyProviderPosts, updateProviderPost, deleteProviderPost } from "@/lib/api/provider/post";
-import { CreatePostRequest, UpdatePostRequest } from "@/lib/types/post";
 import { revalidatePath } from "next/cache";
 
-export async function handleCreateProviderPost(data: CreatePostRequest) {
+export async function handleCreateProviderPost(data: any) {
   try {
     const result = await createProviderPost(data);
     if (result.success) revalidatePath("/provider/posts");
@@ -22,7 +21,7 @@ export async function handleGetMyProviderPosts() {
   }
 }
 
-export async function handleUpdateProviderPost(id: string, data: UpdatePostRequest) {
+export async function handleUpdateProviderPost(id: string, data: any) {
   try {
     const result = await updateProviderPost(id, data);
     if (result.success) revalidatePath("/provider/posts");
@@ -41,3 +40,4 @@ export async function handleDeleteProviderPost(id: string) {
     return { success: false, message: error.message || "Failed to delete post" };
   }
 }
+

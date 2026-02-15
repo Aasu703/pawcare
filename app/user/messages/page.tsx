@@ -1,25 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getMyMessages, createMessage, deleteMessage } from "@/lib/api/user/message";
-import { Message } from "@/lib/types/message";
+import { getAllMessages, createMessage, deleteMessage } from "@/lib/api/user/message";
 import { MessageSquare, Send, Trash2, UserCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
 export default function MessagesPage() {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
+  const currentUserId = user?._id || user?.id || "";
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || "http://localhost:5050";
 
   useEffect(() => { loadMessages(); }, []);
 
   const loadMessages = async () => {
     setLoading(true);
-    const res = await getMyMessages();
-    if (res.success && res.data) setMessages(res.data);
+    const res = await getAllMessages(1, 100);
+    if (res.success && res.data) {
+      setMessages(res.data.messages || []);
+    } else {
+      toast.error(res.message);
+    }
     setLoading(false);
   };
 
@@ -38,9 +43,9 @@ export default function MessagesPage() {
     setSending(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this message?")) return;
-    const res = await deleteMessage(id);
+    const res = await deleteMessage(data);
     if (res.success) {
       toast.success("Message deleted");
       loadMessages();
@@ -52,20 +57,20 @@ export default function MessagesPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
-        <p className="text-gray-500 mt-1">Send and manage your messages</p>
+        <h1 className="text-3xl font-bold text-gray-900">Community Blogs</h1>
+        <p className="text-gray-500 mt-1">Write a blog and see updates from all users</p>
       </div>
 
       {/* Compose */}
       <form onSubmit={handleSend} className="bg-white rounded-xl border border-gray-200 p-5 mb-8">
-        <label className="block text-sm font-medium text-gray-700 mb-2">New Message</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Write Blog</label>
         <div className="flex gap-3">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={2}
             className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none"
-            placeholder="Type your message..."
+            placeholder="Share your thoughts..."
           />
           <button
             type="submit"
@@ -90,12 +95,14 @@ export default function MessagesPage() {
       ) : (
         <div className="space-y-3">
           {messages.map((msg) => {
-            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
-            const rawImageUrl =
-              user?.imageUrl || user?.image || user?.avatar || user?.profileImage || user?.profileImageUrl || "";
+            const author = typeof msg.userId === "object" ? msg.userId : null;
+            const authorId = typeof msg.userId === "string" ? msg.userId : author?._id || author?.id || (msg.userId as any)?.toString?.() || "";
+            const isOwnMessage = Boolean(currentUserId && authorId && currentUserId === authorId);
+            const rawImageUrl = author?.imageUrl || (isOwnMessage ? (user?.imageUrl || user?.image || user?.avatar || user?.profileImage || user?.profileImageUrl || "") : "");
             const imageSrc = rawImageUrl ? (rawImageUrl.startsWith("http") ? rawImageUrl : `${baseUrl}${rawImageUrl}`) : "";
-
-            const displayName = user?.Firstname || user?.firstName || user?.name || user?.email || "User";
+            const displayName = author
+              ? `${author.Firstname || ""} ${author.Lastname || ""}`.trim() || author.email || "User"
+              : (isOwnMessage ? (user?.Firstname || user?.firstName || user?.name || user?.email || "You") : "User");
 
             return (
               <div key={msg._id} className="bg-white rounded-xl border border-gray-200 p-5 flex items-start justify-between group">
@@ -119,12 +126,14 @@ export default function MessagesPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleDelete(msg._id)}
-                  className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 ml-4"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                {isOwnMessage && (
+                  <button
+                    onClick={() => handleDelete(msg._id)}
+                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 ml-4"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                )}
               </div>
             );
           })}
@@ -133,3 +142,4 @@ export default function MessagesPage() {
     </div>
   );
 }
+

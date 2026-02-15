@@ -8,11 +8,11 @@ interface RevenueData {
 }
 
 interface RevenueTrendChartProps {
-  data?: RevenueData[];
+  data?: any[];
   isLoading?: boolean;
 }
 
-const defaultData: RevenueData[] = [
+const defaultData: any[] = [
   { month: "Jan", revenue: 32000 },
   { month: "Feb", revenue: 35000 },
   { month: "Mar", revenue: 38000 },
@@ -24,7 +24,7 @@ const defaultData: RevenueData[] = [
 export default function RevenueTrendChart({
   data = defaultData,
   isLoading = false,
-}: RevenueTrendChartProps) {
+}: any) {
   if (isLoading) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -77,3 +77,4 @@ export default function RevenueTrendChart({
     </div>
   );
 }
+

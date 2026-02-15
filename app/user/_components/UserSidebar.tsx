@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
-import { Home, PawPrint, Calendar, Star, MessageSquare, User, LogOut, Heart, ShoppingCart, FileText } from "lucide-react";
+import { Home, PawPrint, Calendar, Star, MessageSquare, User, LogOut, Heart, ShoppingCart, FileText, Megaphone } from "lucide-react";
 
 const navItems = [
   { label: "Home", href: "/user/home", icon: Home },
@@ -14,6 +14,7 @@ const navItems = [
   { label: "Bookings", href: "/user/bookings", icon: Calendar },
   { label: "Orders", href: "/user/orders", icon: FileText },
   { label: "Reviews", href: "/user/reviews", icon: Star },
+  { label: "Posts", href: "/user/posts", icon: Megaphone },
   { label: "Messages", href: "/user/messages", icon: MessageSquare },
   { label: "Profile", href: "/user/profile", icon: User },
 ];
@@ -73,3 +74,4 @@ export default function UserSidebar() {
     </aside>
   );
 }
+

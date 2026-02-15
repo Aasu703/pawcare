@@ -10,20 +10,22 @@ export const getAllHealthRecords = async (page: number = 1, limit: number = 10) 
     }
 };
 
-export const getHealthRecordById = async (id: string) => {
+export const getHealthRecordById = async (data: any) => {
     try {
-        const response = await axios.get(API.ADMIN.HEALTH_RECORD.GET_BY_ID(id));
+        const response = await axios.get(API.ADMIN.HEALTH_RECORD.GET_BY_ID(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to fetch health record');
     }
 };
 
-export const deleteHealthRecord = async (id: string) => {
+export const deleteHealthRecord = async (data: any) => {
     try {
-        const response = await axios.delete(API.ADMIN.HEALTH_RECORD.DELETE(id));
+        const response = await axios.delete(API.ADMIN.HEALTH_RECORD.DELETE(data));
         return response.data;
     } catch (error: Error | any) {
         throw new Error(error.response?.data?.message || error.message || 'Failed to delete health record');
     }
 };
+
+

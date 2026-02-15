@@ -1,10 +1,9 @@
 "use server";
 
 import { createMessage, getMyMessages, getMessageById, updateMessage, deleteMessage } from "@/lib/api/user/message";
-import { CreateMessageRequest, UpdateMessageRequest } from "@/lib/types/message";
 import { revalidatePath } from "next/cache";
 
-export async function handleCreateMessage(data: CreateMessageRequest) {
+export async function handleCreateMessage(data: any) {
   try {
     const response = await createMessage(data);
     if (response.success) {
@@ -37,7 +36,7 @@ export async function handleGetMessageById(id: string) {
   }
 }
 
-export async function handleUpdateMessage(id: string, data: UpdateMessageRequest) {
+export async function handleUpdateMessage(id: string, data: any) {
   try {
     const response = await updateMessage(id, data);
     if (response.success) {
@@ -62,3 +61,4 @@ export async function handleDeleteMessage(id: string) {
     return { success: false, message: error.message };
   }
 }
+

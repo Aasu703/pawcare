@@ -48,16 +48,16 @@ export default function PetListPage() {
     }
   };
 
-  const handleDeletePet = async (petId: string) => {
+  const handleDeletePet = async (data: any) => {
     if (!confirm('Are you sure you want to delete this pet?')) {
       return;
     }
 
     try {
-      const response = await deleteUserPet(petId);
+      const response = await deleteUserPet(data);
 
       if (response.success) {
-        setPets(pets.filter(pet => pet._id !== petId));
+        setPets(pets.filter(pet => pet._id !== data));
       } else {
         alert(response.message || 'Failed to delete pet');
       }
@@ -104,7 +104,7 @@ export default function PetListPage() {
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
           className="absolute w-96 h-96 bg-green-300/20 rounded-full blur-3xl top-20 left-10"
         />
         <motion.div

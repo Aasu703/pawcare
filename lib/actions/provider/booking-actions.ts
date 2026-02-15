@@ -20,3 +20,4 @@ export async function handleUpdateBookingStatus(id: string, status: string) {
     return { success: false, message: error.message || "Failed to update booking status" };
   }
 }
+

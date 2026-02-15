@@ -7,7 +7,6 @@ import { handleRegister, handleProviderRegister } from '@/lib/actions/auth-actio
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { User, Mail, Lock, Phone, Building, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
-import CursorAnimation from './CursorAnimation';
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -121,7 +120,6 @@ export default function RegisterForm() {
 
   return (
     <>
-      <CursorAnimation />
       <div className="w-full bg-white/80 p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -475,3 +473,4 @@ export default function RegisterForm() {
     </>
   );
 }
+

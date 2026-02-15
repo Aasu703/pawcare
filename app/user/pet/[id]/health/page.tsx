@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getUserPetById } from "@/lib/api/user/pet";
 import { getHealthRecordsByPet, createHealthRecord, updateHealthRecord, deleteHealthRecord } from "@/lib/api/user/health-record";
-import { Pet } from "@/lib/types/pet";
-import { HealthRecord } from "@/lib/types/health-record";
 import { ArrowLeft, Plus, FileText, Calendar, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -15,8 +13,8 @@ export default function PetHealthPage() {
   const petId = params.id as string;
   const router = useRouter();
 
-  const [pet, setPet] = useState<Pet | null>(null);
-  const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [pet, setPet] = useState<any>(null);
+  const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -58,7 +56,7 @@ export default function PetHealthPage() {
     }
   };
 
-  const handleEdit = (record: HealthRecord) => {
+  const handleEdit = (record: any) => {
     setEditingId(record._id);
     setForm({
       recordType: record.recordType || "",

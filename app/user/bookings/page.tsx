@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getBookingsByUser, deleteBooking } from "@/lib/api/user/booking";
-import { Booking } from "@/lib/types/booking";
 import { Calendar, Clock, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -17,7 +16,7 @@ const statusColors: Record<string, string> = {
 
 export default function BookingsPage() {
   const { user } = useAuth();
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
 
@@ -34,9 +33,9 @@ export default function BookingsPage() {
     setLoading(false);
   };
 
-  const handleCancel = async (id: string) => {
+  const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
-    const res = await deleteBooking(id);
+    const res = await deleteBooking(data);
     if (res.success) {
       toast.success("Booking cancelled");
       loadBookings();
@@ -92,9 +91,9 @@ export default function BookingsPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filtered.map((booking) => (
+          {filtered.map((booking, idx) => (
             <div
-              key={booking._id}
+              key={booking._id ?? `booking-${idx}`}
               className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between hover:shadow-md transition-shadow"
             >
               <div className="flex-1">
@@ -133,3 +132,4 @@ export default function BookingsPage() {
     </div>
   );
 }
+

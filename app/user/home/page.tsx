@@ -27,7 +27,7 @@ export default function ProtectedHome() {
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
-  const [pets, setPets] = useState<Pet[]>([]);
+  const [pets, setPets] = useState<any[]>([]);
   const [petsLoading, setPetsLoading] = useState(true);
   const [petsError, setPetsError] = useState<string | null>(null);
 
@@ -46,8 +46,8 @@ export default function ProtectedHome() {
   };
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+    const handleMouseMove = (data: any) => {
+      setMousePosition({ x: data.clientX, y: data.clientY });
     };
 
     const handleScroll = () => {
@@ -158,7 +158,7 @@ export default function ProtectedHome() {
             y: [0, 30, 0],
             opacity: [0.3, 0.5, 0.3]
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
           className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px]"
         />
         <motion.div
@@ -166,7 +166,7 @@ export default function ProtectedHome() {
             x: [0, -50, 0],
             y: [0, -30, 0],
           }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-300/20 rounded-full blur-[100px]"
         />
       </div>
@@ -435,3 +435,4 @@ export default function ProtectedHome() {
     </div>
   );
 }
+

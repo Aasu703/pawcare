@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function UpdateUserForm({
     user
-}: {user : any}) {
+}: {user: any}) {
     const router = useRouter();
     const { register, handleSubmit, control, formState: {errors, isSubmitting} } = useForm<UpdateUserData>({
         resolver: zodResolver(updateUserSchema),
@@ -63,7 +63,7 @@ export default function UpdateUserForm({
         }
     };
 
-    const onSubmit = async (data: UpdateUserData) => {
+    const onSubmit = async (data: any) => {
         setError(null);
         try{
             if (!user?._id) {
@@ -84,8 +84,8 @@ export default function UpdateUserForm({
             }
             toast.success("Profile updated successfully.");
             router.refresh();
-        } catch (error: any) {
-            setError(error.message || "An unexpected error occurred."); 
+        } catch (data: any) {
+            setError(data.message || "An unexpected error occurred."); 
         }
     };
 
@@ -362,3 +362,4 @@ export default function UpdateUserForm({
         </div>
     );
 }
+

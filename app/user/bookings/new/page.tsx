@@ -7,8 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import { getServiceById } from "@/lib/api/public/service";
 import { getUserPets } from "@/lib/api/user/pet";
 import { createBooking } from "@/lib/api/user/booking";
-import { Service } from "@/lib/types/service";
-import { Pet } from "@/lib/types/pet";
 import { toast } from "sonner";
 import { ArrowLeft, Calendar, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
@@ -17,10 +15,11 @@ function NewBookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = searchParams.get("serviceId");
+  const normalizedServiceId = serviceId && serviceId !== "undefined" ? serviceId : undefined;
   const { user } = useAuth();
 
-  const [service, setService] = useState<Service | null>(null);
-  const [pets, setPets] = useState<Pet[]>([]);
+  const [service, setService] = useState<any>(null);
+  const [pets, setPets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -38,7 +37,7 @@ function NewBookingForm() {
   const loadData = async () => {
     setLoading(true);
     const [serviceRes, petsRes] = await Promise.all([
-      serviceId ? getServiceById(serviceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
+      normalizedServiceId ? getServiceById(normalizedServiceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
       getUserPets(),
     ]);
 
@@ -58,7 +57,7 @@ function NewBookingForm() {
     const res = await createBooking({
       startTime: form.startTime,
       endTime: form.endTime,
-      serviceId: serviceId || undefined,
+      serviceId: normalizedServiceId,
       petId: form.petId || undefined,
       notes: form.notes || undefined,
     });
@@ -175,3 +174,4 @@ export default function NewBookingPage() {
     </Suspense>
   );
 }
+

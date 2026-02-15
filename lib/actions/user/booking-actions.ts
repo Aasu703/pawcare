@@ -1,10 +1,9 @@
 "use server";
 
 import { createBooking, getAllBookings, getBookingById, updateBooking, deleteBooking, getBookingsByUser } from "@/lib/api/user/booking";
-import { CreateBookingRequest, UpdateBookingRequest } from "@/lib/types/booking";
 import { revalidatePath } from "next/cache";
 
-export async function handleCreateBooking(data: CreateBookingRequest) {
+export async function handleCreateBooking(data: any) {
   try {
     const response = await createBooking(data);
     if (response.success) {
@@ -37,7 +36,7 @@ export async function handleGetBookingById(id: string) {
   }
 }
 
-export async function handleUpdateBooking(id: string, data: UpdateBookingRequest) {
+export async function handleUpdateBooking(id: string, data: any) {
   try {
     const response = await updateBooking(id, data);
     if (response.success) {
@@ -72,3 +71,4 @@ export async function handleGetBookingsByUser(userId: string) {
     return { success: false, message: error.message };
   }
 }
+

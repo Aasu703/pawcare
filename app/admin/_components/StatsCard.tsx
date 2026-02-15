@@ -19,7 +19,7 @@ export default function StatsCard({
   iconColor = "text-orange-500",
   isLoading = false,
   onClick,
-}: StatsCardProps) {
+}: any) {
   const isPositive = change && change > 0;
   const isNegative = change && change < 0;
 
@@ -68,3 +68,4 @@ export default function StatsCard({
     </div>
   );
 }
+

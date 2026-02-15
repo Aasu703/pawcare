@@ -58,16 +58,16 @@ export default function UsersTable() {
     setModalOpen(true);
   };
 
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
+  const handleEdit = (data: any) => {
+    setSelectedUser(data);
     setModalMode("edit");
     setModalOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
-    const result = await handleDeleteUser(id);
+    const result = await handleDeleteUser(data);
     if (result.success) {
       toast.success(result.message);
       fetchUsers();
@@ -76,7 +76,7 @@ export default function UsersTable() {
     }
   };
 
-  const handleSubmit = async (data: FormData) => {
+  const handleSubmit = async (data: any) => {
     let result;
     if (modalMode === "create") {
       result = await handleCreateUser(data);
@@ -244,3 +244,4 @@ export default function UsersTable() {
     </div>
   );
 }
+

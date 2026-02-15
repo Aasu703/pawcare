@@ -1,7 +1,5 @@
 import { createUserPet, updateUserPet, deleteUserPet } from '@/lib/api/user/pet';
-import { PetFormData } from '@/lib/types/pet';
-
-export async function handleCreateUserPet(formData: PetFormData) {
+export async function handleCreateUserPet(formData: any) {
   try {
     // Create FormData for file upload
     const submitData = new FormData();
@@ -28,7 +26,7 @@ export async function handleCreateUserPet(formData: PetFormData) {
   }
 }
 
-export async function handleUpdateUserPet(petId: string, formData: PetFormData) {
+export async function handleUpdateUserPet(petId: string, formData: any) {
   try {
     // Create FormData for file upload
     const submitData = new FormData();

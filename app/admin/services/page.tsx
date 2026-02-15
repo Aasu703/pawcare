@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices, deleteService } from "@/lib/api/admin/service";
-import { Service } from "@/lib/types/service";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function AdminServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
@@ -16,15 +15,15 @@ export default function AdminServicesPage() {
     setLoading(true);
     try {
       const res = await getAllServices(1, 100);
-      setServices(res.data || res.services || []);
+      setServices(res.data?.services || res.data || res.services || []);
     } catch { /* empty */ }
     setLoading(false);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (data: any) => {
     if (!confirm("Delete this service?")) return;
     try {
-      await deleteService(id);
+      await deleteService(data);
       toast.success("Service deleted");
       load();
     } catch {
@@ -85,3 +84,4 @@ export default function AdminServicesPage() {
     </div>
   );
 }
+

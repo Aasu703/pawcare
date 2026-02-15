@@ -11,11 +11,11 @@ interface Appointment {
 }
 
 interface RecentAppointmentsProps {
-  appointments?: Appointment[];
+  appointments?: any[];
   isLoading?: boolean;
 }
 
-const defaultAppointments: Appointment[] = [
+const defaultAppointments: any[] = [
   {
     id: "1",
     petName: "Max",
@@ -68,7 +68,7 @@ const statusColors = {
 export default function RecentAppointments({
   appointments = defaultAppointments,
   isLoading = false,
-}: RecentAppointmentsProps) {
+}: any) {
   if (isLoading) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
@@ -110,7 +110,7 @@ export default function RecentAppointments({
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment, index) => (
+            {appointments.map((appointment: any, index: number) => (
               <motion.tr
                 key={appointment.id}
                 className="border-b last:border-0 hover:bg-muted/50 transition-colors"
@@ -129,7 +129,7 @@ export default function RecentAppointments({
                 </td>
                 <td className="py-4">
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[appointment.status]}`}
+                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[appointment.status as keyof typeof statusColors]}`}
                   >
                     {appointment.status}
                   </span>
@@ -142,3 +142,4 @@ export default function RecentAppointments({
     </div>
   );
 }
+

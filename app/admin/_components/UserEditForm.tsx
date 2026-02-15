@@ -20,7 +20,7 @@ interface UserEditFormProps {
   userId: string;
 }
 
-export default function UserEditForm({ userId }: UserEditFormProps) {
+export default function UserEditForm({ userId }: any) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);

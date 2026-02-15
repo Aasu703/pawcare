@@ -16,7 +16,7 @@ interface Provider {
 interface ProviderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FormData) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
   provider?: Provider | null;
   mode: "create" | "edit";
 }
@@ -27,7 +27,7 @@ export default function ProviderModal({
   onSubmit,
   provider,
   mode,
-}: ProviderModalProps) {
+}: any) {
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -175,3 +175,4 @@ export default function ProviderModal({
     </div>
   );
 }
+

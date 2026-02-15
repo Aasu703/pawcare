@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { getAllHealthRecords, deleteHealthRecord } from "@/lib/api/admin/health-record";
-import { HealthRecord } from "@/lib/types/health-record";
 import { Trash2, Eye, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -15,9 +14,9 @@ const recordTypeColors: Record<string, string> = {
 };
 
 export default function AdminHealthRecordsPage() {
-  const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<HealthRecord | null>(null);
+  const [selected, setSelected] = useState<any>(null);
 
   useEffect(() => { load(); }, []);
 
@@ -119,3 +118,4 @@ export default function AdminHealthRecordsPage() {
     </div>
   );
 }
+
