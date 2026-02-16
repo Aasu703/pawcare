@@ -11,11 +11,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (loading || loggingOut || !isAuthenticated || !user) return;
 
+        const providerRedirect =
+            !user.providerType
+                ? "/provider/select-type"
+                : user.status === "approved"
+                    ? "/provider/dashboard"
+                    : "/provider/verification-pending";
+
         const redirectPath =
             user.role === "admin"
                 ? "/admin"
                 : user.role === "provider"
-                    ? "/provider/dashboard"
+                    ? providerRedirect
                     : "/user/home";
 
         router.replace(redirectPath);

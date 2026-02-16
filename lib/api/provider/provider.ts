@@ -20,6 +20,39 @@ export async function providerLogin(data: { email: string; password: string }): 
   }
 }
 
+export async function setProviderType(data: {
+  providerType: string;
+  certification?: string;
+  experience?: string;
+  clinicOrShopName?: string;
+  panNumber?: string;
+}): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.put(API.PROVIDER.SET_TYPE, data);
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to set provider type" };
+  }
+}
+
+export async function getMyProviderProfile(): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.get(API.PROVIDER.ME);
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch provider profile" };
+  }
+}
+
+export async function updateMyProviderProfile(data: Record<string, any>): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.put(API.PROVIDER.UPDATE_PROFILE, data);
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to update provider profile" };
+  }
+}
+
 // Provider Services
 export async function createProviderService(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
@@ -34,7 +67,7 @@ export async function getProviderServices(): Promise<{ success: boolean; message
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_ALL);
     const raw = response.data?.data;
-    const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
+    const data = Array.isArray(raw) ? raw.map(item => item._doc || item) : raw ? [raw._doc || raw] : [];
     return { success: true, message: "Services fetched", data };
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch services" };
@@ -44,7 +77,7 @@ export async function getProviderServices(): Promise<{ success: boolean; message
 export async function getProviderServiceById(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_BY_ID(data));
-    return { success: true, message: "Service fetched", data: response.data.data };
+    return { success: true, message: "Service fetched", data: response.data.data?._doc || response.data.data };
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch service" };
   }

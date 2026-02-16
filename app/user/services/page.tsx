@@ -2,16 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Search, Clock, DollarSign, Tag, Calendar, ChevronRight, Star, Activity, Sparkles } from "lucide-react";
+import { Search, Clock, DollarSign, Tag, Calendar, ChevronRight, Star, Activity, Sparkles, Map, List, SortAsc } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import SearchBar, { SearchFilters } from "@/components/SearchBar";
 
 export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
+  const [filters, setFilters] = useState<SearchFilters>({
+    location: "",
+    serviceType: "all",
+    dateFrom: "",
+    dateTo: "",
+    petType: "all",
+    priceRange: "all",
+  });
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
+  const [sortBy, setSortBy] = useState<"newest" | "price-low" | "price-high" | "rating">("newest");
 
   useEffect(() => {
     loadServices();
@@ -19,18 +28,46 @@ export default function ServicesPage() {
 
   useEffect(() => {
     let result = services;
-    if (search) {
+    if (filters.location) {
       result = result.filter(
         (s) =>
-          s.title.toLowerCase().includes(search.toLowerCase()) ||
-          s.description?.toLowerCase().includes(search.toLowerCase())
+          s.provider?.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
+          s.provider?.address?.toLowerCase().includes(filters.location.toLowerCase()) ||
+          s.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
+          // For now, skip location filtering if provider info not available
+          false
       );
     }
-    if (category !== "all") {
-      result = result.filter((s) => s.catergory === category);
+    if (filters.serviceType !== "all") {
+      result = result.filter((s) => s.catergory === filters.serviceType);
     }
+    if (filters.petType !== "all") {
+      // Assuming petType is not in service, skip for now
+    }
+    if (filters.priceRange !== "all") {
+      const [minStr, maxStr] = filters.priceRange.split("-");
+      const min = parseInt(minStr);
+      const max = maxStr === "+" ? Infinity : parseInt(maxStr);
+      result = result.filter((s) => s.price >= min && (max === Infinity || s.price <= max));
+    }
+
+    // Sorting
+    result = result.sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return a.price - b.price;
+        case "price-high":
+          return b.price - a.price;
+        case "rating":
+          return (b.rating || 0) - (a.rating || 0);
+        case "newest":
+        default:
+          return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      }
+    });
+
     setFiltered(result);
-  }, [search, category, services]);
+  }, [filters, services, sortBy]);
 
   const loadServices = async () => {
     setLoading(true);
@@ -69,37 +106,60 @@ export default function ServicesPage() {
           </p>
         </motion.div>
 
-        {/* Filters & Search */}
+        {/* Search Bar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white/70 backdrop-blur-xl rounded-2xl p-4 shadow-lg shadow-gray-200/50 border border-white/50 mb-10 flex flex-col md:flex-row gap-4 items-center justify-between"
+          className="mb-10"
         >
-          <div className="relative w-full md:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-            <input
-              type="text"
-              placeholder="Search services..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all outline-none"
-            />
+          <SearchBar onSearch={setFilters} />
+        </motion.div>
+
+        {/* View Toggle and Sort */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex justify-between items-center mb-8"
+        >
+          <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-1 shadow-lg shadow-gray-200/50 border border-white/50">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                viewMode === "list"
+                  ? "bg-primary text-white shadow-lg shadow-primary/30"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <List className="w-4 h-4" />
+              List View
+            </button>
+            <button
+              onClick={() => setViewMode("map")}
+              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                viewMode === "map"
+                  ? "bg-primary text-white shadow-lg shadow-primary/30"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <Map className="w-4 h-4" />
+              Map View
+            </button>
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-hide">
-            {["all", "grooming", "boarding", "vet"].map((c) => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`px-5 py-2.5 rounded-xl text-sm font-semibold capitalize transition-all whitespace-nowrap ${category === c
-                  ? "bg-primary text-white shadow-lg shadow-primary/30 scale-105"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-                  }`}
-              >
-                {c === "all" ? "All Services" : c}
-              </button>
-            ))}
+          <div className="flex items-center gap-2">
+            <SortAsc className="w-4 h-4 text-gray-600" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="bg-white/70 backdrop-blur-xl rounded-xl px-4 py-2 text-sm font-medium text-gray-700 border border-white/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+            >
+              <option value="newest">Newest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
           </div>
         </motion.div>
 
@@ -118,6 +178,14 @@ export default function ServicesPage() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">No services found</h3>
             <p className="text-gray-500">Try adjusting your search or filters to find what you're looking for.</p>
+          </div>
+        ) : viewMode === "map" ? (
+          <div className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 min-h-[600px] flex items-center justify-center">
+            <div className="text-center">
+              <Map className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Map View</h3>
+              <p className="text-gray-500">Interactive map coming soon! For now, use list view to browse services.</p>
+            </div>
           </div>
         ) : (
           <motion.div
@@ -149,6 +217,21 @@ export default function ServicesPage() {
                   </div>
 
                   <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">{service.title}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${
+                            i < (service.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {service.rating ? `${service.rating.toFixed(1)} (${service.reviewCount || 0} reviews)` : "No reviews yet"}
+                    </span>
+                  </div>
                   <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">
                     {service.description || "No description available for this service."}
                   </p>
@@ -165,15 +248,25 @@ export default function ServicesPage() {
                       </div>
                     </div>
 
-                    <Link
-                      href={`/user/bookings/new?serviceId=${service._id}`}
-                      className="block w-full"
-                    >
-                      <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3.5 rounded-xl font-semibold hover:from-primary hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group-hover:gap-3">
-                        Book Now
-                        <ChevronRight className="w-4 h-4 transition-all" />
-                      </button>
-                    </Link>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/user/services/${service._id}`}
+                        className="flex-1"
+                      >
+                        <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2">
+                          View Details
+                        </button>
+                      </Link>
+                      <Link
+                        href={`/user/bookings/new?serviceId=${service._id}`}
+                        className="flex-1"
+                      >
+                        <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-semibold hover:from-primary hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group-hover:gap-3">
+                          Book Now
+                          <ChevronRight className="w-4 h-4 transition-all" />
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </motion.div>
               ))}

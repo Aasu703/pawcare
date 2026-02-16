@@ -5,7 +5,10 @@ import {
     getAllProvidersServer, 
     getProviderByIdServer, 
     updateProviderServer, 
-    deleteProviderServer 
+    deleteProviderServer,
+    getProvidersByStatusServer,
+    approveProviderServer,
+    rejectProviderServer,
 } from "@/lib/api/admin/provider-server";
 import { revalidatePath } from "next/cache";
 
@@ -103,6 +106,62 @@ export const handleDeleteProvider = async (id: string) => {
         return {
             success: false,
             message: error.message || "An error occurred while deleting the provider.",
+        };
+    }
+};
+
+export const handleGetProvidersByStatus = async (status: string) => {
+    try {
+        const response = await getProvidersByStatusServer(status);
+        if (response.success) {
+            return { success: true, data: response.data };
+        }
+        return {
+            success: false,
+            message: response.message || "Failed to fetch providers.",
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message || "An error occurred while fetching providers.",
+        };
+    }
+};
+
+export const handleApproveProvider = async (id: string) => {
+    try {
+        const response = await approveProviderServer(id);
+        if (response.success) {
+            revalidatePath("/admin/providers");
+            return { success: true, message: response.message || "Provider approved." };
+        }
+        return {
+            success: false,
+            message: response.message || "Failed to approve provider.",
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message || "An error occurred while approving provider.",
+        };
+    }
+};
+
+export const handleRejectProvider = async (id: string) => {
+    try {
+        const response = await rejectProviderServer(id);
+        if (response.success) {
+            revalidatePath("/admin/providers");
+            return { success: true, message: response.message || "Provider rejected." };
+        }
+        return {
+            success: false,
+            message: response.message || "Failed to reject provider.",
+        };
+    } catch (error: any) {
+        return {
+            success: false,
+            message: error.message || "An error occurred while rejecting provider.",
         };
     }
 };

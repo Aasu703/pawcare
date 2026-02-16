@@ -158,6 +158,8 @@ export const API = {
     UPDATE: (data: any) => `/api/provider/${data}`,
     DELETE: (data: any) => `/api/provider/${data}`,
     SET_TYPE: '/api/provider/set-type',
+    ME: '/api/provider/me',
+    UPDATE_PROFILE: '/api/provider/profile',
     APPROVE: (data: any) => `/api/provider/approve/${data}`,
     REJECT: (data: any) => `/api/provider/reject/${data}`,
     GET_BY_STATUS: (data: any) => `/api/provider/status/${data}`,
@@ -210,6 +212,13 @@ export const API = {
     GET_ALL: '/api/product',
     GET_BY_ID: (data: any) => `/api/product/${data}`,
     GET_BY_PROVIDER: (data: any) => `/api/product/provider/${data}`,
+ },
+ CART: {
+    GET_MY: '/api/cart',
+    ADD_ITEM: '/api/cart/add',
+    UPDATE_ITEM: (data: any) => `/api/cart/item/${data}`,
+    REMOVE_ITEM: (data: any) => `/api/cart/item/${data}`,
+    CLEAR: '/api/cart',
  },
 };
 

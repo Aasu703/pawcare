@@ -51,11 +51,23 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    const errorUrl = `${error.config?.baseURL || ""}${error.config?.url || ""}` || error.config?.url;
-    console.error(
-      `[HTTP ERROR] [${error.response?.status || "Network Error"}] ${errorUrl}`,
-      error.response?.data || error.message
-    );
+    try {
+      const cfg = error?.config || {};
+      const method = (cfg.method || "").toUpperCase();
+      const errorUrl = `${cfg.baseURL || ""}${cfg.url || ""}` || cfg.url || "<unknown>";
+      const reqData = cfg.data ? (typeof cfg.data === 'string' ? cfg.data : JSON.stringify(cfg.data)) : undefined;
+      const status = error.response?.status || "Network Error";
+      const respData = error.response?.data;
+
+      console.error(
+        `[HTTP ERROR] [${status}] [${method}] ${errorUrl}`,
+        reqData ? { requestBody: reqData } : undefined,
+        respData || error.message
+      );
+    } catch (logErr) {
+      // Fallback logging if anything goes wrong here
+      console.error('[HTTP ERROR] (failed to format error)', error?.message || error, logErr);
+    }
     return Promise.reject(error);
   }
 );

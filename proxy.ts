@@ -5,6 +5,13 @@ const adminPaths = ["/admin"];
 const userPaths = ["/user"];
 const providerPaths = ["/provider"];
 const providerAuthPaths = ["/provider/login", "/provider/register"];
+const providerSetupPaths = ["/provider/select-type", "/provider/verification-pending"];
+
+type ProxyUser = {
+    role?: string;
+    providerType?: string | null;
+    status?: "pending" | "approved" | "rejected" | string;
+};
 
 function proxy(req: NextRequest) {
     const { pathname } = req.nextUrl;
@@ -14,7 +21,7 @@ function proxy(req: NextRequest) {
     const userDataCookie = req.cookies.get('user_data')?.value;
 
     // Parse user data if exists
-    let user: { role?: string } | null = null;
+    let user: ProxyUser | null = null;
     if (userDataCookie) {
         try {
             user = JSON.parse(userDataCookie);
@@ -73,7 +80,33 @@ function proxy(req: NextRequest) {
 
     // Redirect authenticated providers away from provider auth pages  
     if (hasValidToken && user?.role === 'provider' && isProviderAuthPath) {
-        return NextResponse.redirect(new URL('/provider/dashboard', req.url));
+        const hasProviderType = Boolean(user?.providerType);
+        const isApproved = user?.status === "approved";
+        const redirectTo = !hasProviderType
+            ? "/provider/select-type"
+            : isApproved
+                ? "/provider/dashboard"
+                : "/provider/verification-pending";
+        return NextResponse.redirect(new URL(redirectTo, req.url));
+    }
+
+    // Provider onboarding + approval gate
+    if (hasValidToken && user?.role === 'provider' && isProviderPath && !isProviderAuthPath) {
+        const hasProviderType = Boolean(user?.providerType);
+        const isApproved = user?.status === "approved";
+        const isSetupPath = providerSetupPaths.some((path) => pathname.startsWith(path));
+
+        if (!hasProviderType && pathname !== "/provider/select-type") {
+            return NextResponse.redirect(new URL('/provider/select-type', req.url));
+        }
+
+        if (hasProviderType && !isApproved && !isSetupPath) {
+            return NextResponse.redirect(new URL('/provider/verification-pending', req.url));
+        }
+
+        if (hasProviderType && isApproved && isSetupPath) {
+            return NextResponse.redirect(new URL('/provider/dashboard', req.url));
+        }
     }
 
     // Allow request to continue

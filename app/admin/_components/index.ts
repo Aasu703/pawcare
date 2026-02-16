@@ -11,4 +11,5 @@ export { default as UserEditForm } from "./UserEditForm";
 export { default as PetsTable } from "./PetsTable";
 export { default as PetModal } from "./PetModal";
 export { default as ProvidersTable } from "./ProvidersTable";
+export { default as ProviderAccountsTable } from "./ProviderAccountsTable";
 export { default as ProviderModal } from "./ProviderModal";

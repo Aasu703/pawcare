@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText } from "lucide-react";
-import { handleLogout } from "@/lib/actions/auth-actions";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle } from "lucide-react";
+import { useAuth } from '@/context/AuthContext';
 
 const navItems = [
   { label: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
+  { label: "Profile", href: "/provider/profile", icon: UserCircle },
   { label: "Services", href: "/provider/services", icon: Wrench },
   { label: "Inventory", href: "/provider/inventory", icon: Package },
   { label: "Bookings", href: "/provider/bookings", icon: CalendarCheck },
@@ -19,18 +20,21 @@ const navItems = [
 export default function ProviderSidebar() {
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { logout } = useAuth();
 
   const onLogout = async () => {
     if (isLoggingOut) return;
 
     setIsLoggingOut(true);
     try {
-      await handleLogout();
-    } catch (_) {
-    } finally {
+      await logout();
+    } catch {
+      // Ensure client-side cleanup if context logout fails
       document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "user_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      window.location.href = "/provider/login";
+      window.location.href = "/";
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 

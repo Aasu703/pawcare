@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { registerSchema } from '../schema';
 import Link from 'next/link';
 import { handleRegister, handleProviderRegister } from '@/lib/actions/auth-actions';
@@ -8,9 +8,17 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { User, Mail, Lock, Phone, Building, MapPin, ArrowRight, CheckCircle } from 'lucide-react';
 
-export default function RegisterForm() {
+type AuthRole = 'user' | 'provider';
+
+interface RegisterFormProps {
+  defaultRole?: AuthRole;
+  hideRoleToggle?: boolean;
+}
+
+export default function RegisterForm(props: RegisterFormProps = {}) {
+  const { defaultRole, hideRoleToggle } = props;
   const router = useRouter();
-  const [role, setRole] = useState<'user' | 'provider'>('user');
+  const [role, setRole] = useState<AuthRole>(defaultRole ?? 'user');
   const [formData, setFormData] = useState({
     Firstname: '',
     Lastname: '',
@@ -38,6 +46,10 @@ export default function RegisterForm() {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+
+  useEffect(() => {
+    if (defaultRole) setRole(defaultRole);
+  }, [defaultRole]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +88,7 @@ export default function RegisterForm() {
         const response = await handleProviderRegister(providerFormData);
 
         if (response.success) {
-          window.location.href = '/provider/dashboard';
+          window.location.href = '/provider/select-type';
         } else {
           setErrors({ businessName: response.message || 'Registration failed' });
         }
@@ -128,25 +140,27 @@ export default function RegisterForm() {
         </div>
 
         {/* Role Toggle */}
-        <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
-          <div
-            className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
-          ></div>
-          <button
-            type="button"
-            onClick={() => { setRole('user'); setErrors({}); }}
-            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            <span>🐕</span> Pet Owner
-          </button>
-          <button
-            type="button"
-            onClick={() => { setRole('provider'); setErrors({}); }}
-            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            <span>🏥</span> Provider
-          </button>
-        </div>
+        {!hideRoleToggle && (
+          <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
+            <div
+              className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
+            ></div>
+            <button
+              type="button"
+              onClick={() => { setRole('user'); setErrors({}); }}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              <span>🐕</span> Pet Owner
+            </button>
+            <button
+              type="button"
+              onClick={() => { setRole('provider'); setErrors({}); }}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              <span>🏥</span> Provider
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {role === 'user' ? (
