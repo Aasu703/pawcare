@@ -158,6 +158,8 @@ export const API = {
     UPDATE: (data: any) => `/api/provider/${data}`,
     DELETE: (data: any) => `/api/provider/${data}`,
     SET_TYPE: '/api/provider/set-type',
+    ME: '/api/provider/me',
+    UPDATE_PROFILE: '/api/provider/profile',
     APPROVE: (data: any) => `/api/provider/approve/${data}`,
     REJECT: (data: any) => `/api/provider/reject/${data}`,
     GET_BY_STATUS: (data: any) => `/api/provider/status/${data}`,

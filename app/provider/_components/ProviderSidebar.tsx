@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText } from "lucide-react";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle } from "lucide-react";
 import { useAuth } from '@/context/AuthContext';
 
 const navItems = [
   { label: "Dashboard", href: "/provider/dashboard", icon: LayoutDashboard },
+  { label: "Profile", href: "/provider/profile", icon: UserCircle },
   { label: "Services", href: "/provider/services", icon: Wrench },
   { label: "Inventory", href: "/provider/inventory", icon: Package },
   { label: "Bookings", href: "/provider/bookings", icon: CalendarCheck },
@@ -27,7 +28,7 @@ export default function ProviderSidebar() {
     setIsLoggingOut(true);
     try {
       await logout();
-    } catch (_) {
+    } catch {
       // Ensure client-side cleanup if context logout fails
       document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "user_data=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

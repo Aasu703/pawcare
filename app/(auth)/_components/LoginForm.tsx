@@ -25,13 +25,18 @@ export default function LoginForm(props: LoginFormProps = {}) {
   const [role, setRole] = useState<AuthRole>(defaultRole ?? 'user');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
+  const getProviderRedirectPath = (provider: any) => {
+    if (!provider?.providerType) return "/provider/select-type";
+    if (provider?.status !== "approved") return "/provider/verification-pending";
+    return "/provider/dashboard";
+  };
 
   useEffect(() => {
     // apply default role when prop changes
     if (defaultRole) setRole(defaultRole);
 
     if (isAuthenticated && user) {
-      const redirectPath = user.role === 'admin' ? '/admin' : user.role === 'provider' ? '/provider/dashboard' : '/user/home';
+      const redirectPath = user.role === 'admin' ? '/admin' : user.role === 'provider' ? getProviderRedirectPath(user) : '/user/home';
       window.location.href = redirectPath;
     }
   }, [isAuthenticated, user, defaultRole]);
@@ -74,7 +79,7 @@ export default function LoginForm(props: LoginFormProps = {}) {
         await checkAuth(userData);
 
         // Hard redirect — ensures cookies are sent to server and middleware handles routing
-        const redirectPath = userData.role === 'admin' ? '/admin' : userData.role === 'provider' ? '/provider/dashboard' : '/user/home';
+        const redirectPath = userData.role === 'admin' ? '/admin' : userData.role === 'provider' ? getProviderRedirectPath(userData) : '/user/home';
         window.location.href = redirectPath;
         return; // Stop further execution
       } else {

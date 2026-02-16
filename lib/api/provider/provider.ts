@@ -20,12 +20,36 @@ export async function providerLogin(data: { email: string; password: string }): 
   }
 }
 
-export async function setProviderType(data: { type: string }): Promise<{ success: boolean; message: string; data?: any }> {
+export async function setProviderType(data: {
+  providerType: string;
+  certification?: string;
+  experience?: string;
+  clinicOrShopName?: string;
+  panNumber?: string;
+}): Promise<{ success: boolean; message: string; data?: any }> {
   try {
-    const response = await axios.post(API.PROVIDER.SET_TYPE, data);
+    const response = await axios.put(API.PROVIDER.SET_TYPE, data);
     return response.data;
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to set provider type" };
+  }
+}
+
+export async function getMyProviderProfile(): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.get(API.PROVIDER.ME);
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch provider profile" };
+  }
+}
+
+export async function updateMyProviderProfile(data: Record<string, any>): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.put(API.PROVIDER.UPDATE_PROFILE, data);
+    return response.data;
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to update provider profile" };
   }
 }
 

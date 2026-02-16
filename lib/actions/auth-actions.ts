@@ -15,7 +15,10 @@ export const whoAmI = async () => {
     try {
         const token = await getAuthToken();
         
+        console.log('[whoAmI] Token from cookies:', token ? `${token.substring(0, 20)}...` : 'NULL');
+        
         if (!token) {
+            console.log('[whoAmI] No token found in cookies');
             return {
                 success: false,
                 message: "No auth token found"
@@ -32,6 +35,7 @@ export const whoAmI = async () => {
         );
         return response.data;
     } catch (err: Error | any) {
+        console.error('[whoAmI] Error:', err.message);
         throw new Error(
             err.response?.data?.message 
             || err.message 
@@ -87,7 +91,7 @@ export const handleLogin = async (loginData: any) => {
         try {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
-                const providerData = { ...providerResult.data, role: "provider" };
+                const providerData = { ...providerResult.data.provider, role: "provider" };
                 if (providerResult.token) {
                     await setAuthToken(providerResult.token);
                 }
@@ -111,7 +115,7 @@ export const handleLogin = async (loginData: any) => {
         try {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
-                const providerData = { ...providerResult.data, role: "provider" };
+                const providerData = { ...providerResult.data.provider, role: "provider" };
                 if (providerResult.token) {
                     await setAuthToken(providerResult.token);
                 }
@@ -137,7 +141,7 @@ export const handleProviderLogin = async (loginData: any) => {
     try {
         const providerResult = await providerLoginApi(loginData);
         if (providerResult.success) {
-            const providerData = { ...providerResult.data, role: "provider" };
+            const providerData = { ...providerResult.data.provider, role: "provider" };
             if (providerResult.token) {
                 await setAuthToken(providerResult.token);
             }
@@ -165,7 +169,7 @@ export const handleProviderRegister = async (providerData: any) => {
     try {
         const result = await providerRegisterApi(providerData);
         if (result.success) {
-            const userData = { ...result.data, role: "provider" };
+            const userData = { ...result.data.provider, role: "provider" };
             if (result.token) {
                 await setAuthToken(result.token);
             }

@@ -183,4 +183,84 @@ export const deleteProviderServer = async (data: any) => {
     }
 };
 
+export const getProvidersByStatusServer = async (status: string) => {
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            return { success: false, message: "No auth token found" };
+        }
+
+        const response = await axios.get(
+            API.PROVIDER.GET_BY_STATUS(status),
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.response?.data?.message
+                || err.message
+                || "Failed to fetch providers by status"
+        };
+    }
+};
+
+export const approveProviderServer = async (id: string) => {
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            return { success: false, message: "No auth token found" };
+        }
+
+        const response = await axios.put(
+            API.PROVIDER.APPROVE(id),
+            {},
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.response?.data?.message
+                || err.message
+                || "Failed to approve provider"
+        };
+    }
+};
+
+export const rejectProviderServer = async (id: string) => {
+    try {
+        const token = await getAuthToken();
+        if (!token) {
+            return { success: false, message: "No auth token found" };
+        }
+
+        const response = await axios.put(
+            API.PROVIDER.REJECT(id),
+            {},
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+        return response.data;
+    } catch (err: Error | any) {
+        return {
+            success: false,
+            message: err.response?.data?.message
+                || err.message
+                || "Failed to reject provider"
+        };
+    }
+};
+
 

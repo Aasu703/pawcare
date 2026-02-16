@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { setProviderType } from "@/lib/api/provider/provider";
-import { Stethoscope, Scissors, ShoppingBag, MoreHorizontal, CheckCircle } from "lucide-react";
+import { Stethoscope, Scissors, ShoppingBag, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const providerTypes = [
@@ -16,52 +16,93 @@ const providerTypes = [
     color: "bg-green-500",
   },
   {
-    id: "groomer",
-    title: "Pet Groomer",
-    description: "Offer grooming services like bathing, trimming, nail care, and styling",
-    icon: Scissors,
-    color: "bg-purple-500",
-  },
-  {
-    id: "shop_owner",
-    title: "Pet Shop Owner",
+    id: "shop",
+    title: "Pet Shop",
     description: "Sell pet supplies, food, toys, and accessories",
     icon: ShoppingBag,
     color: "bg-blue-500",
   },
   {
-    id: "other",
-    title: "Other Services",
-    description: "Pet sitting, training, boarding, or other pet-related services",
-    icon: MoreHorizontal,
-    color: "bg-orange-500",
+    id: "babysitter",
+    title: "Groomer",
+    description: "Offer grooming and related pet care services",
+    icon: Scissors,
+    color: "bg-purple-500",
   },
 ];
 
 export default function SelectProviderType() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [certification, setCertification] = useState("");
+  const [experience, setExperience] = useState("");
+  const [clinicOrShopName, setClinicOrShopName] = useState("");
+  const [panNumber, setPanNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, checkAuth } = useAuth();
 
-  const handleSubmit = async () => {
-    if (!selectedType) return;
+  const submitType = async (typeId: string) => {
+    if (!typeId || loading) return;
+
+    const isVet = typeId === "vet";
+    const isGroomer = typeId === "babysitter";
+    const isShop = typeId === "shop";
+
+    if (isVet && (!certification.trim() || !experience.trim() || !clinicOrShopName.trim())) {
+      toast.error("For vets, certification, experience, and clinic/shop name are required.");
+      return;
+    }
+
+    if (isGroomer && !experience.trim()) {
+      toast.error("For groomers, experience is required.");
+      return;
+    }
+
+    if (isShop && (!clinicOrShopName.trim() || !panNumber.trim())) {
+      toast.error("For shop owners, shop name and PAN number are required.");
+      return;
+    }
 
     setLoading(true);
     try {
-      const res = await setProviderType({ type: selectedType });
+      const res = await setProviderType({
+        providerType: typeId,
+        certification: certification.trim(),
+        experience: experience.trim(),
+        clinicOrShopName: clinicOrShopName.trim(),
+        panNumber: panNumber.trim().toUpperCase(),
+      });
       if (res.success) {
-        toast.success("Provider type set successfully!");
-        router.push("/provider/dashboard");
+        const providerFromResponse = res.data?._doc ?? res.data ?? {};
+        const updatedUser = {
+          ...(user ?? {}),
+          ...providerFromResponse,
+          providerType: providerFromResponse.providerType ?? typeId,
+          role: "provider",
+        };
+
+        document.cookie = `user_data=${encodeURIComponent(JSON.stringify(updatedUser))}; path=/;`;
+        await checkAuth(updatedUser);
+        toast.success("Details submitted. Please wait for admin verification.");
+        router.replace("/provider/verification-pending");
       } else {
         toast.error(res.message);
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to set provider type");
     } finally {
       setLoading(false);
     }
   };
+
+  const handleSubmit = async () => {
+    if (!selectedType) return;
+    await submitType(selectedType);
+  };
+
+  const isVet = selectedType === "vet";
+  const isGroomer = selectedType === "babysitter";
+  const isShop = selectedType === "shop";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50/30 flex items-center justify-center p-6">
@@ -85,7 +126,9 @@ export default function SelectProviderType() {
             return (
               <div
                 key={type.id}
-                onClick={() => setSelectedType(type.id)}
+                onClick={() => {
+                  setSelectedType(type.id);
+                }}
                 className={`relative bg-white/80 backdrop-blur-md rounded-3xl p-8 border-2 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 ${
                   isSelected
                     ? "border-primary shadow-lg shadow-primary/20 scale-105"
@@ -112,6 +155,73 @@ export default function SelectProviderType() {
           })}
         </div>
 
+        {selectedType && (
+          <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-3xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Details</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {(isVet || isShop) && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Clinic/Shop Name
+                  </label>
+                  <input
+                    type="text"
+                    value={clinicOrShopName}
+                    onChange={(e) => setClinicOrShopName(e.target.value)}
+                    placeholder="Enter clinic or shop name"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                  />
+                </div>
+              )}
+
+              {(isVet || isGroomer) && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Experience
+                  </label>
+                  <textarea
+                    value={experience}
+                    onChange={(e) => setExperience(e.target.value)}
+                    placeholder="Describe your relevant experience"
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                  />
+                </div>
+              )}
+
+              {isVet && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Certification
+                  </label>
+                  <textarea
+                    value={certification}
+                    onChange={(e) => setCertification(e.target.value)}
+                    placeholder="Enter certification/license details"
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                  />
+                </div>
+              )}
+
+              {isShop && (
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    PAN Number
+                  </label>
+                  <input
+                    type="text"
+                    value={panNumber}
+                    onChange={(e) => setPanNumber(e.target.value.toUpperCase())}
+                    placeholder="Enter PAN number"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70 uppercase"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Continue Button */}
         <div className="text-center">
           <button
@@ -129,20 +239,14 @@ export default function SelectProviderType() {
                 Setting up your profile...
               </div>
             ) : (
-              "Continue to Dashboard"
+              "Submit For Verification"
             )}
           </button>
         </div>
 
-        {/* Skip Option */}
-        <div className="text-center mt-6">
-          <button
-            onClick={() => router.push("/provider/dashboard")}
-            className="text-gray-500 hover:text-gray-700 text-sm underline"
-          >
-            Skip for now
-          </button>
-        </div>
+        <p className="text-center mt-6 text-sm text-gray-500">
+          Dashboard access will unlock after admin verification.
+        </p>
       </div>
     </div>
   );

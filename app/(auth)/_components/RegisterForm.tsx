@@ -88,7 +88,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
         const response = await handleProviderRegister(providerFormData);
 
         if (response.success) {
-          window.location.href = '/provider/dashboard';
+          window.location.href = '/provider/select-type';
         } else {
           setErrors({ businessName: response.message || 'Registration failed' });
         }
