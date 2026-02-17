@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import UserSidebar from "./_components/UserSidebar";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function UserLayout({
   children,
 }: {
@@ -39,6 +42,7 @@ export default function UserLayout({
     <div className="min-h-screen bg-gray-50">
       <UserSidebar />
       <main className="ml-64 min-h-screen p-8">{children}</main>
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
     </div>
   );
 }

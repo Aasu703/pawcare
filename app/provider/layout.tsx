@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import ProviderSidebar from "./_components/ProviderSidebar";
 import { getMyProviderProfile } from "@/lib/api/provider/provider";
+import {
+  canAccessVetFeatures,
+  canManageBookings,
+  canManageInventory,
+  canManageServices,
+} from "@/lib/provider-access";
 
 const authPages = ["/provider/login", "/provider/register", "/provider/select-type", "/provider/verification-pending"];
 
@@ -48,9 +54,27 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
       }
 
       if (user.status !== "approved") {
-        if (pathname !== "/provider/verification-pending" && pathname !== "/provider/select-type") {
+        if (pathname !== "/provider/verification-pending") {
           router.replace("/provider/verification-pending");
         }
+        return;
+      }
+
+      const providerType = user.providerType;
+      if (pathname.startsWith("/provider/services") && !canManageServices(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
+      if (pathname.startsWith("/provider/bookings") && !canManageBookings(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
+      if (pathname.startsWith("/provider/inventory") && !canManageInventory(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
+      if (pathname.startsWith("/provider/vet-appointments") && !canAccessVetFeatures(providerType)) {
+        router.replace("/provider/dashboard");
         return;
       }
 
@@ -58,7 +82,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
         if (user.providerType && user.status === "approved") {
           router.replace("/provider/dashboard");
         } else {
-          router.replace("/provider/select-type");
+          router.replace(user.providerType ? "/provider/verification-pending" : "/provider/select-type");
         }
       }
       return;

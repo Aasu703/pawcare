@@ -37,6 +37,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -132,7 +133,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
 
   return (
     <>
-      <div className="w-full bg-white/80 p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
+      <div className="w-full bg-white/80 p-10 md:p-12 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Create Account</h2>
@@ -274,7 +275,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     <input
                       id="password"
                       name="password"
-                      type="password"
+                      type={showPasswords ? "text" : "password"}
                       value={formData.password}
                       onChange={handleChange}
                       className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
@@ -294,7 +295,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showPasswords ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className={`w-full px-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
@@ -420,7 +421,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     <input
                       id="providerPassword"
                       name="password"
-                      type="password"
+                      type={showPasswords ? "text" : "password"}
                       value={providerFormData.password}
                       onChange={handleChange}
                       className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
@@ -440,7 +441,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                   <input
                     id="providerConfirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showPasswords ? "text" : "password"}
                     value={providerFormData.confirmPassword}
                     onChange={handleChange}
                     className={`w-full px-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
@@ -454,6 +455,16 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
               </div>
             </>
           )}
+
+          <div className="flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => setShowPasswords((prev) => !prev)}
+              className="text-xs font-semibold text-primary hover:text-orange-600 transition-colors"
+            >
+              {showPasswords ? "Hide Passwords" : "Show Passwords"}
+            </button>
+          </div>
 
           {/* Submit Button */}
           <button

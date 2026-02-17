@@ -100,6 +100,10 @@ function proxy(req: NextRequest) {
             return NextResponse.redirect(new URL('/provider/select-type', req.url));
         }
 
+        if (hasProviderType && !isApproved && pathname === "/provider/select-type") {
+            return NextResponse.redirect(new URL('/provider/verification-pending', req.url));
+        }
+
         if (hasProviderType && !isApproved && !isSetupPath) {
             return NextResponse.redirect(new URL('/provider/verification-pending', req.url));
         }

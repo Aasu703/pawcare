@@ -1,4 +1,4 @@
-import { DashboardHeader, ProviderAccountsTable, ProvidersTable } from "../_components";
+import { DashboardHeader, ProviderAccountsTable, AllProvidersTable, ProvidersTable } from "../_components";
 
 export default function ProvidersPage() {
   return (
@@ -8,6 +8,7 @@ export default function ProvidersPage() {
         subtitle="Review provider account submissions and service registrations"
       />
       <ProviderAccountsTable />
+      <AllProvidersTable />
       <ProvidersTable />
     </div>
   );

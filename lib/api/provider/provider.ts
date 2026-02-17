@@ -67,7 +67,16 @@ export async function getProviderServices(): Promise<{ success: boolean; message
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_ALL);
     const raw = response.data?.data;
-    const data = Array.isArray(raw) ? raw.map(item => item._doc || item) : raw ? [raw._doc || raw] : [];
+
+    let data: any[] = [];
+    if (Array.isArray(raw)) {
+      data = raw.map((item) => item?._doc || item);
+    } else if (Array.isArray(raw?.services)) {
+      data = raw.services.map((item: any) => item?._doc || item);
+    } else if (raw && Array.isArray(raw?.data)) {
+      data = raw.data.map((item: any) => item?._doc || item);
+    }
+
     return { success: true, message: "Services fetched", data };
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch services" };

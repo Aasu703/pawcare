@@ -4,20 +4,13 @@ import { useState, useEffect } from "react";
 import { getInventoryByProvider, createInventory, updateInventory, deleteInventory } from "@/lib/api/provider/provider";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
 import { toast } from "sonner";
-
-function getProviderId(): string {
-  if (typeof window === "undefined") return "";
-  try {
-    const cookie = document.cookie.split("; ").find((c) => c.startsWith("user_data="));
-    if (cookie) {
-      const data = JSON.parse(decodeURIComponent(cookie.split("=")[1]));
-      return data._id || data.id || "";
-    }
-  } catch { /* empty */ }
-  return "";
-}
+import { useAuth } from "@/context/AuthContext";
+import { canManageInventory } from "@/lib/provider-access";
 
 export default function ProviderInventoryPage() {
+  const { user } = useAuth();
+  const providerType = user?.providerType;
+  const hasInventoryAccess = canManageInventory(providerType);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -30,16 +23,22 @@ export default function ProviderInventoryPage() {
     category: "",
   });
 
-  const providerId = getProviderId();
+  const providerId = user?._id || user?.id || "";
 
-  useEffect(() => { if (providerId) loadItems(); }, [providerId]);
-
-  const loadItems = async () => {
+  async function loadItems() {
     setLoading(true);
     const res = await getInventoryByProvider(providerId);
     if (res.success && res.data) setItems(res.data);
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    if (!hasInventoryAccess) {
+      setLoading(false);
+      return;
+    }
+    if (providerId) loadItems();
+  }, [providerId, hasInventoryAccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,6 +85,17 @@ export default function ProviderInventoryPage() {
     setEditingId(null);
     setForm({ product_name: "", description: "", quantity: 0, price: 0, category: "" });
   };
+
+  if (!hasInventoryAccess) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Inventory Not Available</h1>
+        <p className="text-gray-500">
+          Only shop owners can manage products. Vet and groomer providers should use Services and Bookings.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
