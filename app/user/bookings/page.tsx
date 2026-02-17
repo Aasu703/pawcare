@@ -19,26 +19,29 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const userId = user?._id || user?.id;
 
-  useEffect(() => {
-    if (user?._id) loadBookings();
-  }, [user]);
-
-  const loadBookings = async () => {
+  async function loadBookings(uid: string) {
     setLoading(true);
-    const res = await getBookingsByUser(user._id);
+    const res = await getBookingsByUser(uid);
     if (res.success && res.data) {
       setBookings(res.data);
+    } else if (!res.success) {
+      toast.error(res.message || "Failed to fetch bookings");
     }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    if (userId) loadBookings(userId);
+  }, [userId]);
 
   const handleCancel = async (data: any) => {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
     const res = await deleteBooking(data);
     if (res.success) {
       toast.success("Booking cancelled");
-      loadBookings();
+      if (userId) loadBookings(userId);
     } else {
       toast.error(res.message);
     }
@@ -111,6 +114,12 @@ export default function BookingsPage() {
                     {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleString()}
                   </span>
                 </div>
+                {(booking.provider?.businessName || booking.providerId) && (
+                  <p className="text-sm text-gray-600 mt-1">
+                    <span className="font-medium">Provider:</span>{" "}
+                    {booking.provider?.businessName || booking.providerId}
+                  </p>
+                )}
                 {booking.notes && (
                   <p className="text-sm text-gray-600 mt-2">{booking.notes}</p>
                 )}

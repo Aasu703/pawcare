@@ -48,7 +48,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
       }
 
       if (user.status !== "approved") {
-        if (pathname !== "/provider/verification-pending" && pathname !== "/provider/select-type") {
+        if (pathname !== "/provider/verification-pending") {
           router.replace("/provider/verification-pending");
         }
         return;
@@ -58,7 +58,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
         if (user.providerType && user.status === "approved") {
           router.replace("/provider/dashboard");
         } else {
-          router.replace("/provider/select-type");
+          router.replace(user.providerType ? "/provider/verification-pending" : "/provider/select-type");
         }
       }
       return;

@@ -6,7 +6,6 @@ import { getServiceById } from "@/lib/api/public/service";
 import { getServicesByProvider } from "@/lib/api/public/service";
 import { Star, Clock, DollarSign, MapPin, Phone, Mail, Calendar, ChevronRight, ArrowLeft, User, Award } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function ServiceDetailPage() {
@@ -24,16 +23,14 @@ export default function ServiceDetailPage() {
 
   const loadData = async () => {
     setLoading(true);
-    const [serviceRes, providerRes] = await Promise.all([
-      getServiceById(serviceId),
-      getServicesByProvider(service?.provider?._id || service?.providerId),
-    ]);
+    const serviceRes = await getServiceById(serviceId);
 
     if (serviceRes.success && serviceRes.data) {
       setService(serviceRes.data);
-      // Load other services by this provider
-      if (serviceRes.data.provider?._id || serviceRes.data.providerId) {
-        const providerServicesRes = await getServicesByProvider(serviceRes.data.provider._id || serviceRes.data.providerId);
+
+      const providerId = serviceRes.data.provider?._id || serviceRes.data.providerId;
+      if (providerId) {
+        const providerServicesRes = await getServicesByProvider(providerId);
         if (providerServicesRes.success && providerServicesRes.data) {
           setProviderServices(providerServicesRes.data.filter((s: any) => s._id !== serviceId));
         }

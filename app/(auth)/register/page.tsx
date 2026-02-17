@@ -96,7 +96,7 @@ export default function RegisterPage() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="w-full max-w-md space-y-8"
+          className="w-full max-w-lg space-y-8"
         >
           {/* Back to Home */}
           <Link

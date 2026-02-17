@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Search, Clock, DollarSign, Tag, Calendar, ChevronRight, Star, Activity, Sparkles, Map, List, SortAsc } from "lucide-react";
+import { Search, Clock, DollarSign, Tag, ChevronRight, Star, Activity, Sparkles, Map, List, SortAsc } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchBar, { SearchFilters } from "@/components/SearchBar";
@@ -22,6 +22,16 @@ export default function ServicesPage() {
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [sortBy, setSortBy] = useState<"newest" | "price-low" | "price-high" | "rating">("newest");
 
+  async function loadServices() {
+    setLoading(true);
+    const res = await getAllServices();
+    if (res.success && res.data) {
+      setServices(res.data);
+      setFiltered(res.data);
+    }
+    setLoading(false);
+  }
+
   useEffect(() => {
     loadServices();
   }, []);
@@ -39,7 +49,7 @@ export default function ServicesPage() {
       );
     }
     if (filters.serviceType !== "all") {
-      result = result.filter((s) => s.catergory === filters.serviceType);
+      result = result.filter((s) => (s.category || s.catergory) === filters.serviceType);
     }
     if (filters.petType !== "all") {
       // Assuming petType is not in service, skip for now
@@ -68,16 +78,6 @@ export default function ServicesPage() {
 
     setFiltered(result);
   }, [filters, services, sortBy]);
-
-  const loadServices = async () => {
-    setLoading(true);
-    const res = await getAllServices();
-    if (res.success && res.data) {
-      setServices(res.data);
-      setFiltered(res.data);
-    }
-    setLoading(false);
-  };
 
   const categoryColors: Record<string, string> = {
     grooming: "bg-purple-100 text-purple-700",
@@ -193,83 +193,86 @@ export default function ServicesPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             <AnimatePresence>
-              {filtered.map((service) => (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  key={service._id}
-                  className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full"
-                >
-                  <div className="flex items-start justify-between mb-6">
-                    <div className={`p-3 rounded-2xl ${service.catergory && categoryColors[service.catergory] ? categoryColors[service.catergory] : "bg-gray-100 text-gray-600"} bg-opacity-20`}>
-                      {/* Icon based on category - simplified mapping */}
-                      {service.catergory === 'vet' ? <Activity className="w-6 h-6" /> :
-                        service.catergory === 'grooming' ? <Sparkles className="w-6 h-6" /> :
-                          <Tag className="w-6 h-6" />}
+              {filtered.map((service) => {
+                const category = service.category || service.catergory;
+
+                return (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    key={service._id}
+                    className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full"
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <div className={`p-3 rounded-2xl ${category && categoryColors[category] ? categoryColors[category] : "bg-gray-100 text-gray-600"} bg-opacity-20`}>
+                        {category === 'vet' ? <Activity className="w-6 h-6" /> :
+                          category === 'grooming' ? <Sparkles className="w-6 h-6" /> :
+                            <Tag className="w-6 h-6" />}
+                      </div>
+                      {category && (
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${category && categoryColors[category] ? categoryColors[category] : "bg-gray-100 text-gray-600"}`}>
+                          {category}
+                        </span>
+                      )}
                     </div>
-                    {service.catergory && (
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${service.catergory && categoryColors[service.catergory] ? categoryColors[service.catergory] : "bg-gray-100 text-gray-600"}`}>
-                        {service.catergory}
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">{service.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${
+                              i < (service.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-gray-500">
+                        {service.rating ? `${service.rating.toFixed(1)} (${service.reviewCount || 0} reviews)` : "No reviews yet"}
                       </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">{service.title}</h3>
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < (service.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
-                          }`}
-                        />
-                      ))}
                     </div>
-                    <span className="text-sm text-gray-500">
-                      {service.rating ? `${service.rating.toFixed(1)} (${service.reviewCount || 0} reviews)` : "No reviews yet"}
-                    </span>
-                  </div>
-                  <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">
-                    {service.description || "No description available for this service."}
-                  </p>
+                    <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">
+                      {service.description || "No description available for this service."}
+                    </p>
 
-                  <div className="space-y-4 mt-auto">
-                    <div className="flex items-center justify-between text-sm font-medium text-gray-600 bg-gray-50 p-3 rounded-xl">
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span>{service.duration_minutes} min</span>
+                    <div className="space-y-4 mt-auto">
+                      <div className="flex items-center justify-between text-sm font-medium text-gray-600 bg-gray-50 p-3 rounded-xl">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-primary" />
+                          <span>{service.duration_minutes} min</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="h-4 w-4 text-green-600" />
+                          <span className="text-gray-900 text-base">${service.price}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-green-600" />
-                        <span className="text-gray-900 text-base">${service.price}</span>
+
+                      <div className="flex gap-2">
+                        <Link
+                          href={`/user/services/${service._id}`}
+                          className="flex-1"
+                        >
+                          <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2">
+                            View Details
+                          </button>
+                        </Link>
+                        <Link
+                          href={`/user/bookings/new?serviceId=${service._id}`}
+                          className="flex-1"
+                        >
+                          <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-semibold hover:from-primary hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group-hover:gap-3">
+                            Book Now
+                            <ChevronRight className="w-4 h-4 transition-all" />
+                          </button>
+                        </Link>
                       </div>
                     </div>
-
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/user/services/${service._id}`}
-                        className="flex-1"
-                      >
-                        <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2">
-                          View Details
-                        </button>
-                      </Link>
-                      <Link
-                        href={`/user/bookings/new?serviceId=${service._id}`}
-                        className="flex-1"
-                      >
-                        <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-semibold hover:from-primary hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group-hover:gap-3">
-                          Book Now
-                          <ChevronRight className="w-4 h-4 transition-all" />
-                        </button>
-                      </Link>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </motion.div>
         )}

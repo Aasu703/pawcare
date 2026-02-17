@@ -50,7 +50,18 @@ export async function getBookingsByUser(userId: string): Promise<{ success: bool
   try {
     const response = await axios.get(API.BOOKING.GET_BY_USER(userId));
     const raw = response.data?.data;
-    const data = Array.isArray(raw) ? raw : raw ? [raw] : [];
+
+    // Backend usually returns paginated shape: { bookings, total, page, ... }
+    // but some callers/endpoints may return a plain array.
+    let data: any[] = [];
+    if (Array.isArray(raw)) {
+      data = raw;
+    } else if (Array.isArray(raw?.bookings)) {
+      data = raw.bookings;
+    } else if (raw && Array.isArray(raw?.data)) {
+      data = raw.data;
+    }
+
     return { success: true, message: "Bookings fetched", data };
   } catch (error: any) {
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch bookings" };

@@ -174,8 +174,8 @@ export default function ProviderServicesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {serviceList.map((s) => (
-                <tr key={s._id} className="hover:bg-gray-50">
+              {serviceList.map((s, idx) => (
+                <tr key={s._id || s.id || `${s.title || "service"}-${idx}`} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">{s.title}</div>
                     <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
