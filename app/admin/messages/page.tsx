@@ -16,8 +16,16 @@ export default function AdminMessagesPage() {
     setLoading(true);
     try {
       const res = await getAllMessages(1, 100);
-      setMessages(res.data || res.messages || []);
-    } catch { /* empty */ }
+      // normalize response — backend may return { data: { messages: [...] } } or { messages: [...] } or an array
+      const msgs = Array.isArray(res?.data)
+        ? res.data
+        : Array.isArray(res?.data?.messages)
+        ? res.data.messages
+        : Array.isArray(res?.messages)
+        ? res.messages
+        : [];
+      setMessages(msgs);
+    } catch (err) { /* ignore — leave messages empty */ }
     setLoading(false);
   };
 

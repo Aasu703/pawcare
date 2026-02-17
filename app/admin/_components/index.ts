@@ -12,4 +12,5 @@ export { default as PetsTable } from "./PetsTable";
 export { default as PetModal } from "./PetModal";
 export { default as ProvidersTable } from "./ProvidersTable";
 export { default as ProviderAccountsTable } from "./ProviderAccountsTable";
+export { default as AllProvidersTable } from "./AllProvidersTable";
 export { default as ProviderModal } from "./ProviderModal";

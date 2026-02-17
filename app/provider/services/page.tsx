@@ -5,9 +5,13 @@ import { useAuth } from "@/context/AuthContext";
 import { getProviderServices, createProviderService, updateProviderService, deleteProviderService } from "@/lib/api/provider/provider";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
+import { canManageServices, isVetProvider } from "@/lib/provider-access";
 
 export default function ProviderServicesPage() {
   const { user } = useAuth();
+  const providerType = user?.providerType;
+  const hasServiceAccess = canManageServices(providerType);
+  const vetOnly = isVetProvider(providerType);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -20,20 +24,23 @@ export default function ProviderServicesPage() {
     catergory: "" as "" | "grooming" | "boarding" | "vet",
   });
 
-  useEffect(() => { loadServices(); }, []);
-
-  const loadServices = async () => {
+  async function loadServices() {
     setLoading(true);
     const res = await getProviderServices();
     if (res.success && res.data) setServices(res.data);
     setLoading(false);
-  };
+  }
+
+  useEffect(() => { if (hasServiceAccess) loadServices(); else setLoading(false); }, [hasServiceAccess]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      ...form,
-      catergory: form.catergory || undefined,
+      title: form.title,
+      description: form.description,
+      price: form.price,
+      duration_minutes: form.duration_minutes,
+      category: (vetOnly ? "vet" : form.catergory) || undefined,
     };
     // Ensure providerId is attached so backend can validate the provider
     if (user?._id || user?.id) {
@@ -61,7 +68,7 @@ export default function ProviderServicesPage() {
       description: data.description ?? "",
       price: data.price ?? 0,
       duration_minutes: data.duration_minutes ?? 30,
-      catergory: data.catergory ?? "",
+      catergory: data.catergory ?? data.category ?? "",
     });
     setShowForm(true);
   };
@@ -80,10 +87,21 @@ export default function ProviderServicesPage() {
   const resetForm = () => {
     setShowForm(false);
     setEditingId(null);
-    setForm({ title: "", description: "", price: 0, duration_minutes: 0, catergory: "" });
+    setForm({ title: "", description: "", price: 0, duration_minutes: 0, catergory: vetOnly ? "vet" : "" });
   };
 
   const serviceList = Array.isArray(services) ? services : [];
+
+  if (!hasServiceAccess) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Services Not Available</h1>
+        <p className="text-gray-500">
+          Shop owners cannot create service bookings. Use Inventory to add products for users.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -132,16 +150,27 @@ export default function ProviderServicesPage() {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="1" required />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select value={form.catergory ?? ""} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent">
-                  <option value="">Select category</option>
-                  <option value="grooming">Grooming</option>
-                  <option value="boarding">Boarding</option>
-                  <option value="vet">Vet</option>
-                </select>
-              </div>
+              {vetOnly ? (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <input
+                    type="text"
+                    value="Vet"
+                    disabled
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <select value={form.catergory ?? ""} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent">
+                    <option value="">Select category</option>
+                    <option value="grooming">Grooming</option>
+                    <option value="boarding">Boarding</option>
+                  </select>
+                </div>
+              )}
               <button type="submit"
                 className="w-full bg-[#0f4f57] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0c4148] transition-colors">
                 {editingId ? "Update Service" : "Create Service"}
@@ -180,7 +209,7 @@ export default function ProviderServicesPage() {
                     <div className="text-sm font-medium text-gray-900">{s.title}</div>
                     <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || "-"}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || s.category || "-"}</td>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">${s.price}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{s.duration_minutes} min</td>
                   <td className="px-6 py-4 text-right">

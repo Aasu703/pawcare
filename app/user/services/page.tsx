@@ -2,10 +2,28 @@
 
 import { useState, useEffect } from "react";
 import { getAllServices } from "@/lib/api/public/service";
-import { Search, Clock, DollarSign, Tag, ChevronRight, Star, Activity, Sparkles, Map, List, SortAsc } from "lucide-react";
+import {
+  Search,
+  Clock,
+  DollarSign,
+  Tag,
+  ChevronRight,
+  Star,
+  Activity,
+  Sparkles,
+  Map,
+  List,
+  SortAsc,
+  ShieldCheck,
+  PillBottle,
+  Scissors,
+  Home,
+} from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchBar, { SearchFilters } from "@/components/SearchBar";
+
+type SortType = "newest" | "price-low" | "price-high" | "rating";
 
 export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
@@ -20,7 +38,7 @@ export default function ServicesPage() {
     priceRange: "all",
   });
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
-  const [sortBy, setSortBy] = useState<"newest" | "price-low" | "price-high" | "rating">("newest");
+  const [sortBy, setSortBy] = useState<SortType>("newest");
 
   async function loadServices() {
     setLoading(true);
@@ -44,15 +62,11 @@ export default function ServicesPage() {
           s.provider?.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
           s.provider?.address?.toLowerCase().includes(filters.location.toLowerCase()) ||
           s.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
-          // For now, skip location filtering if provider info not available
           false
       );
     }
     if (filters.serviceType !== "all") {
       result = result.filter((s) => (s.category || s.catergory) === filters.serviceType);
-    }
-    if (filters.petType !== "all") {
-      // Assuming petType is not in service, skip for now
     }
     if (filters.priceRange !== "all") {
       const [minStr, maxStr] = filters.priceRange.split("-");
@@ -61,7 +75,6 @@ export default function ServicesPage() {
       result = result.filter((s) => s.price >= min && (max === Infinity || s.price <= max));
     }
 
-    // Sorting
     result = result.sort((a, b) => {
       switch (sortBy) {
         case "price-low":
@@ -79,81 +92,157 @@ export default function ServicesPage() {
     setFiltered(result);
   }, [filters, services, sortBy]);
 
-  const categoryColors: Record<string, string> = {
-    grooming: "bg-purple-100 text-purple-700",
-    boarding: "bg-blue-100 text-blue-700",
-    vet: "bg-green-100 text-green-700",
+  const categoryStyles: Record<string, { chip: string; panel: string; icon: any }> = {
+    grooming: {
+      chip: "bg-[#ffe8d5] text-[#b45309]",
+      panel: "from-[#fff7ed] to-[#ffe8d5]",
+      icon: Scissors,
+    },
+    boarding: {
+      chip: "bg-[#d9f2f1] text-[#0f766e]",
+      panel: "from-[#f0fdfa] to-[#d9f2f1]",
+      icon: Home,
+    },
+    vet: {
+      chip: "bg-[#dbeafe] text-[#1d4ed8]",
+      panel: "from-[#eff6ff] to-[#dbeafe]",
+      icon: ShieldCheck,
+    },
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50/30 p-6 md:p-12 relative overflow-hidden">
-      {/* Background Blobs */}
-      <div className="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-[100px] pointer-events-none -z-10" />
-      <div className="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-orange-200/20 rounded-full blur-[100px] pointer-events-none -z-10" />
+  const quickNeeds = [
+    { label: "All Services", value: "all", icon: Tag },
+    { label: "Vet Visits", value: "vet", icon: PillBottle },
+    { label: "Grooming", value: "grooming", icon: Scissors },
+    { label: "Boarding", value: "boarding", icon: Home },
+  ];
 
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-12 relative z-10">
+  return (
+    <div
+      className="min-h-screen bg-[#fffdf9] px-4 py-6 md:px-8 md:py-8"
+      style={{ fontFamily: '"Nunito", "Poppins", sans-serif' }}
+    >
+      <div className="mx-auto max-w-7xl">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
+          className="mb-6 rounded-2xl border border-[#f2ddbc] bg-gradient-to-r from-[#fff4de] via-[#fff9ef] to-[#ecfeff] px-5 py-3 text-sm font-semibold text-[#7a4d0b]"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-            Browse <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-orange-500">Services</span>
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Find and book the best care for your pets. From grooming to vet visits, we have it all.
-          </p>
+          Free cancellation on selected bookings. Verified pet care providers only.
         </motion.div>
 
-        {/* Search Bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-10"
+          className="mb-8 grid gap-5 rounded-[28px] border border-[#f0dfc6] bg-white p-6 shadow-[0_20px_70px_rgba(245,158,11,0.12)] md:grid-cols-[2fr,1fr]"
+        >
+          <div>
+            <p className="mb-2 inline-flex items-center gap-2 rounded-full bg-[#fff0d7] px-4 py-1 text-xs font-bold uppercase tracking-wider text-[#b45309]">
+              <Sparkles className="h-3.5 w-3.5" />
+              Trusted pet care
+            </p>
+            <h1 className="text-3xl font-extrabold text-[#111827] md:text-5xl">
+              Book care your pet
+              <span className="text-[#f59e0b]"> actually enjoys</span>
+            </h1>
+            <p className="mt-3 max-w-2xl text-base text-gray-600 md:text-lg">
+              Explore grooming, veterinary checkups, and boarding from verified providers in one place.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl bg-[#fff8ec] p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#a16207]">Providers</p>
+              <p className="mt-2 text-2xl font-extrabold text-[#111827]">300+</p>
+            </div>
+            <div className="rounded-2xl bg-[#f0fdfa] p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#0f766e]">Happy Pets</p>
+              <p className="mt-2 text-2xl font-extrabold text-[#111827]">50K+</p>
+            </div>
+            <div className="rounded-2xl bg-[#eff6ff] p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#1d4ed8]">Avg Rating</p>
+              <p className="mt-2 text-2xl font-extrabold text-[#111827]">4.8</p>
+            </div>
+            <div className="rounded-2xl bg-[#fff1f2] p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#be123c]">Support</p>
+              <p className="mt-2 text-2xl font-extrabold text-[#111827]">24/7</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="mb-8"
         >
           <SearchBar onSearch={setFilters} />
         </motion.div>
 
-        {/* View Toggle and Sort */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-between items-center mb-8"
+          transition={{ delay: 0.1 }}
+          className="mb-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
-          <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-1 shadow-lg shadow-gray-200/50 border border-white/50">
+          <div>
+            <h2 className="text-xl font-extrabold text-[#111827] md:text-2xl">Shop by need</h2>
+            <p className="text-sm text-gray-500">Choose a care type to narrow down options quickly.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {quickNeeds.map((item) => {
+              const Icon = item.icon;
+              const active = filters.serviceType === item.value;
+              return (
+                <button
+                  key={item.value}
+                  onClick={() => setFilters((prev) => ({ ...prev, serviceType: item.value }))}
+                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
+                    active
+                      ? "border-[#f59e0b] bg-[#f59e0b] text-white shadow-[0_10px_24px_rgba(245,158,11,0.35)]"
+                      : "border-[#eadcc8] bg-white text-gray-700 hover:bg-[#fff6ea]"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12 }}
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#efe2cc] bg-white p-3"
+        >
+          <div className="inline-flex rounded-xl bg-[#f8f6f2] p-1">
             <button
               onClick={() => setViewMode("list")}
-              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
-                viewMode === "list"
-                  ? "bg-primary text-white shadow-lg shadow-primary/30"
-                  : "text-gray-600 hover:text-gray-900"
+              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                viewMode === "list" ? "bg-white text-[#111827] shadow-sm" : "text-gray-500"
               }`}
             >
-              <List className="w-4 h-4" />
+              <List className="h-4 w-4" />
               List View
             </button>
             <button
               onClick={() => setViewMode("map")}
-              className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
-                viewMode === "map"
-                  ? "bg-primary text-white shadow-lg shadow-primary/30"
-                  : "text-gray-600 hover:text-gray-900"
+              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                viewMode === "map" ? "bg-white text-[#111827] shadow-sm" : "text-gray-500"
               }`}
             >
-              <Map className="w-4 h-4" />
+              <Map className="h-4 w-4" />
               Map View
             </button>
           </div>
 
           <div className="flex items-center gap-2">
-            <SortAsc className="w-4 h-4 text-gray-600" />
+            <SortAsc className="h-4 w-4 text-gray-500" />
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-white/70 backdrop-blur-xl rounded-xl px-4 py-2 text-sm font-medium text-gray-700 border border-white/50 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+              onChange={(e) => setSortBy(e.target.value as SortType)}
+              className="h-10 rounded-xl border border-[#efe2cc] bg-white px-3 text-sm font-medium text-gray-700 outline-none focus:border-[#f59e0b]"
             >
               <option value="newest">Newest First</option>
               <option value="price-low">Price: Low to High</option>
@@ -163,114 +252,119 @@ export default function ServicesPage() {
           </div>
         </motion.div>
 
-        {/* Services Grid */}
         {loading ? (
-          <div className="flex justify-center py-20">
+          <div className="flex justify-center py-24">
             <div className="flex flex-col items-center gap-4">
-              <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#f59e0b] border-t-transparent"></div>
               <p className="text-gray-500 font-medium">Loading services...</p>
             </div>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20 bg-white/50 backdrop-blur-md rounded-3xl border border-dashed border-gray-300">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-10 h-10 text-gray-400" />
+          <div className="rounded-3xl border border-dashed border-[#e8d8bc] bg-white px-6 py-20 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#fff4de]">
+              <Search className="h-8 w-8 text-[#f59e0b]" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No services found</h3>
-            <p className="text-gray-500">Try adjusting your search or filters to find what you're looking for.</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">No services found</h3>
+            <p className="text-gray-500">Try changing filters and search again.</p>
           </div>
         ) : viewMode === "map" ? (
-          <div className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 min-h-[600px] flex items-center justify-center">
-            <div className="text-center">
-              <Map className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Map View</h3>
-              <p className="text-gray-500">Interactive map coming soon! For now, use list view to browse services.</p>
+          <div className="flex min-h-[480px] items-center justify-center rounded-3xl border border-[#e8d8bc] bg-white p-6 text-center">
+            <div>
+              <Map className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Map View Coming Soon</h3>
+              <p className="text-gray-500">Use list view to browse and book for now.</p>
             </div>
           </div>
         ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
+          <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             <AnimatePresence>
-              {filtered.map((service) => {
-                const category = service.category || service.catergory;
+              {filtered.map((service, index) => {
+                const category = service.category || service.catergory || "general";
+                const style = categoryStyles[category] || {
+                  chip: "bg-gray-100 text-gray-700",
+                  panel: "from-[#f8fafc] to-[#eef2f7]",
+                  icon: Tag,
+                };
+                const Icon = style.icon;
 
                 return (
-                  <motion.div
+                  <motion.article
                     layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12 }}
+                    transition={{ duration: 0.2, delay: index * 0.02 }}
                     key={service._id}
-                    className="bg-white/80 backdrop-blur-md rounded-[2rem] border border-white/60 p-6 shadow-xl shadow-gray-200/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 transition-all duration-300 group flex flex-col h-full"
+                    className="group overflow-hidden rounded-3xl border border-[#eee1cb] bg-white transition-all hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(17,24,39,0.12)]"
                   >
-                    <div className="flex items-start justify-between mb-6">
-                      <div className={`p-3 rounded-2xl ${category && categoryColors[category] ? categoryColors[category] : "bg-gray-100 text-gray-600"} bg-opacity-20`}>
-                        {category === 'vet' ? <Activity className="w-6 h-6" /> :
-                          category === 'grooming' ? <Sparkles className="w-6 h-6" /> :
-                            <Tag className="w-6 h-6" />}
+                    <div className={`bg-gradient-to-r ${style.panel} p-5`}>
+                      <div className="flex items-start justify-between">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/70">
+                          <Icon className="h-6 w-6 text-[#b45309]" />
+                        </div>
+                        <div className="flex gap-2">
+                          <span className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wide ${style.chip}`}>
+                            {category}
+                          </span>
+                          {(service.rating || 0) >= 4.5 && (
+                            <span className="rounded-full bg-[#fff4de] px-3 py-1 text-xs font-bold uppercase tracking-wide text-[#b45309]">
+                              Popular
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      {category && (
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${category && categoryColors[category] ? categoryColors[category] : "bg-gray-100 text-gray-600"}`}>
-                          {category}
+                    </div>
+
+                    <div className="p-5">
+                      <h3 className="mb-1 line-clamp-1 text-xl font-extrabold text-[#111827] group-hover:text-[#f59e0b]">
+                        {service.title}
+                      </h3>
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-4 w-4 ${
+                                i < (service.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs font-medium text-gray-500">
+                          {service.rating ? `${service.rating.toFixed(1)} rating` : "No rating yet"}
                         </span>
-                      )}
-                    </div>
-
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-1">{service.title}</h3>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 ${
-                              i < (service.rating || 0) ? "text-yellow-400 fill-current" : "text-gray-300"
-                            }`}
-                          />
-                        ))}
                       </div>
-                      <span className="text-sm text-gray-500">
-                        {service.rating ? `${service.rating.toFixed(1)} (${service.reviewCount || 0} reviews)` : "No reviews yet"}
-                      </span>
-                    </div>
-                    <p className="text-gray-500 text-sm mb-6 line-clamp-2 leading-relaxed flex-grow">
-                      {service.description || "No description available for this service."}
-                    </p>
 
-                    <div className="space-y-4 mt-auto">
-                      <div className="flex items-center justify-between text-sm font-medium text-gray-600 bg-gray-50 p-3 rounded-xl">
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-primary" />
-                          <span>{service.duration_minutes} min</span>
+                      <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-600">
+                        {service.description || "No description available for this service."}
+                      </p>
+
+                      <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl bg-[#faf7f1] p-3 text-sm">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Clock className="h-4 w-4 text-[#f59e0b]" />
+                          {service.duration_minutes} min
                         </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-green-600" />
-                          <span className="text-gray-900 text-base">${service.price}</span>
+                        <div className="flex items-center justify-end gap-2 text-gray-700">
+                          <DollarSign className="h-4 w-4 text-[#16a34a]" />
+                          <span className="font-bold">${service.price}</span>
                         </div>
                       </div>
 
-                      <div className="flex gap-2">
-                        <Link
-                          href={`/user/services/${service._id}`}
-                          className="flex-1"
-                        >
-                          <button className="w-full bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 flex items-center justify-center gap-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link href={`/user/services/${service._id}`}>
+                          <button className="w-full rounded-xl border border-[#e8d8bc] bg-white py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-[#fff7ed]">
                             View Details
                           </button>
                         </Link>
-                        <Link
-                          href={`/user/bookings/new?serviceId=${service._id}`}
-                          className="flex-1"
-                        >
-                          <button className="w-full bg-gradient-to-r from-gray-900 to-gray-800 text-white py-3 rounded-xl font-semibold hover:from-primary hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2 group-hover:gap-3">
+                        <Link href={`/user/bookings/new?serviceId=${service._id}`}>
+                          <button className="inline-flex w-full items-center justify-center gap-1 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#ef7f1a] py-2.5 text-sm font-semibold text-white shadow-[0_12px_22px_rgba(239,127,26,0.35)] transition-all hover:from-[#ef7f1a] hover:to-[#dd6b13]">
                             Book Now
-                            <ChevronRight className="w-4 h-4 transition-all" />
+                            <ChevronRight className="h-4 w-4" />
                           </button>
                         </Link>
                       </div>
                     </div>
-                  </motion.div>
+                  </motion.article>
                 );
               })}
             </AnimatePresence>
@@ -280,4 +374,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-

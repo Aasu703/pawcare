@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { getProviderBookings, updateBookingStatus } from "@/lib/api/provider/booking";
 import { toast } from "sonner";
-import { Calendar, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { canManageBookings, isVetProvider } from "@/lib/provider-access";
 
 const statusConfig: Record<string, { label: string; color: string; bgColor: string }> = {
   pending: { label: "Pending", color: "text-yellow-700", bgColor: "bg-yellow-100" },
@@ -13,16 +15,16 @@ const statusConfig: Record<string, { label: string; color: string; bgColor: stri
 };
 
 export default function ProviderBookingsPage() {
+  const { user } = useAuth();
+  const providerType = user?.providerType;
+  const hasBookingAccess = canManageBookings(providerType);
+  const isVet = isVetProvider(providerType);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [updating, setUpdating] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
+  async function fetchBookings() {
     setLoading(true);
     const res = await getProviderBookings();
     if (res.success && res.data) {
@@ -31,7 +33,12 @@ export default function ProviderBookingsPage() {
       toast.error(res.message);
     }
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    if (hasBookingAccess) fetchBookings();
+    else setLoading(false);
+  }, [hasBookingAccess]);
 
   const handleStatusChange = async (bookingId: any, status: any) => {
     setUpdating(bookingId);
@@ -47,6 +54,17 @@ export default function ProviderBookingsPage() {
 
   const filteredBookings = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
 
+  if (!hasBookingAccess) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Bookings Not Available</h1>
+        <p className="text-gray-500">
+          Shop owners cannot accept service bookings. Manage products from Inventory instead.
+        </p>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -58,8 +76,12 @@ export default function ProviderBookingsPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#0c4148]">Booking Management</h1>
-        <p className="text-gray-500 mt-1">Manage customer bookings</p>
+        <h1 className="text-3xl font-bold text-[#0c4148]">
+          {isVet ? "Vet Appointment Bookings" : "Booking Management"}
+        </h1>
+        <p className="text-gray-500 mt-1">
+          {isVet ? "Accept appointments and complete checkups" : "Manage customer bookings"}
+        </p>
       </div>
 
       {/* Filter Tabs */}
@@ -111,6 +133,19 @@ export default function ProviderBookingsPage() {
                         {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleTimeString()}
                       </span>
                     </div>
+                    <div className="text-sm text-gray-500">
+                      <span className="font-medium text-gray-700">Service:</span> {booking.service?.title || "Not specified"}
+                    </div>
+                    {booking.pet && (
+                      <div className="text-sm text-gray-500">
+                        <span className="font-medium text-gray-700">Pet:</span> {booking.pet.name} ({booking.pet.species || "unknown"})
+                      </div>
+                    )}
+                    {booking.user && (
+                      <div className="text-sm text-gray-500">
+                        <span className="font-medium text-gray-700">Owner:</span> {booking.user.name || booking.user.email || "N/A"}
+                      </div>
+                    )}
                     {booking.notes && (
                       <p className="text-sm text-gray-500">
                         <span className="font-medium">Notes:</span> {booking.notes}
