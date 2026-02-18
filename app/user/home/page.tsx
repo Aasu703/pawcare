@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import AppNotificationBell from "@/components/AppNotificationBell";
 import { getUserPets } from "@/lib/api/user/pet";
 
 interface Pet {
@@ -186,10 +187,11 @@ export default function ProtectedHome() {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="p-2.5 rounded-full hover:bg-white/50 transition duration-300 relative group">
-              <Bell className="w-5 h-5 text-gray-700 group-hover:text-primary transition-colors" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
+            <AppNotificationBell
+              audience="user"
+              buttonClassName="h-10 w-10 bg-transparent text-gray-700 hover:bg-white/70"
+              iconClassName="w-5 h-5"
+            />
             <button
               onClick={handleProfileClick}
               className="px-3 py-1.5 rounded-full bg-white/50 hover:bg-white border border-white/20 transition-all duration-300 flex items-center gap-2 group"

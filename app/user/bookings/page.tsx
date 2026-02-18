@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getBookingsByUser, deleteBooking } from "@/lib/api/user/booking";
+import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
 import { Calendar, Clock, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -25,7 +26,13 @@ export default function BookingsPage() {
     setLoading(true);
     const res = await getBookingsByUser(uid);
     if (res.success && res.data) {
-      setBookings(res.data);
+      const nextBookings = Array.isArray(res.data) ? res.data : [];
+      setBookings(nextBookings);
+      createUpcomingAppointmentNotifications(nextBookings, {
+        audience: "user",
+        statuses: ["confirmed"],
+        link: "/user/bookings",
+      });
     } else if (!res.success) {
       toast.error(res.message || "Failed to fetch bookings");
     }
@@ -40,6 +47,13 @@ export default function BookingsPage() {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
     const res = await deleteBooking(data);
     if (res.success) {
+      addAppNotification({
+        audience: "user",
+        type: "booking",
+        title: "Booking cancelled",
+        message: "A booking was cancelled from your schedule.",
+        link: "/user/bookings",
+      });
       toast.success("Booking cancelled");
       if (userId) loadBookings(userId);
     } else {

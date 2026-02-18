@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchBar, { SearchFilters } from "@/components/SearchBar";
+import ProviderNearbyShopsMap from "@/components/ProviderNearbyShopsMap";
 
 type SortType = "newest" | "price-low" | "price-high" | "rating";
 
@@ -268,12 +269,8 @@ export default function ServicesPage() {
             <p className="text-gray-500">Try changing filters and search again.</p>
           </div>
         ) : viewMode === "map" ? (
-          <div className="flex min-h-[480px] items-center justify-center rounded-3xl border border-[#e8d8bc] bg-white p-6 text-center">
-            <div>
-              <Map className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-              <h3 className="text-lg font-bold text-gray-900 mb-1">Map View Coming Soon</h3>
-              <p className="text-gray-500">Use list view to browse and book for now.</p>
-            </div>
+          <div className="rounded-3xl border border-[#e8d8bc] bg-white p-4 md:p-6">
+            <ProviderNearbyShopsMap address={filters.location || undefined} mode="vet-hospital" />
           </div>
         ) : (
           <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">

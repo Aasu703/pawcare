@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { canAccessVetFeatures } from "@/lib/provider-access";
 import { getProviderBookings } from "@/lib/api/provider/booking";
 import { createHealthRecord } from "@/lib/api/user/health-record";
+import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
 
 type CheckupForm = {
   title: string;
@@ -36,7 +37,13 @@ export default function VetAppointmentsPage() {
     setLoading(true);
     const res = await getProviderBookings();
     if (res.success && res.data?.bookings) {
-      setBookings(res.data.bookings);
+      const nextBookings = Array.isArray(res.data.bookings) ? res.data.bookings : [];
+      setBookings(nextBookings);
+      createUpcomingAppointmentNotifications(nextBookings, {
+        audience: "provider",
+        statuses: ["confirmed"],
+        link: "/provider/vet-appointments",
+      });
     } else if (!res.success) {
       toast.error(res.message || "Failed to load appointments");
       setBookings([]);
@@ -91,6 +98,13 @@ export default function VetAppointmentsPage() {
     });
 
     if (res.success) {
+      addAppNotification({
+        audience: "provider",
+        type: "appointment",
+        title: "Checkup report saved",
+        message: `${selectedBooking?.pet?.name || "Pet"} checkup added to health records.`,
+        link: "/provider/vet-appointments",
+      });
       toast.success("Checkup report saved to health records");
       closeForm();
     } else {

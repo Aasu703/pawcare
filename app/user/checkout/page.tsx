@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -46,6 +47,15 @@ export default function CheckoutPage() {
     });
 
     if (res.success) {
+      addAppNotification({
+        audience: "user",
+        type: "order",
+        title: "Order placed",
+        message: `Your order totaling $${total.toFixed(2)} has been placed successfully.`,
+        link: "/user/orders",
+        dedupeKey: `order-created:${res.data?._id || new Date().toISOString()}`,
+        pushToBrowser: true,
+      });
       toast.success("Order placed successfully!");
       router.push("/user/orders");
     } else {

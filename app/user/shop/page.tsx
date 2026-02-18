@@ -22,6 +22,7 @@ import {
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
+import ProviderNearbyShopsMap from "@/components/ProviderNearbyShopsMap";
 
 type Product = {
   _id: string;
@@ -293,6 +294,10 @@ export default function ShopPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+        <ProviderNearbyShopsMap mode="pet-shop" />
       </section>
 
       {showCart && (

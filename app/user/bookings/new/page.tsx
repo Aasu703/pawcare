@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { getServiceById } from "@/lib/api/public/service";
 import { getUserPets } from "@/lib/api/user/pet";
 import { createBooking } from "@/lib/api/user/booking";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { ArrowLeft, Calendar, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
@@ -63,6 +64,16 @@ function NewBookingForm() {
     });
 
     if (res.success) {
+      const startLabel = new Date(form.startTime).toLocaleString();
+      addAppNotification({
+        audience: "user",
+        type: "booking",
+        title: "Booking confirmed",
+        message: `${service?.title || "Service"} booked for ${startLabel}.`,
+        link: "/user/bookings",
+        dedupeKey: `booking-created:${res.data?._id || `${normalizedServiceId}:${form.startTime}`}`,
+        pushToBrowser: true,
+      });
       toast.success("Booking created successfully!");
       router.push("/user/bookings");
     } else {

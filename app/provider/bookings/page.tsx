@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getProviderBookings, updateBookingStatus } from "@/lib/api/provider/booking";
+import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
@@ -28,7 +29,30 @@ export default function ProviderBookingsPage() {
     setLoading(true);
     const res = await getProviderBookings();
     if (res.success && res.data) {
-      setBookings(res.data.bookings || []);
+      const nextBookings = Array.isArray(res.data.bookings) ? res.data.bookings : [];
+      setBookings(nextBookings);
+
+      for (const booking of nextBookings) {
+        if (booking?.status === "pending") {
+          addAppNotification({
+            audience: "provider",
+            type: "booking",
+            title: "New booking request",
+            message: `${booking.service?.title || "Service booking"} is awaiting your confirmation.`,
+            link: "/provider/bookings",
+            dedupeKey: `provider-pending-booking:${booking._id || booking.id}`,
+            pushToBrowser: true,
+          });
+        }
+      }
+
+      if (isVet) {
+        createUpcomingAppointmentNotifications(nextBookings, {
+          audience: "provider",
+          statuses: ["confirmed"],
+          link: "/provider/vet-appointments",
+        });
+      }
     } else {
       toast.error(res.message);
     }
@@ -44,6 +68,13 @@ export default function ProviderBookingsPage() {
     setUpdating(bookingId);
     const res = await updateBookingStatus(bookingId, status);
     if (res.success) {
+      addAppNotification({
+        audience: "provider",
+        type: "booking",
+        title: "Booking updated",
+        message: `Booking marked as ${status}.`,
+        link: "/provider/bookings",
+      });
       toast.success(`Booking ${status}`);
       fetchBookings();
     } else {
