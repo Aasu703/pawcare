@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -26,26 +27,62 @@ export default function CheckoutPage() {
     }
   }, [searchParams]);
 
-  const total = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+  // Normalize items: coerce prices and quantities to numbers and fill expected fields
+  const normalizedItems = items.map((item) => ({
+    ...item,
+    productId: item.productId ?? item.id ?? "",
+    productName: item.productName ?? item.name ?? "",
+    unitPrice: Number(item.unitPrice ?? item.price ?? 0),
+    quantity: Number(item.quantity ?? item.qty ?? 0),
+  }));
+
+  const validItems = normalizedItems.filter(
+    (item) => Number.isFinite(item.unitPrice) && item.unitPrice >= 0 && Number.isFinite(item.quantity) && item.quantity > 0
+  );
+
+  const total = validItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
 
   const handleCheckout = async () => {
     if (!shippingAddress.trim()) {
       toast.error("Please enter a shipping address");
       return;
     }
-    if (items.length === 0) {
-      toast.error("No items in cart");
+    if (validItems.length === 0) {
+      toast.error("No valid items in cart");
+      return;
+    }
+    // Check for invalid items
+    if (items.length !== validItems.length) {
+      toast.error("Some items have invalid price or quantity.");
       return;
     }
 
     setLoading(true);
+    // Map to backend shape: price (number) instead of unitPrice
+    const payloadItems = validItems.map((it) => ({
+      productId: it.productId,
+      productName: it.productName,
+      quantity: it.quantity,
+      price: it.unitPrice,
+    }));
+
     const res = await createOrder({
-      items,
+      items: payloadItems,
+      totalAmount: Number(total),
       shippingAddress,
       notes: notes || undefined,
     });
 
     if (res.success) {
+      addAppNotification({
+        audience: "user",
+        type: "order",
+        title: "Order placed",
+        message: `Your order totaling $${total.toFixed(2)} has been placed successfully.`,
+        link: "/user/orders",
+        dedupeKey: `order-created:${res.data?._id || new Date().toISOString()}`,
+        pushToBrowser: true,
+      });
       toast.success("Order placed successfully!");
       router.push("/user/orders");
     } else {
@@ -76,7 +113,7 @@ export default function CheckoutPage() {
           <div className="bg-white rounded-xl shadow border p-6">
             <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
             <div className="space-y-3">
-              {items.map((item, idx) => (
+              {normalizedItems.map((item, idx) => (
                 <div key={idx} className="flex justify-between items-center border-b pb-2">
                   <div>
                     <p className="font-medium">{item.productName}</p>

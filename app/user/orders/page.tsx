@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getMyOrders, deleteOrder } from "@/lib/api/user/order";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { Package, Clock, Truck, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
 import Link from "next/link";
@@ -38,6 +39,13 @@ export default function OrdersPage() {
     if (!confirm("Are you sure you want to cancel this order?")) return;
     const res = await deleteOrder(data);
     if (res.success) {
+      addAppNotification({
+        audience: "user",
+        type: "order",
+        title: "Order cancelled",
+        message: "A pending order was cancelled.",
+        link: "/user/orders",
+      });
       toast.success("Order cancelled");
       fetchOrders();
     } else {
