@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { useAuth } from "@/context/AuthContext";
 import { getServiceById } from "@/lib/api/public/service";
 import { getUserPets } from "@/lib/api/user/pet";
 import { createBooking } from "@/lib/api/user/booking";
@@ -12,15 +11,72 @@ import { toast } from "sonner";
 import { ArrowLeft, Calendar, Clock, DollarSign } from "lucide-react";
 import Link from "next/link";
 
+const QUICK_TIME_SLOTS = ["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"];
+
+function padTwo(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function formatDateForInput(date: Date) {
+  return `${date.getFullYear()}-${padTwo(date.getMonth() + 1)}-${padTwo(date.getDate())}`;
+}
+
+function formatTimeForInput(date: Date) {
+  return `${padTwo(date.getHours())}:${padTwo(date.getMinutes())}`;
+}
+
+function formatDateTimeForInput(date: Date) {
+  return `${formatDateForInput(date)}T${formatTimeForInput(date)}`;
+}
+
+function toNextHalfHour(date: Date) {
+  const next = new Date(date);
+  next.setSeconds(0, 0);
+  const minutes = next.getMinutes();
+  const remainder = minutes % 30;
+  if (remainder !== 0) {
+    next.setMinutes(minutes + (30 - remainder));
+  }
+  if (next.getTime() <= date.getTime()) {
+    next.setMinutes(next.getMinutes() + 30);
+  }
+  return next;
+}
+
+function addMinutesToLocalDateTime(localDateTime: string, minutesToAdd: number) {
+  const date = new Date(localDateTime);
+  if (Number.isNaN(date.getTime())) return "";
+  date.setMinutes(date.getMinutes() + minutesToAdd);
+  return formatDateTimeForInput(date);
+}
+
+function combineDateAndTime(date: string, time: string) {
+  if (!date || !time) return "";
+  return `${date}T${time}`;
+}
+
+type ServiceSummary = {
+  _id?: string;
+  title?: string;
+  description?: string;
+  price?: number;
+  duration_minutes?: number;
+};
+
+type PetSummary = {
+  _id: string;
+  name: string;
+  species?: string;
+};
+
 function NewBookingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const serviceId = searchParams.get("serviceId");
   const normalizedServiceId = serviceId && serviceId !== "undefined" ? serviceId : undefined;
-  const { user } = useAuth();
 
-  const [service, setService] = useState<any>(null);
-  const [pets, setPets] = useState<any[]>([]);
+  const [service, setService] = useState<ServiceSummary | null>(null);
+  const [pets, setPets] = useState<PetSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,27 +86,80 @@ function NewBookingForm() {
     petId: "",
     notes: "",
   });
+  const [bookingDate, setBookingDate] = useState("");
+  const [bookingTime, setBookingTime] = useState("");
 
-  useEffect(() => {
-    loadData();
-  }, [serviceId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const [serviceRes, petsRes] = await Promise.all([
-      normalizedServiceId ? getServiceById(normalizedServiceId) : Promise.resolve({ success: false as const, message: "", data: undefined }),
+      normalizedServiceId
+        ? getServiceById(normalizedServiceId)
+        : Promise.resolve({ success: false as const, message: "", data: undefined }),
       getUserPets(),
     ]);
 
     if (serviceRes.success && serviceRes.data) setService(serviceRes.data);
     if (petsRes.success && petsRes.data) setPets(petsRes.data);
     setLoading(false);
+  }, [normalizedServiceId]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadData();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [loadData]);
+
+  useEffect(() => {
+    if (form.startTime) return;
+    const timer = window.setTimeout(() => {
+      const defaultStart = toNextHalfHour(new Date());
+      const date = formatDateForInput(defaultStart);
+      const time = formatTimeForInput(defaultStart);
+      const startTime = combineDateAndTime(date, time);
+      const duration = service?.duration_minutes || 60;
+
+      setBookingDate(date);
+      setBookingTime(time);
+      setForm((prev) => ({
+        ...prev,
+        startTime,
+        endTime: addMinutesToLocalDateTime(startTime, duration),
+      }));
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [form.startTime, service?.duration_minutes]);
+
+  const updateStartSchedule = (nextDate: string, nextTime: string) => {
+    const startTime = combineDateAndTime(nextDate, nextTime);
+    const duration = service?.duration_minutes || 60;
+    setBookingDate(nextDate);
+    setBookingTime(nextTime);
+    setForm((prev) => ({
+      ...prev,
+      startTime,
+      endTime: addMinutesToLocalDateTime(startTime, duration),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.startTime || !form.endTime) {
       toast.error("Please select start and end times");
+      return;
+    }
+    if (new Date(form.startTime).getTime() < Date.now()) {
+      toast.error("Please select a future date and time");
+      return;
+    }
+    if (new Date(form.endTime).getTime() <= new Date(form.startTime).getTime()) {
+      toast.error("End time must be after start time");
       return;
     }
 
@@ -91,22 +200,22 @@ function NewBookingForm() {
   }
 
   return (
-    <div>
-      <Link href="/user/services" className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6">
+    <div className="mx-auto flex max-w-2xl flex-col items-center">
+      <Link href="/user/services" className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-gray-900">
         <ArrowLeft className="h-5 w-5" />
         Back to Services
       </Link>
 
-      <div className="max-w-2xl">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Booking</h1>
-        <p className="text-gray-500 mb-8">Fill in the details to book a service for your pet</p>
+      <div className="w-full text-center">
+        <h1 className="mb-2 text-3xl font-bold text-gray-900">Create Booking</h1>
+        <p className="mb-8 text-gray-500">Fill in the details to book a service for your pet</p>
 
         {/* Service Info */}
         {service && (
-          <div className="bg-[#0f4f57]/5 border border-[#0f4f57]/20 rounded-xl p-5 mb-8">
+          <div className="mb-8 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 p-5 text-center">
             <h3 className="font-semibold text-gray-900 text-lg">{service.title}</h3>
             <p className="text-gray-600 text-sm mt-1">{service.description}</p>
-            <div className="flex gap-4 mt-3 text-sm text-gray-500">
+            <div className="mt-3 flex justify-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1"><DollarSign className="h-4 w-4" />${service.price}</span>
               <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{service.duration_minutes} min</span>
             </div>
@@ -129,28 +238,86 @@ function NewBookingForm() {
             </select>
           </div>
 
-          {/* Start Time */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Time</label>
-            <input
-              type="datetime-local"
-              value={form.startTime}
-              onChange={(e) => setForm({ ...form, startTime: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent"
-              required
-            />
-          </div>
+          <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4">
+            <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-[#0c4148]">
+              <Calendar className="h-4 w-4" />
+              Schedule
+            </div>
 
-          {/* End Time */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Time</label>
-            <input
-              type="datetime-local"
-              value={form.endTime}
-              onChange={(e) => setForm({ ...form, endTime: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent"
-              required
-            />
+            <div className="grid gap-3 md:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => updateStartSchedule(formatDateForInput(new Date()), bookingTime || "09:00")}
+                className="rounded-lg border border-[#0f4f57]/20 bg-white px-3 py-2 text-sm font-medium text-[#0f4f57] hover:bg-[#0f4f57]/5"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const tomorrow = new Date();
+                  tomorrow.setDate(tomorrow.getDate() + 1);
+                  updateStartSchedule(formatDateForInput(tomorrow), bookingTime || "09:00");
+                }}
+                className="rounded-lg border border-[#0f4f57]/20 bg-white px-3 py-2 text-sm font-medium text-[#0f4f57] hover:bg-[#0f4f57]/5"
+              >
+                Tomorrow
+              </button>
+            </div>
+
+            <div className="mt-3 grid gap-3 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Date</label>
+                <input
+                  type="date"
+                  value={bookingDate}
+                  min={formatDateForInput(new Date())}
+                  onChange={(e) => updateStartSchedule(e.target.value, bookingTime)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  required
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Start Time</label>
+                <input
+                  type="time"
+                  value={bookingTime}
+                  onChange={(e) => updateStartSchedule(bookingDate, e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {QUICK_TIME_SLOTS.map((slot) => (
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => updateStartSchedule(bookingDate, slot)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                    bookingTime === slot
+                      ? "border-[#0f4f57] bg-[#0f4f57] text-white"
+                      : "border-gray-300 bg-white text-gray-700 hover:border-[#0f4f57]/50"
+                  }`}
+                >
+                  {slot}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-4 rounded-lg bg-white p-3 text-sm text-gray-700">
+              <p className="font-medium text-[#0c4148]">Appointment Summary</p>
+              <p className="mt-1">
+                Starts: {form.startTime ? new Date(form.startTime).toLocaleString() : "--"}
+              </p>
+              <p>
+                Ends: {form.endTime ? new Date(form.endTime).toLocaleString() : "--"}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                End time is auto-set using service duration ({service?.duration_minutes || 60} minutes).
+              </p>
+            </div>
           </div>
 
           {/* Notes */}
