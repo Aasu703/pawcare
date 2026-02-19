@@ -10,6 +10,21 @@ import { providerLogin as providerLoginApi, providerRegister as providerRegister
 
 const BASE_URL = process.env.API_BASE_URL || "http://localhost:5050";
 
+
+const resolveToken = (payload: any): string | undefined => {
+    const directToken = payload?.token;
+    if (typeof directToken === 'string' && directToken.trim().length > 0 && directToken !== 'undefined') {
+        return directToken;
+    }
+
+    const nestedToken = payload?.data?.accessToken;
+    if (typeof nestedToken === 'string' && nestedToken.trim().length > 0 && nestedToken !== 'undefined') {
+        return nestedToken;
+    }
+
+    return undefined;
+};
+
 // Server-side whoAmI that uses Next.js cookies
 export const whoAmI = async () => {
     try {
@@ -50,8 +65,9 @@ export const handleRegister = async (userData: any) => {
         const result=await register(userData);
         // how to send back to component
         if(result.success){
-            if (result.token) {
-                await setAuthToken(result.token);
+            const token = resolveToken(result);
+            if (token) {
+                await setAuthToken(token);
             }
             if (result.data) {
                 await setUserData(result.data);
@@ -78,13 +94,21 @@ export const handleLogin = async (loginData: any) => {
     try{
         const result=await login(loginData);
         if(result.success){
-            await setAuthToken(result.token);
+            const token = resolveToken(result);
+            if (!token) {
+                return {
+                    success: false,
+                    message: "Login failed: missing access token"
+                };
+            }
+
+            await setAuthToken(token);
             await setUserData(result.data.user);
             return {
                 success: true,
                 message: "Login successful",
                 data: result.data.user,
-                token: result.token
+                token
                 };
         }
         // If user login fails, try provider login
@@ -92,15 +116,16 @@ export const handleLogin = async (loginData: any) => {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
                 const providerData = { ...providerResult.data.provider, role: "provider" };
-                if (providerResult.token) {
-                    await setAuthToken(providerResult.token);
+                const token = resolveToken(providerResult);
+                if (token) {
+                    await setAuthToken(token);
                 }
                 await setUserData(providerData);
                 return {
                     success: true,
                     message: "Login successful",
                     data: providerData,
-                    token: providerResult.token
+                    token: resolveToken(providerResult)
                 };
             }
         } catch (providerErr: any) {
@@ -116,15 +141,16 @@ export const handleLogin = async (loginData: any) => {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
                 const providerData = { ...providerResult.data.provider, role: "provider" };
-                if (providerResult.token) {
-                    await setAuthToken(providerResult.token);
+                const token = resolveToken(providerResult);
+                if (token) {
+                    await setAuthToken(token);
                 }
                 await setUserData(providerData);
                 return {
                     success: true,
                     message: "Login successful",
                     data: providerData,
-                    token: providerResult.token
+                    token: resolveToken(providerResult)
                 };
             }
         } catch (providerErr: any) {
@@ -142,15 +168,21 @@ export const handleProviderLogin = async (loginData: any) => {
         const providerResult = await providerLoginApi(loginData);
         if (providerResult.success) {
             const providerData = { ...providerResult.data.provider, role: "provider" };
-            if (providerResult.token) {
-                await setAuthToken(providerResult.token);
+            const token = resolveToken(providerResult);
+            if (!token) {
+                return {
+                    success: false,
+                    message: "Provider login failed: missing access token"
+                };
             }
+
+            await setAuthToken(token);
             await setUserData(providerData);
             return {
                 success: true,
                 message: "Login successful",
                 data: providerData,
-                token: providerResult.token
+                token
             };
         }
         return {
@@ -170,8 +202,9 @@ export const handleProviderRegister = async (providerData: any) => {
         const result = await providerRegisterApi(providerData);
         if (result.success) {
             const userData = { ...result.data.provider, role: "provider" };
-            if (result.token) {
-                await setAuthToken(result.token);
+            const token = resolveToken(result);
+            if (token) {
+                await setAuthToken(token);
             }
             await setUserData(userData);
             return {

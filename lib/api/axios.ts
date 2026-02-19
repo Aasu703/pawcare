@@ -12,6 +12,18 @@ function getCookie(name: string): string | null {
   return null;
 }
 
+
+function getAuthToken(): string | null {
+  const cookieToken = getCookie("auth_token");
+  if (cookieToken && cookieToken !== "undefined") return cookieToken;
+
+  if (typeof window !== "undefined") {
+    const stored = window.localStorage.getItem("auth_token");
+    if (stored && stored !== "undefined") return stored;
+  }
+
+  return null;
+}
 const BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   process.env.API_BASE_URL ||
@@ -28,7 +40,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const token = getCookie("auth_token");
+    const token = getAuthToken();
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
