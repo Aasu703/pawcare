@@ -145,6 +145,13 @@ export default function ProviderDashboard() {
                 <p className="text-sm text-gray-500 mt-1">Create checkup reports for pets</p>
               </Link>
             )}
+            {canManageBookings(providerType) && (
+              <Link href="/provider/messages" className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow text-center">
+                <MessageSquare className="h-8 w-8 text-[#0f4f57] mx-auto mb-3" />
+                <p className="font-semibold text-gray-900">Messages</p>
+                <p className="text-sm text-gray-500 mt-1">Chat with pet owners</p>
+              </Link>
+            )}
             {canManageInventory(providerType) && (
               <Link href="/provider/inventory" className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow text-center">
                 <Package className="h-8 w-8 text-[#0f4f57] mx-auto mb-3" />

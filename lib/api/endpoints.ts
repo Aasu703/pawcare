@@ -136,6 +136,12 @@ export const API = {
     UPDATE: (data: any) => `/api/message/${data}`,
     DELETE: (data: any) => `/api/message/${data}`,
  },
+ CHAT: {
+    GET_CONVERSATIONS: '/api/chat/conversations',
+    GET_CONTACTS: '/api/chat/contacts',
+    GET_MESSAGES: (participantId: string) => `/api/chat/messages/${participantId}`,
+    SEND_MESSAGE: (participantId: string) => `/api/chat/messages/${participantId}`,
+ },
  HEALTH_RECORD: {
     CREATE: '/api/health-record',
     GET_BY_PET: (data: any) => `/api/health-record/pet/${data}`,

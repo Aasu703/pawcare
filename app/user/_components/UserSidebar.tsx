@@ -16,6 +16,7 @@ const navItems = [
   { label: "Reviews", href: "/user/reviews", icon: Star },
   { label: "Posts", href: "/user/posts", icon: Megaphone },
   { label: "Messages", href: "/user/messages", icon: MessageSquare },
+  { label: "Vet Chat", href: "/user/vet-chat", icon: MessageSquare },
   { label: "Profile", href: "/user/profile", icon: User },
 ];
 

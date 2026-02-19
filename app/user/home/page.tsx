@@ -33,6 +33,22 @@ export default function ProtectedHome() {
   const [petsError, setPetsError] = useState<string | null>(null);
 
   const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
+  const mediaBaseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.API_BASE_URL ||
+    "http://localhost:5050";
+  const rawProfileImage =
+    user?.imageUrl ||
+    user?.image ||
+    user?.avatar ||
+    user?.profileImage ||
+    user?.profileImageUrl ||
+    "";
+  const profileImageSrc = rawProfileImage
+    ? rawProfileImage.startsWith("http")
+      ? rawProfileImage
+      : `${mediaBaseUrl}${rawProfileImage}`
+    : "";
 
   const handleLogout = async () => {
     await logout();
@@ -196,8 +212,16 @@ export default function ProtectedHome() {
               onClick={handleProfileClick}
               className="px-3 py-1.5 rounded-full bg-white/50 hover:bg-white border border-white/20 transition-all duration-300 flex items-center gap-2 group"
             >
-              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white text-xs font-bold">
-                {user?.Firstname?.charAt(0) || <User className="w-4 h-4" />}
+              <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                {profileImageSrc ? (
+                  <img
+                    src={profileImageSrc}
+                    alt={user?.Firstname || "Profile"}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user?.Firstname?.charAt(0) || <User className="w-4 h-4" />
+                )}
               </div>
               <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 hidden sm:block">
                 {user?.Firstname || "Profile"}

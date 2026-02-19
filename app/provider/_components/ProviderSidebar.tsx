@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, LucideIcon } from "lucide-react";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, MessageCircle, LucideIcon } from "lucide-react";
 import { useAuth } from '@/context/AuthContext';
 import {
   canAccessVetFeatures,
@@ -33,6 +33,7 @@ export default function ProviderSidebar() {
     ...(canManageInventory(providerType) ? [{ label: "Inventory", href: "/provider/inventory", icon: Package }] : []),
     ...(canManageBookings(providerType) ? [{ label: "Bookings", href: "/provider/bookings", icon: CalendarCheck }] : []),
     ...(canAccessVetFeatures(providerType) ? [{ label: "Vet Appointments", href: "/provider/vet-appointments", icon: HeartPulse }] : []),
+    ...(canManageBookings(providerType) ? [{ label: "Messages", href: "/provider/messages", icon: MessageCircle }] : []),
     { label: "Posts", href: "/provider/posts", icon: FileText },
     { label: "Feedback", href: "/provider/feedback", icon: MessageSquare },
   ];

@@ -78,6 +78,11 @@ export default function ServiceDetailPage() {
   }
 
   const category = service.category || service.catergory || "general";
+  const providerId = service.provider?._id || service.providerId || "";
+  const providerName = service.provider?.name || service.provider?.businessName || "Vet Provider";
+  const providerSubtitle = service.provider?.providerType
+    ? `${service.provider.providerType} provider`
+    : "provider";
   const categoryBadge =
     category === "vet"
       ? "bg-[#dbeafe] text-[#1d4ed8]"
@@ -282,6 +287,19 @@ export default function ServiceDetailPage() {
                 Continue to Booking
               </button>
             </Link>
+
+            {category === "vet" && providerId && (
+              <Link
+                href={`/user/vet-chat?participantId=${providerId}&participantRole=provider&participantName=${encodeURIComponent(
+                  providerName,
+                )}&participantSubtitle=${encodeURIComponent(providerSubtitle)}`}
+              >
+                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#e8d8bc] bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-[#fff8ec]">
+                  <Mail className="h-4 w-4" />
+                  Chat with Vet
+                </button>
+              </Link>
+            )}
 
             <p className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-gray-500">
               <HeartPulse className="h-4 w-4 text-[#f59e0b]" />
