@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { getProviderServices, getInventoryByProvider } from "@/lib/api/provider/provider";
 import { getProviderBookings } from "@/lib/api/provider/booking";
+import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
+import AppNotificationBell from "@/components/AppNotificationBell";
 import { Wrench, Package, MessageSquare, DollarSign, CalendarCheck, HeartPulse, AlertTriangle, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -37,7 +39,33 @@ export default function ProviderDashboard() {
     if (canManageBookings(providerType)) {
       const bookingsRes = await getProviderBookings();
       if (bookingsRes.success && bookingsRes.data?.bookings) {
-        setBookings(bookingsRes.data.bookings);
+        const nextBookings = Array.isArray(bookingsRes.data.bookings)
+          ? bookingsRes.data.bookings
+          : [];
+        setBookings(nextBookings);
+
+        for (const booking of nextBookings) {
+          if (booking?.status === "pending") {
+            addAppNotification({
+              audience: "provider",
+              providerType: providerType ?? undefined,
+              type: "booking",
+              title: "New booking request",
+              message: `${booking.service?.title || "Service booking"} is awaiting your confirmation.`,
+              link: "/provider/bookings",
+              dedupeKey: `dashboard-pending-booking:${booking._id || booking.id}`,
+            });
+          }
+        }
+
+        createUpcomingAppointmentNotifications(nextBookings, {
+          audience: "provider",
+          providerType: providerType ?? undefined,
+          statuses: ["confirmed"],
+          link: canAccessVetFeatures(providerType)
+            ? "/provider/vet-appointments"
+            : "/provider/bookings",
+        });
       } else {
         setBookings([]);
       }
@@ -48,7 +76,27 @@ export default function ProviderDashboard() {
     if (canManageInventory(providerType) && providerId) {
       const inventoryRes = await getInventoryByProvider(providerId);
       if (inventoryRes.success && inventoryRes.data) {
-        setInventory(inventoryRes.data);
+        const nextInventory = Array.isArray(inventoryRes.data)
+          ? inventoryRes.data
+          : [];
+        setInventory(nextInventory);
+
+        for (const item of nextInventory) {
+          const quantity = Number(item?.quantity || 0);
+          if (quantity <= 5) {
+            addAppNotification({
+              audience: "provider",
+              providerType: "shop",
+              type: "order",
+              title: quantity === 0 ? "Out of stock item" : "Low stock alert",
+              message: `${item?.product_name || "Product"} has ${
+                quantity === 0 ? "no remaining stock" : `${quantity} units left`
+              }.`,
+              link: "/provider/inventory",
+              dedupeKey: `dashboard-stock-alert:${item?._id || item?.id}:${quantity}`,
+            });
+          }
+        }
       } else {
         setInventory([]);
       }
@@ -89,15 +137,23 @@ export default function ProviderDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{getProviderTypeLabel(providerType)} Dashboard</h1>
-        <p className="text-gray-500 mt-1">
-          {isShop
-            ? "Manage your shop products and stock visibility"
-            : isVet
-            ? "Manage vet services, bookings, and appointments"
-            : "Manage grooming services and customer bookings"}
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{getProviderTypeLabel(providerType)} Dashboard</h1>
+          <p className="text-gray-500 mt-1">
+            {isShop
+              ? "Manage your shop products and stock visibility"
+              : isVet
+              ? "Manage vet services, bookings, and appointments"
+              : "Manage grooming services and customer bookings"}
+          </p>
+        </div>
+        <AppNotificationBell
+          audience="provider"
+          providerType={providerType ?? undefined}
+          buttonClassName="h-10 w-10 bg-white text-[#0f4f57] border border-gray-200 hover:bg-gray-50"
+          panelClassName="right-0"
+        />
       </div>
 
       {/* Stats */}

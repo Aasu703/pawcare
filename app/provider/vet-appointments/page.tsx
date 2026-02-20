@@ -41,6 +41,7 @@ export default function VetAppointmentsPage() {
       setBookings(nextBookings);
       createUpcomingAppointmentNotifications(nextBookings, {
         audience: "provider",
+        providerType: "vet",
         statuses: ["confirmed"],
         link: "/provider/vet-appointments",
       });
@@ -100,6 +101,7 @@ export default function VetAppointmentsPage() {
     if (res.success) {
       addAppNotification({
         audience: "provider",
+        providerType: "vet",
         type: "appointment",
         title: "Checkup report saved",
         message: `${selectedBooking?.pet?.name || "Pet"} checkup added to health records.`,

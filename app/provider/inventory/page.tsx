@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { getInventoryByProvider, createInventory, updateInventory, deleteInventory } from "@/lib/api/provider/provider";
 import { Plus, Pencil, Trash2, X, Package } from "lucide-react";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { canManageInventory } from "@/lib/provider-access";
@@ -28,7 +29,28 @@ export default function ProviderInventoryPage() {
   async function loadItems() {
     setLoading(true);
     const res = await getInventoryByProvider(providerId);
-    if (res.success && res.data) setItems(res.data);
+    if (res.success && res.data) {
+      const nextItems = Array.isArray(res.data) ? res.data : [];
+      setItems(nextItems);
+
+      for (const item of nextItems) {
+        const quantity = Number(item?.quantity || 0);
+        if (quantity <= 5) {
+          addAppNotification({
+            audience: "provider",
+            providerType: "shop",
+            type: "order",
+            title: quantity === 0 ? "Out of stock item" : "Low stock alert",
+            message: `${item?.product_name || "Product"} has ${
+              quantity === 0 ? "no remaining stock" : `${quantity} units left`
+            }.`,
+            link: "/provider/inventory",
+            dedupeKey: `shop-stock-alert:${item?._id || item?.id}:${quantity}`,
+            pushToBrowser: true,
+          });
+        }
+      }
+    }
     setLoading(false);
   }
 
@@ -49,6 +71,16 @@ export default function ProviderInventoryPage() {
       res = await createInventory({ ...form, providerId });
     }
     if (res.success) {
+      addAppNotification({
+        audience: "provider",
+        providerType: "shop",
+        type: "general",
+        title: editingId ? "Inventory item updated" : "Inventory item added",
+        message: `${form.product_name || "Product"} ${
+          editingId ? "updated" : "added"
+        } successfully.`,
+        link: "/provider/inventory",
+      });
       toast.success(editingId ? "Item updated!" : "Item added!");
       resetForm();
       loadItems();

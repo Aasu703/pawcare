@@ -34,11 +34,13 @@ export default function ProviderBookingsPage() {
 
       for (const booking of nextBookings) {
         if (booking?.status === "pending") {
+          const bookingLabel = isVet ? "vet booking request" : "grooming booking request";
           addAppNotification({
             audience: "provider",
+            providerType: providerType ?? undefined,
             type: "booking",
             title: "New booking request",
-            message: `${booking.service?.title || "Service booking"} is awaiting your confirmation.`,
+            message: `${booking.service?.title || bookingLabel} is awaiting your confirmation.`,
             link: "/provider/bookings",
             dedupeKey: `provider-pending-booking:${booking._id || booking.id}`,
             pushToBrowser: true,
@@ -46,13 +48,12 @@ export default function ProviderBookingsPage() {
         }
       }
 
-      if (isVet) {
-        createUpcomingAppointmentNotifications(nextBookings, {
-          audience: "provider",
-          statuses: ["confirmed"],
-          link: "/provider/vet-appointments",
-        });
-      }
+      createUpcomingAppointmentNotifications(nextBookings, {
+        audience: "provider",
+        providerType: providerType ?? undefined,
+        statuses: ["confirmed"],
+        link: isVet ? "/provider/vet-appointments" : "/provider/bookings",
+      });
     } else {
       toast.error(res.message);
     }
@@ -70,6 +71,7 @@ export default function ProviderBookingsPage() {
     if (res.success) {
       addAppNotification({
         audience: "provider",
+        providerType: providerType ?? undefined,
         type: "booking",
         title: "Booking updated",
         message: `Booking marked as ${status}.`,

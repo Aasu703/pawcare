@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   ChatContact,
@@ -12,8 +12,10 @@ import {
   sendChatMessage,
 } from "@/lib/api/chat";
 import { useAuth } from "@/context/AuthContext";
+import { createChatSocket, getClientAuthToken } from "@/lib/realtime/chat-socket";
 import { MessageSquare, Send, UserCircle } from "lucide-react";
 import { toast } from "sonner";
+import type { Socket } from "socket.io-client";
 
 type ActiveParticipant = {
   participantId: string;
@@ -40,6 +42,7 @@ export default function ProviderMessagesPage() {
   const [sending, setSending] = useState(false);
   const [draft, setDraft] = useState("");
   const [manualActive, setManualActive] = useState<ActiveParticipant | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   const selectedFromQuery = useMemo(() => {
     const participantId = searchParams.get("participantId") || "";
@@ -117,6 +120,51 @@ export default function ProviderMessagesPage() {
 
   const active = manualActive ?? defaultActive;
 
+  const mergeIncomingMessage = useCallback((incoming: ChatMessage) => {
+    setMessages((prev) => {
+      if (prev.some((msg) => msg.id === incoming.id)) return prev;
+      const belongsToActive =
+        active &&
+        ((incoming.senderId === currentUserId &&
+          incoming.receiverId === active.participantId &&
+          incoming.receiverRole === active.participantRole) ||
+          (incoming.receiverId === currentUserId &&
+            incoming.senderId === active.participantId &&
+            incoming.senderRole === active.participantRole));
+
+      if (!belongsToActive) return prev;
+
+      return [...prev, incoming].sort((a, b) => {
+        const at = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return at - bt;
+      });
+    });
+
+    const participantId =
+      incoming.senderId === currentUserId ? incoming.receiverId : incoming.senderId;
+    const participantRole =
+      incoming.senderId === currentUserId ? incoming.receiverRole : incoming.senderRole;
+
+    setConversations((prev) => {
+      const idx = prev.findIndex(
+        (c) => c.participantId === participantId && c.participantRole === participantRole,
+      );
+      if (idx === -1) return prev;
+
+      const updated = [...prev];
+      const existing = updated.splice(idx, 1)[0];
+      updated.unshift({
+        ...existing,
+        lastMessage: incoming.content,
+        lastMessageAt: incoming.createdAt || new Date().toISOString(),
+        lastMessageSenderId: incoming.senderId,
+        lastMessageSenderRole: incoming.senderRole,
+      });
+      return updated;
+    });
+  }, [active, currentUserId]);
+
   useEffect(() => {
     if (!active) {
       const timer = window.setTimeout(() => {
@@ -138,6 +186,26 @@ export default function ProviderMessagesPage() {
       return () => window.clearTimeout(timer);
     }
   }, [selectedFromQuery]);
+
+  useEffect(() => {
+    if (!currentUserId) return;
+    const token = getClientAuthToken();
+    if (!token) return;
+
+    const socket = createChatSocket(token);
+    socketRef.current = socket;
+
+    socket.on("chat:message", (payload: ChatMessage) => {
+      if (!payload || typeof payload !== "object") return;
+      mergeIncomingMessage(payload);
+    });
+
+    return () => {
+      socket.off("chat:message");
+      socket.disconnect();
+      socketRef.current = null;
+    };
+  }, [currentUserId, active?.participantId, active?.participantRole, mergeIncomingMessage]);
 
   const handleSelectContact = (contact: ChatContact) => {
     const participant: ActiveParticipant = {
@@ -162,8 +230,10 @@ export default function ProviderMessagesPage() {
     );
     if (res.success) {
       setDraft("");
-      await loadMessages(active);
-      await loadInitial();
+      if (!socketRef.current?.connected) {
+        await loadMessages(active);
+        await loadInitial();
+      }
     } else {
       toast.error(res.message);
     }

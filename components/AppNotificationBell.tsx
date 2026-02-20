@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import {
   AppNotification,
   NotificationAudience,
+  NotificationProviderType,
   clearNotifications,
   getAppNotifications,
   markAllNotificationsAsRead,
@@ -17,6 +18,7 @@ import {
 
 type AppNotificationBellProps = {
   audience: Exclude<NotificationAudience, "all">;
+  providerType?: NotificationProviderType;
   buttonClassName?: string;
   panelClassName?: string;
   iconClassName?: string;
@@ -42,6 +44,7 @@ function formatRelativeTime(iso: string) {
 
 export default function AppNotificationBell({
   audience,
+  providerType,
   buttonClassName,
   panelClassName,
   iconClassName,
@@ -56,7 +59,7 @@ export default function AppNotificationBell({
 
   useEffect(() => {
     const refresh = () => {
-      setItems(getAppNotifications(audience));
+      setItems(getAppNotifications(audience, providerType));
       if (typeof window !== "undefined" && "Notification" in window) {
         setPermission(Notification.permission);
       } else {
@@ -67,7 +70,7 @@ export default function AppNotificationBell({
     refresh();
     const unsubscribe = subscribeToNotificationUpdates(refresh);
     return unsubscribe;
-  }, [audience]);
+  }, [audience, providerType]);
 
   useEffect(() => {
     const onPointerDown = (event: MouseEvent) => {
@@ -134,7 +137,7 @@ export default function AppNotificationBell({
             </div>
             <button
               type="button"
-              onClick={() => markAllNotificationsAsRead(audience)}
+              onClick={() => markAllNotificationsAsRead(audience, providerType)}
               className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[#0f4f57] hover:bg-[#0f4f57]/10"
             >
               <CheckCheck className="h-3.5 w-3.5" />
@@ -182,7 +185,7 @@ export default function AppNotificationBell({
           {items.length > 0 && (
             <button
               type="button"
-              onClick={() => clearNotifications(audience)}
+              onClick={() => clearNotifications(audience, providerType)}
               className="mt-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
             >
               <Trash2 className="h-3.5 w-3.5" />

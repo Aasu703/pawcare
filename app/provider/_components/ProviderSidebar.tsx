@@ -58,7 +58,7 @@ export default function ProviderSidebar() {
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[#0c4148] border-r border-[#f8d548]/20 flex flex-col">
       <div className="flex items-center gap-3 px-6 py-5 border-b border-[#f8d548]/20">
         <Image src="/images/pawcare.png" alt="PawCare" width={36} height={36} />
-        <div>
+        <div className="flex-1">
           <span className="text-xl font-bold text-white">PawCare</span>
           <p className="text-xs text-[#f8d548]">{getProviderTypeLabel(providerType)}</p>
         </div>
