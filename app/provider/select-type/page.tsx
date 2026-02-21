@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { setProviderType } from "@/lib/api/provider/provider";
-import { Stethoscope, Scissors, ShoppingBag, CheckCircle } from "lucide-react";
+import { setProviderType, uploadProviderCertificate } from "@/lib/api/provider/provider";
+import { FileUp, Paperclip, Stethoscope, Scissors, ShoppingBag, CheckCircle, X } from "lucide-react";
 import { toast } from "sonner";
+import ProviderLocationPicker, { type ProviderPinnedLocation } from "@/components/ProviderLocationPicker";
 
 const providerTypes = [
   {
@@ -34,12 +35,25 @@ const providerTypes = [
 export default function SelectProviderType() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [certification, setCertification] = useState("");
+  const [certificationDocumentUrl, setCertificationDocumentUrl] = useState("");
+  const [certificationFileName, setCertificationFileName] = useState("");
+  const [uploadingCertificate, setUploadingCertificate] = useState(false);
   const [experience, setExperience] = useState("");
   const [clinicOrShopName, setClinicOrShopName] = useState("");
   const [panNumber, setPanNumber] = useState("");
+  const [pinnedLocation, setPinnedLocation] = useState<ProviderPinnedLocation>({
+    latitude: null,
+    longitude: null,
+    address: "",
+  });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { user, checkAuth } = useAuth();
+  const hasPinnedLocation =
+    typeof pinnedLocation.latitude === "number" &&
+    Number.isFinite(pinnedLocation.latitude) &&
+    typeof pinnedLocation.longitude === "number" &&
+    Number.isFinite(pinnedLocation.longitude);
 
   const submitType = async (typeId: string) => {
     if (!typeId || loading) return;
@@ -63,14 +77,27 @@ export default function SelectProviderType() {
       return;
     }
 
+    if ((isVet || isShop) && !hasPinnedLocation) {
+      toast.error("Please pin your clinic/shop location on the map.");
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await setProviderType({
         providerType: typeId,
         certification: certification.trim(),
+        certificationDocumentUrl: certificationDocumentUrl || undefined,
         experience: experience.trim(),
         clinicOrShopName: clinicOrShopName.trim(),
         panNumber: panNumber.trim().toUpperCase(),
+        location: hasPinnedLocation
+          ? {
+              latitude: pinnedLocation.latitude as number,
+              longitude: pinnedLocation.longitude as number,
+              address: pinnedLocation.address?.trim() || "",
+            }
+          : undefined,
       });
       if (res.success) {
         const providerFromResponse = res.data?._doc ?? res.data ?? {};
@@ -98,6 +125,29 @@ export default function SelectProviderType() {
   const handleSubmit = async () => {
     if (!selectedType) return;
     await submitType(selectedType);
+  };
+
+  const handleCertificateUpload = async (file: File | null) => {
+    if (!file) return;
+
+    setUploadingCertificate(true);
+    try {
+      const result = await uploadProviderCertificate(file);
+      if (result.success) {
+        const uploadedPath = result.data?.path || result.data?.url || "";
+        if (!uploadedPath) {
+          toast.error("Upload succeeded but file path was not returned.");
+          return;
+        }
+        setCertificationDocumentUrl(uploadedPath);
+        setCertificationFileName(result.data?.originalname || file.name);
+        toast.success("Certificate file attached successfully.");
+      } else {
+        toast.error(result.message || "Failed to upload certificate file.");
+      }
+    } finally {
+      setUploadingCertificate(false);
+    }
   };
 
   const isVet = selectedType === "vet";
@@ -201,6 +251,51 @@ export default function SelectProviderType() {
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
                   />
+                  <div className="mt-3 space-y-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-2 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10">
+                      <FileUp className="h-4 w-4" />
+                      {uploadingCertificate ? "Uploading..." : "Attach Certificate File"}
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png,.webp"
+                        className="hidden"
+                        disabled={uploadingCertificate}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] || null;
+                          void handleCertificateUpload(file);
+                          e.currentTarget.value = "";
+                        }}
+                      />
+                    </label>
+                    {certificationDocumentUrl ? (
+                      <div className="flex flex-wrap items-center gap-3 text-xs">
+                        <a
+                          href={certificationDocumentUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 font-semibold text-[#0f4f57] hover:underline"
+                        >
+                          <Paperclip className="h-3.5 w-3.5" />
+                          {certificationFileName || "View attached certificate"}
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCertificationDocumentUrl("");
+                            setCertificationFileName("");
+                          }}
+                          className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700 hover:bg-red-100"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500">
+                        Accepted formats: PDF, JPG, PNG, WEBP (max 10MB).
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
 
@@ -216,6 +311,36 @@ export default function SelectProviderType() {
                     placeholder="Enter PAN number"
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70 uppercase"
                   />
+                </div>
+              )}
+
+              {(isVet || isShop) && (
+                <div className="md:col-span-2 space-y-3">
+                  <ProviderLocationPicker
+                    value={pinnedLocation}
+                    onChange={setPinnedLocation}
+                    required
+                    label={isVet ? "Clinic Location" : "Shop Location"}
+                    helperText="Allow location access or click anywhere on map to pin your exact business location."
+                  />
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Location Notes (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={pinnedLocation.address || ""}
+                      onChange={(e) =>
+                        setPinnedLocation((prev) => ({
+                          ...prev,
+                          address: e.target.value,
+                        }))
+                      }
+                      placeholder="Landmark, floor, or nearby reference"
+                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    />
+                  </div>
                 </div>
               )}
             </div>

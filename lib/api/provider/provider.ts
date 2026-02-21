@@ -23,15 +23,41 @@ export async function providerLogin(data: { email: string; password: string }): 
 export async function setProviderType(data: {
   providerType: string;
   certification?: string;
+  certificationDocumentUrl?: string;
   experience?: string;
   clinicOrShopName?: string;
   panNumber?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
 }): Promise<{ success: boolean; message: string; data?: any }> {
   try {
     const response = await axios.put(API.PROVIDER.SET_TYPE, data);
     return response.data;
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to set provider type" };
+  }
+}
+
+export async function uploadProviderCertificate(
+  file: File,
+): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const form = new FormData();
+    form.append("certification_document", file);
+    const response = await axios.post(API.UPLOAD.PROVIDER_CERTIFICATE, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (err: any) {
+    return {
+      success: false,
+      message: err.response?.data?.message || err.message || "Failed to upload certificate file",
+    };
   }
 }
 

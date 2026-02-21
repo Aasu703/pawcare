@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, XCircle, Search } from "lucide-react";
+import { CheckCircle, ExternalLink, MapPin, Search, ShieldCheck, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   handleGetAllProviders,
@@ -17,9 +17,17 @@ type Provider = {
   providerType?: "shop" | "vet" | "babysitter";
   status: "pending" | "approved" | "rejected";
   certification?: string;
+  certificationDocumentUrl?: string;
   experience?: string;
   clinicOrShopName?: string;
   panNumber?: string;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+  };
+  locationVerified?: boolean;
+  pawcareVerified?: boolean;
   createdAt?: string;
 };
 
@@ -110,19 +118,34 @@ export default function AllProvidersTable() {
                 <th className="pb-3 font-medium">Type</th>
                 <th className="pb-3 font-medium">Status</th>
                 <th className="pb-3 font-medium">Submitted</th>
+                <th className="pb-3 font-medium">Verification</th>
                 <th className="pb-3 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-muted-foreground">
+                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
                     No providers found
                   </td>
                 </tr>
               ) : (
-                filtered.map((provider) => (
-                  <tr key={provider._id} className="border-b last:border-0 align-top">
+                filtered.map((provider) => {
+                  const latitude = provider.location?.latitude;
+                  const longitude = provider.location?.longitude;
+                  const hasPinnedLocation =
+                    typeof latitude === "number" &&
+                    Number.isFinite(latitude) &&
+                    typeof longitude === "number" &&
+                    Number.isFinite(longitude);
+                  const needsPinnedLocation =
+                    provider.providerType === "shop" || provider.providerType === "vet";
+                  const mapUrl = hasPinnedLocation
+                    ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
+                    : null;
+
+                  return (
+                    <tr key={provider._id} className="border-b last:border-0 align-top">
                     <td className="py-4">
                       <div className="font-medium">{provider.businessName}</div>
                       <div className="text-sm text-muted-foreground">{provider.email}</div>
@@ -143,11 +166,42 @@ export default function AllProvidersTable() {
                     <td className="py-4 text-muted-foreground">
                       {provider.createdAt ? new Date(provider.createdAt).toLocaleDateString() : "-"}
                     </td>
+                    <td className="py-4 text-sm">
+                      {provider.pawcareVerified && (provider.providerType === "shop" || provider.providerType === "vet") ? (
+                        <div className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                          <ShieldCheck className="h-3.5 w-3.5" />
+                          {provider.providerType === "shop" ? "PawCare Verified Shop" : "PawCare Verified Vet"}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">
+                          {provider.locationVerified ? "Location verified" : "Not verified"}
+                        </span>
+                      )}
+                      {mapUrl ? (
+                        <a
+                          href={mapUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                        >
+                          <MapPin className="h-3.5 w-3.5" />
+                          View Pin
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      ) : (
+                        <p className="mt-2 text-xs text-red-600">No map pin</p>
+                      )}
+                    </td>
                     <td className="py-4">
                       <div className="flex gap-2">
                         {provider.status === "pending" && (
                           <>
-                            <button onClick={() => onApprove(provider._id)} className="rounded-lg p-2 hover:bg-green-50" title="Approve">
+                            <button
+                              onClick={() => onApprove(provider._id)}
+                              disabled={needsPinnedLocation && !hasPinnedLocation}
+                              className="rounded-lg p-2 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
+                              title="Approve"
+                            >
                               <CheckCircle className="h-5 w-5 text-green-600" />
                             </button>
                             <button onClick={() => onReject(provider._id)} className="rounded-lg p-2 hover:bg-red-50" title="Reject">
@@ -156,9 +210,13 @@ export default function AllProvidersTable() {
                           </>
                         )}
                       </div>
+                      {provider.status === "pending" && needsPinnedLocation && !hasPinnedLocation ? (
+                        <p className="mt-2 text-xs text-red-600">Map pin required before approval.</p>
+                      ) : null}
                     </td>
-                  </tr>
-                ))
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

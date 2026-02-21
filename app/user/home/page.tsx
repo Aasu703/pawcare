@@ -1,7 +1,19 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity, User, Plus, Eye, Edit, ChevronRight } from "lucide-react";
+import {
+  Heart,
+  Shield,
+  Calendar,
+  Bell,
+  LogOut,
+  Sparkles,
+  PawPrint,
+  Activity,
+  User,
+  Plus,
+  ChevronRight,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -28,10 +40,8 @@ export default function ProtectedHome() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
   const openNotificationsRef = useRef<(() => void) | null>(null);
-  const [pets, setPets] = useState<any[]>([]);
+  const [pets, setPets] = useState<Pet[]>([]);
   const [petsLoading, setPetsLoading] = useState(true);
   const [petsError, setPetsError] = useState<string | null>(null);
   const [appointmentsCount, setAppointmentsCount] = useState(0);
@@ -68,24 +78,6 @@ export default function ProtectedHome() {
   const handleProfileClick = () => {
     router.push("/user/profile");
   };
-
-  useEffect(() => {
-    const handleMouseMove = (data: any) => {
-      setMousePosition({ x: data.clientX, y: data.clientY });
-    };
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   useEffect(() => {
     fetchPets();
@@ -146,61 +138,73 @@ export default function ProtectedHome() {
     }
   };
 
+  const petStatusText = petsLoading
+    ? "Loading pets..."
+    : `${pets.length} pet${pets.length === 1 ? "" : "s"} tracked`;
+  const appointmentStatusText = appointmentsLoading
+    ? "Loading appointments..."
+    : `${appointmentsCount} upcoming`;
+  const reminderStatusText =
+    remindersCount > 0
+      ? `${remindersCount} unread reminder${remindersCount === 1 ? "" : "s"}`
+      : "All reminders read";
+
   const features = [
     {
       icon: <Heart className="w-6 h-6" />,
       title: "Pet Health",
       description: "Track vaccinations, medications, and vet visits",
       color: "from-pink-500 to-rose-500",
-      bgColor: "bg-pink-500/10",
-      borderColor: "border-pink-500/30",
-      hoverBorder: "group-hover:border-pink-500"
+      badge: petStatusText,
+      cta: "Open health records",
+      onClick: () => router.push("/user/pet"),
     },
     {
       icon: <Calendar className="w-6 h-6" />,
       title: "Appointments",
       description: "Schedule and manage upcoming visits",
       color: "from-blue-500 to-cyan-500",
-      bgColor: "bg-blue-500/10",
-      borderColor: "border-blue-500/30",
-      hoverBorder: "group-hover:border-blue-500"
+      badge: appointmentStatusText,
+      cta: "Manage bookings",
+      onClick: () => router.push("/user/bookings"),
     },
     {
       icon: <Activity className="w-6 h-6" />,
       title: "Activity Tracker",
       description: "Monitor your pet's daily exercise and play",
       color: "from-green-500 to-emerald-500",
-      bgColor: "bg-green-500/10",
-      borderColor: "border-green-500/30",
-      hoverBorder: "group-hover:border-green-500"
+      badge: "Set feeding and care routines",
+      cta: "Open pet care",
+      onClick: () => router.push("/user/pet"),
     },
     {
       icon: <Bell className="w-6 h-6" />,
       title: "Reminders",
       description: "Never miss important pet care tasks",
       color: "from-primary to-orange-600",
-      bgColor: "bg-amber-500/10",
-      borderColor: "border-amber-500/30",
-      hoverBorder: "group-hover:border-amber-500"
+      badge: reminderStatusText,
+      cta: "Open notifications",
+      count: remindersCount,
+      onClick: () => openNotificationsRef.current?.(),
     },
     {
       icon: <PawPrint className="w-6 h-6" />,
       title: "Pet Profile",
       description: "Manage your pet's information and photos",
       color: "from-purple-500 to-violet-500",
-      bgColor: "bg-purple-500/10",
-      borderColor: "border-purple-500/30",
-      hoverBorder: "group-hover:border-purple-500"
+      badge: "Update pet details and photos",
+      cta: "Go to profile",
+      onClick: () => router.push("/user/profile"),
     },
     {
       icon: <Shield className="w-6 h-6" />,
       title: "Insurance",
       description: "Track coverage and file claims easily",
       color: "from-indigo-500 to-blue-500",
-      bgColor: "bg-indigo-500/10",
-      borderColor: "border-indigo-500/30",
-      hoverBorder: "group-hover:border-indigo-500"
-    }
+      badge: "Book trusted services quickly",
+      cta: "Explore services",
+      onClick: () => router.push("/user/services"),
+    },
   ];
 
   const stats = [
@@ -318,13 +322,20 @@ export default function ProtectedHome() {
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               {user?.Firstname ? `Hey, ${user.Firstname}!` : "Your pet,"}<br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
-                {user?.Firstname ? "Ready for care? 🐾" : "our priority 🐾"}
+                {user?.Firstname ? "Ready for care?" : "our priority"}
               </span>
             </h1>
 
             <p className="text-xl text-gray-600 mb-8 max-w-lg leading-relaxed">
-              Manage your pets' health, appointments, and daily activities all in one place. We make pet care simple and stress-free.
+              Manage your pets&apos; health, appointments, and daily activities all in one place. We make pet care simple and stress-free.
             </p>
+
+            {remindersCount > 0 && (
+              <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800">
+                <Bell className="h-4 w-4" />
+                {reminderStatusText}
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-4">
               <Link href="/user/pet/add">
@@ -365,6 +376,51 @@ export default function ProtectedHome() {
             ))}
           </motion.div>
         </div>
+
+        <section className="rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-lg shadow-gray-200/40 backdrop-blur-xl md:p-8">
+          <div className="mb-5 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Quick Care Actions</h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Jump straight to the tasks you do most often.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => openNotificationsRef.current?.()}
+              className="inline-flex items-center gap-2 rounded-xl border border-amber-300 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 hover:bg-amber-100"
+            >
+              <Bell className="h-4 w-4" />
+              Open Reminders
+            </button>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <button
+              type="button"
+              onClick={() => router.push("/user/pet/add")}
+              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <p className="text-sm font-semibold text-gray-900">Add Pet</p>
+              <p className="mt-1 text-xs text-gray-500">Create profile and care plan.</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/user/bookings")}
+              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <p className="text-sm font-semibold text-gray-900">Manage Appointments</p>
+              <p className="mt-1 text-xs text-gray-500">Review and schedule vet visits.</p>
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/user/pet")}
+              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <p className="text-sm font-semibold text-gray-900">Open Pet Care</p>
+              <p className="mt-1 text-xs text-gray-500">Update feeding and vaccination tasks.</p>
+            </button>
+          </div>
+        </section>
 
         {/* Pets Section */}
         <section>
@@ -475,24 +531,42 @@ export default function ProtectedHome() {
         <section>
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Everything you need</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">From health tracking to appointment scheduling, we've got you covered.</p>
+            <p className="text-gray-500 max-w-2xl mx-auto">From health tracking to appointment scheduling, we&apos;ve got you covered.</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {features.map((feature, index) => (
-              <motion.div
+              <motion.button
                 key={index}
+                type="button"
                 whileHover={{ y: -5 }}
-                className={`p-6 rounded-3xl bg-white border border-gray-100 shadow-lg shadow-gray-200/50 hover:shadow-xl hover:border-primary/20 transition-all duration-300 cursor-pointer group flex flex-col items-center text-center`}
+                onClick={feature.onClick}
+                className={`relative p-6 rounded-3xl bg-white border shadow-lg shadow-gray-200/50 hover:shadow-xl hover:border-primary/20 transition-all duration-300 cursor-pointer group flex flex-col items-center text-center ${
+                  activeCard === index
+                    ? "border-primary/30 shadow-primary/10"
+                    : "border-gray-100"
+                }`}
                 onMouseEnter={() => setActiveCard(index)}
                 onMouseLeave={() => setActiveCard(null)}
+                onFocus={() => setActiveCard(index)}
+                onBlur={() => setActiveCard(null)}
               >
+                {feature.count && feature.count > 0 && (
+                  <span className="absolute right-3 top-3 min-w-[22px] rounded-full bg-amber-500 px-1.5 py-0.5 text-[11px] font-bold text-white">
+                    {feature.count > 99 ? "99+" : feature.count}
+                  </span>
+                )}
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   {feature.icon}
                 </div>
                 <h3 className="font-semibold text-gray-900 mb-1 text-sm md:text-base">{feature.title}</h3>
                 <p className="text-xs text-gray-500 hidden md:block">{feature.description}</p>
-              </motion.div>
+                <p className="mt-2 text-[11px] font-medium text-gray-500">{feature.badge}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                  {feature.cta}
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </span>
+              </motion.button>
             ))}
           </div>
         </section>
@@ -528,4 +602,5 @@ export default function ProtectedHome() {
     </div>
   );
 }
+
 

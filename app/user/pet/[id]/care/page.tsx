@@ -1,9 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, Clock3, Plus, Save, Syringe, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  BellRing,
+  Clock3,
+  Plus,
+  Save,
+  Syringe,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   getUserPetById,
@@ -13,6 +21,7 @@ import {
   PetVaccinationStatus,
   updateUserPetCare,
 } from "@/lib/api/user/pet";
+import { addAppNotification } from "@/lib/notifications/app-notifications";
 
 type PetSummary = {
   _id: string;
@@ -27,6 +36,8 @@ type VaccineTemplate = {
 };
 
 const TIME_FORMAT = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const REMINDER_INTERVAL_OPTIONS = [2, 3, 5, 10] as const;
+const FEEDING_PENDING_WINDOW_MINUTES = 30;
 
 const SPECIES_VACCINE_TEMPLATES: Record<string, VaccineTemplate[]> = {
   dog: [
@@ -105,6 +116,88 @@ function getDueLabel(ageInMonths: number | null, recommendedByMonths?: number) {
   return `Due in ${recommendedByMonths - ageInMonths} mo`;
 }
 
+type FeedingReminder = {
+  timeLabel: string;
+  minutesFromNow: number;
+};
+
+function parseTimeCandidate(timeLabel: string, now: Date, dayOffset = 0) {
+  const value = timeLabel.trim();
+  if (!TIME_FORMAT.test(value)) return null;
+  const [hourPart, minutePart] = value.split(":");
+  const hour = Number(hourPart);
+  const minute = Number(minutePart);
+  if (Number.isNaN(hour) || Number.isNaN(minute)) return null;
+
+  return new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + dayOffset,
+    hour,
+    minute,
+    0,
+    0,
+  );
+}
+
+function minutesFromNow(target: Date, now: Date) {
+  return Math.round((target.getTime() - now.getTime()) / 60000);
+}
+
+function findUpcomingFeeding(feedingTimes: string[], now: Date): FeedingReminder | null {
+  let best: FeedingReminder | null = null;
+
+  for (const item of feedingTimes) {
+    const todayCandidate = parseTimeCandidate(item, now, 0);
+    if (!todayCandidate) continue;
+    const candidate =
+      todayCandidate.getTime() >= now.getTime()
+        ? todayCandidate
+        : parseTimeCandidate(item, now, 1);
+    if (!candidate) continue;
+
+    const diff = minutesFromNow(candidate, now);
+    if (!best || diff < best.minutesFromNow) {
+      best = { timeLabel: item, minutesFromNow: diff };
+    }
+  }
+
+  return best;
+}
+
+function findPendingFeeding(
+  feedingTimes: string[],
+  now: Date,
+  windowMinutes: number,
+): FeedingReminder | null {
+  let best: FeedingReminder | null = null;
+
+  for (const item of feedingTimes) {
+    const candidate = parseTimeCandidate(item, now, 0);
+    if (!candidate) continue;
+
+    const diff = minutesFromNow(candidate, now);
+    if (Math.abs(diff) > windowMinutes) continue;
+    if (!best || Math.abs(diff) < Math.abs(best.minutesFromNow)) {
+      best = { timeLabel: item, minutesFromNow: diff };
+    }
+  }
+
+  return best;
+}
+
+function formatRelativeMinutes(diff: number) {
+  const absoluteMinutes = Math.abs(diff);
+  if (absoluteMinutes >= 60) {
+    const hours = Math.floor(absoluteMinutes / 60);
+    const minutes = absoluteMinutes % 60;
+    const durationLabel = `${hours}h${minutes > 0 ? ` ${minutes}m` : ""}`;
+    return diff >= 0 ? `in ${durationLabel}` : `${durationLabel} ago`;
+  }
+
+  return diff >= 0 ? `in ${absoluteMinutes} min` : `${absoluteMinutes} min ago`;
+}
+
 export default function PetCarePage() {
   const params = useParams();
   const petId = params.id as string;
@@ -115,8 +208,16 @@ export default function PetCarePage() {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [remindersEnabled, setRemindersEnabled] = useState(true);
+  const [reminderIntervalMinutes, setReminderIntervalMinutes] = useState<number>(3);
+  const [nowTick, setNowTick] = useState(() => Date.now());
 
   const ageInMonths = useMemo(() => toAgeInMonths(pet?.age), [pet?.age]);
+
+  useEffect(() => {
+    const timerId = window.setInterval(() => setNowTick(Date.now()), 60000);
+    return () => window.clearInterval(timerId);
+  }, []);
 
   useEffect(() => {
     if (!petId) return;
@@ -153,6 +254,122 @@ export default function PetCarePage() {
 
     load();
   }, [petId]);
+
+  const pendingVaccinations = useMemo(() => {
+    return vaccinations.filter((item) => {
+      if ((item.status || "pending") !== "pending") return false;
+      if (typeof item.recommendedByMonths !== "number") return true;
+      if (ageInMonths === null) return true;
+      return ageInMonths >= item.recommendedByMonths;
+    });
+  }, [vaccinations, ageInMonths]);
+
+  const upcomingFeeding = useMemo(() => {
+    return findUpcomingFeeding(feedingTimes, new Date(nowTick));
+  }, [feedingTimes, nowTick]);
+
+  const pendingFeedingNow = useMemo(() => {
+    return findPendingFeeding(
+      feedingTimes,
+      new Date(nowTick),
+      FEEDING_PENDING_WINDOW_MINUTES,
+    );
+  }, [feedingTimes, nowTick]);
+
+  const buildReminderPayload = useCallback(() => {
+    const now = new Date();
+    const messages: string[] = [];
+    const pendingVaccinationNames = pendingVaccinations
+      .map((item) => item.vaccine.trim())
+      .filter(Boolean);
+
+    if (pendingVaccinationNames.length > 0) {
+      const preview = pendingVaccinationNames.slice(0, 2).join(", ");
+      const extraCount = pendingVaccinationNames.length - Math.min(2, pendingVaccinationNames.length);
+      const suffix = extraCount > 0 ? ` +${extraCount} more` : "";
+      messages.push(`Pending vaccinations: ${preview}${suffix}.`);
+    }
+
+    const pendingFood = findPendingFeeding(
+      feedingTimes,
+      now,
+      FEEDING_PENDING_WINDOW_MINUTES,
+    );
+    if (pendingFood) {
+      messages.push(
+        pendingFood.minutesFromNow >= 0
+          ? `Food reminder: feed at ${pendingFood.timeLabel} (${formatRelativeMinutes(
+              pendingFood.minutesFromNow,
+            )}).`
+          : `Food reminder: feeding at ${pendingFood.timeLabel} is pending (${formatRelativeMinutes(
+              pendingFood.minutesFromNow,
+            )}).`,
+      );
+    }
+
+    const fingerprint = [
+      pendingVaccinationNames.join("|"),
+      pendingFood
+        ? `${pendingFood.timeLabel}:${pendingFood.minutesFromNow}`
+        : "no-pending-food",
+    ].join("::");
+
+    return { messages, fingerprint };
+  }, [feedingTimes, pendingVaccinations]);
+
+  const triggerCareReminder = useCallback(
+    (mode: "auto" | "manual") => {
+      const { messages, fingerprint } = buildReminderPayload();
+      if (messages.length === 0) {
+        if (mode === "manual") {
+          toast.success("No pending vaccination or feeding task right now.");
+        }
+        return;
+      }
+
+      const petName = pet?.name || "Pet";
+      const title = `${petName} care reminder`;
+      const message = messages.join(" ");
+
+      toast.info(title, {
+        description: message,
+        duration: 5000,
+      });
+
+      const slot = Math.floor(
+        Date.now() / (Math.max(1, reminderIntervalMinutes) * 60 * 1000),
+      );
+      addAppNotification({
+        audience: "user",
+        type: "general",
+        title,
+        message,
+        link: `/user/pet/${petId}/care`,
+        dedupeKey:
+          mode === "auto"
+            ? `pet-care:auto:${petId}:${slot}:${fingerprint}`
+            : `pet-care:manual:${petId}:${Date.now()}`,
+        pushToBrowser: true,
+      });
+    },
+    [buildReminderPayload, pet?.name, petId, reminderIntervalMinutes],
+  );
+
+  useEffect(() => {
+    if (!petId || loading || !remindersEnabled) return;
+
+    const intervalId = window.setInterval(() => {
+      triggerCareReminder("auto");
+    }, Math.max(1, reminderIntervalMinutes) * 60 * 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [
+    loading,
+    petId,
+    reminderIntervalMinutes,
+    remindersEnabled,
+    triggerCareReminder,
+  ]);
 
   const updateFeedingTime = (index: number, value: string) => {
     setFeedingTimes((prev) => prev.map((time, i) => (i === index ? value : time)));
@@ -263,6 +480,83 @@ export default function PetCarePage() {
         <p className="mt-1 text-gray-500">
           Track daily feeding and vaccination progress for {pet?.species || "your pet"}.
         </p>
+      </div>
+
+      <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-900">
+              <BellRing className="h-5 w-5 text-amber-600" />
+              Smart Reminders
+            </h2>
+            <p className="mt-1 text-sm text-gray-600">
+              Get reminders every few minutes when vaccination or feeding tasks are pending.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700">
+              <input
+                type="checkbox"
+                checked={remindersEnabled}
+                onChange={(e) => setRemindersEnabled(e.target.checked)}
+                className="h-4 w-4 accent-[#0f4f57]"
+              />
+              Enable reminders
+            </label>
+            <select
+              value={reminderIntervalMinutes}
+              onChange={(e) => setReminderIntervalMinutes(Number(e.target.value))}
+              disabled={!remindersEnabled}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-[#0f4f57] focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {REMINDER_INTERVAL_OPTIONS.map((minutes) => (
+                <option key={minutes} value={minutes}>
+                  Every {minutes} min
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => triggerCareReminder("manual")}
+              className="rounded-lg border border-[#0f4f57]/30 bg-white px-3 py-2 text-sm font-medium text-[#0f4f57] hover:bg-[#0f4f57]/5"
+            >
+              Send test reminder
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-xl border border-white bg-white px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Pending Vaccinations
+            </p>
+            <p className="mt-1 text-2xl font-bold text-gray-900">
+              {pendingVaccinations.length}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white bg-white px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Feeding Status
+            </p>
+            <p className="mt-1 text-base font-semibold text-gray-900">
+              {pendingFeedingNow
+                ? `Pending at ${pendingFeedingNow.timeLabel}`
+                : "No pending feeding now"}
+            </p>
+          </div>
+          <div className="rounded-xl border border-white bg-white px-4 py-3">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Next Feeding
+            </p>
+            <p className="mt-1 text-base font-semibold text-gray-900">
+              {upcomingFeeding
+                ? `${upcomingFeeding.timeLabel} (${formatRelativeMinutes(
+                    upcomingFeeding.minutesFromNow,
+                  )})`
+                : "No feeding time set"}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="rounded-2xl border border-gray-200 bg-white p-6">

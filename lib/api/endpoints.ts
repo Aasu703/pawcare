@@ -206,6 +206,9 @@ export const API = {
         DELETE: (data: any) => `/api/provider/post/${data}`,
     },
  },
+ UPLOAD: {
+    PROVIDER_CERTIFICATE: '/api/upload/provider-certificate',
+ },
  ORDER: {
     CREATE: '/api/order',
     GET_MY: '/api/order/my',

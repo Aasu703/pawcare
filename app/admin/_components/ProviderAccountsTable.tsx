@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, ExternalLink, MapPin, XCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   handleApproveProvider,
@@ -17,9 +17,17 @@ type Provider = {
   providerType?: "shop" | "vet" | "babysitter";
   status: "pending" | "approved" | "rejected";
   certification?: string;
+  certificationDocumentUrl?: string;
   experience?: string;
   clinicOrShopName?: string;
   panNumber?: string;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+  };
+  locationVerified?: boolean;
+  pawcareVerified?: boolean;
   createdAt?: string;
 };
 
@@ -92,8 +100,22 @@ export default function ProviderAccountsTable() {
                   </td>
                 </tr>
               ) : (
-                providers.map((provider) => (
-                  <tr key={provider._id} className="border-b last:border-0 align-top">
+                providers.map((provider) => {
+                  const latitude = provider.location?.latitude;
+                  const longitude = provider.location?.longitude;
+                  const hasPinnedLocation =
+                    typeof latitude === "number" &&
+                    Number.isFinite(latitude) &&
+                    typeof longitude === "number" &&
+                    Number.isFinite(longitude);
+                  const needsPinnedLocation =
+                    provider.providerType === "shop" || provider.providerType === "vet";
+                  const mapUrl = hasPinnedLocation
+                    ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
+                    : null;
+
+                  return (
+                    <tr key={provider._id} className="border-b last:border-0 align-top">
                     <td className="py-4">
                       <div className="font-medium">{provider.businessName}</div>
                       <div className="text-sm text-muted-foreground">{provider.email}</div>
@@ -103,13 +125,57 @@ export default function ProviderAccountsTable() {
                       <div><span className="font-medium">Clinic/Shop:</span> {provider.clinicOrShopName || "-"}</div>
                       <div><span className="font-medium">Experience:</span> {provider.experience || "-"}</div>
                       <div><span className="font-medium">Certification:</span> {provider.certification || "-"}</div>
+                      <div>
+                        <span className="font-medium">Certificate File:</span>{" "}
+                        {provider.certificationDocumentUrl ? (
+                          <a
+                            href={provider.certificationDocumentUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[#0f4f57] hover:underline"
+                          >
+                            View file
+                          </a>
+                        ) : (
+                          "-"
+                        )}
+                      </div>
                       <div><span className="font-medium">PAN:</span> {provider.panNumber || "-"}</div>
+                      <div className="mt-2">
+                        <span className="font-medium">Pinned Location:</span>{" "}
+                        {hasPinnedLocation ? (
+                          <span className="text-emerald-700">Saved</span>
+                        ) : (
+                          <span className="text-red-600">Missing</span>
+                        )}
+                      </div>
+                      {hasPinnedLocation ? (
+                        <div className="mt-1 space-y-1">
+                          <div className="text-muted-foreground">
+                            {latitude?.toFixed(6)}, {longitude?.toFixed(6)}
+                          </div>
+                          {provider.location?.address ? (
+                            <div className="text-muted-foreground">{provider.location.address}</div>
+                          ) : null}
+                          <a
+                            href={mapUrl || "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                          >
+                            <MapPin className="h-3.5 w-3.5" />
+                            Open Pin
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
+                      ) : null}
                     </td>
                     <td className="py-4">
                       <div className="flex gap-2">
                         <button
                           onClick={() => onApprove(provider._id)}
-                          className="rounded-lg p-2 hover:bg-green-50"
+                          disabled={needsPinnedLocation && !hasPinnedLocation}
+                          className="rounded-lg p-2 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
                           title="Approve"
                         >
                           <CheckCircle className="h-5 w-5 text-green-600" />
@@ -122,9 +188,15 @@ export default function ProviderAccountsTable() {
                           <XCircle className="h-5 w-5 text-red-600" />
                         </button>
                       </div>
+                      {needsPinnedLocation && !hasPinnedLocation ? (
+                        <p className="mt-2 text-xs text-red-600">
+                          Pin is required before map verification approval.
+                        </p>
+                      ) : null}
                     </td>
-                  </tr>
-                ))
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
