@@ -67,6 +67,11 @@ export default function AddPetForm() {
             }
 
             toast.success("Pet added successfully!");
+            const createdPetId = response.data?._id || response.data?.id;
+            if (createdPetId) {
+                router.push(`/user/pet/${createdPetId}/care`);
+                return;
+            }
             router.push("/user/pet");
         } catch (data: any) {
             setError(data.message || "An unexpected error occurred.");

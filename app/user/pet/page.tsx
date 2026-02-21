@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Heart, Plus, Edit, Trash2, ArrowLeft, PawPrint } from 'lucide-react';
+import { Plus, Edit, Trash2, ArrowLeft, PawPrint, ActivitySquare } from 'lucide-react';
 import Link from 'next/link';
 import { getUserPets, deleteUserPet } from '@/lib/api/user/pet';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -208,17 +208,24 @@ export default function PetListPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2 opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                  <div className="grid grid-cols-3 gap-2 opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <button
+                      onClick={() => router.push(`/user/pet/${pet._id}/care`)}
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors hover:shadow-md"
+                    >
+                      <ActivitySquare className="w-4 h-4" />
+                      Care
+                    </button>
                     <button
                       onClick={() => router.push(`/user/pet/${pet._id}/edit`)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:shadow-md"
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition-colors hover:shadow-md"
                     >
                       <Edit className="w-4 h-4" />
                       Edit
                     </button>
                     <button
                       onClick={() => handleDeletePet(pet._id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors hover:shadow-md"
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors hover:shadow-md"
                     >
                       <Trash2 className="w-4 h-4" />
                       Delete

@@ -103,6 +103,10 @@ export const API = {
         GET_BY_ID: (data: any) => `/api/user/pet/${data}`,
         UPDATE: (data: any) => `/api/user/pet/${data}`,
         DELETE: (data: any) => `/api/user/pet/${data}`,
+        CARE: {
+            GET: (data: any) => `/api/user/pet/${data}/care`,
+            UPDATE: (data: any) => `/api/user/pet/${data}/care`,
+        },
     },
  },
  BOOKING: {

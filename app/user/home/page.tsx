@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Heart, Shield, Calendar, Bell, Settings, LogOut, Home, Sparkles, PawPrint, Activity, User, Plus, Eye, Edit, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
@@ -9,6 +9,8 @@ import Link from "next/link";
 import Image from "next/image";
 import AppNotificationBell from "@/components/AppNotificationBell";
 import { getUserPets } from "@/lib/api/user/pet";
+import { getBookingsByUser } from "@/lib/api/user/booking";
+import { getUnreadNotificationCount, subscribeToNotificationUpdates } from "@/lib/notifications/app-notifications";
 
 interface Pet {
   _id: string;
@@ -28,9 +30,14 @@ export default function ProtectedHome() {
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
+  const openNotificationsRef = useRef<(() => void) | null>(null);
   const [pets, setPets] = useState<any[]>([]);
   const [petsLoading, setPetsLoading] = useState(true);
   const [petsError, setPetsError] = useState<string | null>(null);
+  const [appointmentsCount, setAppointmentsCount] = useState(0);
+  const [appointmentsLoading, setAppointmentsLoading] = useState(true);
+  const [remindersCount, setRemindersCount] = useState(0);
+  const userId = user?._id || user?.id;
 
   const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
   const mediaBaseUrl =
@@ -83,6 +90,43 @@ export default function ProtectedHome() {
   useEffect(() => {
     fetchPets();
   }, []);
+
+  useEffect(() => {
+    const refreshNotifications = () => {
+      setRemindersCount(getUnreadNotificationCount("user"));
+    };
+
+    refreshNotifications();
+    const unsubscribe = subscribeToNotificationUpdates(refreshNotifications);
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const fetchBookingsCount = async () => {
+      if (!userId) {
+        setAppointmentsCount(0);
+        setAppointmentsLoading(false);
+        return;
+      }
+
+      try {
+        setAppointmentsLoading(true);
+        const response = await getBookingsByUser(userId);
+        if (response.success && response.data) {
+          setAppointmentsCount(Array.isArray(response.data) ? response.data.length : 0);
+        } else {
+          setAppointmentsCount(0);
+        }
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        setAppointmentsCount(0);
+      } finally {
+        setAppointmentsLoading(false);
+      }
+    };
+
+    fetchBookingsCount();
+  }, [userId]);
 
   const fetchPets = async () => {
     try {
@@ -160,9 +204,24 @@ export default function ProtectedHome() {
   ];
 
   const stats = [
-    { label: "Active Pets", value: petsLoading ? "..." : pets.length.toString(), icon: <PawPrint className="w-5 h-5" /> },
-    { label: "Appointments", value: "2", icon: <Calendar className="w-5 h-5" /> },
-    { label: "Reminders", value: "5", icon: <Bell className="w-5 h-5" /> }
+    {
+      label: "Active Pets",
+      value: petsLoading ? "..." : pets.length.toString(),
+      icon: <PawPrint className="w-5 h-5" />,
+      onClick: () => router.push("/user/pet"),
+    },
+    {
+      label: "Appointments",
+      value: appointmentsLoading ? "..." : appointmentsCount.toString(),
+      icon: <Calendar className="w-5 h-5" />,
+      onClick: () => router.push("/user/bookings"),
+    },
+    {
+      label: "Reminders",
+      value: remindersCount.toString(),
+      icon: <Bell className="w-5 h-5" />,
+      onClick: () => openNotificationsRef.current?.(),
+    },
   ];
 
   return (
@@ -205,6 +264,9 @@ export default function ProtectedHome() {
           <div className="flex items-center gap-4">
             <AppNotificationBell
               audience="user"
+              registerOpenHandler={(handler) => {
+                openNotificationsRef.current = handler;
+              }}
               buttonClassName="h-10 w-10 bg-transparent text-gray-700 hover:bg-white/70"
               iconClassName="w-5 h-5"
             />
@@ -288,13 +350,18 @@ export default function ProtectedHome() {
             className="grid grid-cols-2 gap-4"
           >
             {stats.map((stat, index) => (
-              <div key={index} className={`bg-white/60 backdrop-blur-xl border border-white/50 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 ${index === 0 ? 'col-span-2' : ''}`}>
+              <button
+                key={index}
+                type="button"
+                onClick={stat.onClick}
+                className={`bg-white/60 backdrop-blur-xl border border-white/50 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 text-left ${index === 0 ? 'col-span-2' : ''}`}
+              >
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-blue-100 flex items-center justify-center text-primary mb-4">
                   {stat.icon}
                 </div>
                 <div className="text-4xl font-bold text-gray-900 mb-1">{stat.value}</div>
                 <div className="text-sm font-medium text-gray-500">{stat.label}</div>
-              </div>
+              </button>
             ))}
           </motion.div>
         </div>

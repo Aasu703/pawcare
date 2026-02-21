@@ -22,6 +22,7 @@ type AppNotificationBellProps = {
   buttonClassName?: string;
   panelClassName?: string;
   iconClassName?: string;
+  registerOpenHandler?: (handler: (() => void) | null) => void;
 };
 
 function formatRelativeTime(iso: string) {
@@ -48,6 +49,7 @@ export default function AppNotificationBell({
   buttonClassName,
   panelClassName,
   iconClassName,
+  registerOpenHandler,
 }: AppNotificationBellProps) {
   const router = useRouter();
   const wrapperRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +90,12 @@ export default function AppNotificationBell({
       window.removeEventListener("mousedown", onPointerDown);
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!registerOpenHandler) return;
+    registerOpenHandler(() => setOpen(true));
+    return () => registerOpenHandler(null);
+  }, [registerOpenHandler]);
 
   const openNotification = (notification: AppNotification) => {
     markNotificationAsRead(notification.id);

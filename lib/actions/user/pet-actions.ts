@@ -16,7 +16,7 @@ export async function handleCreateUserPet(formData: any) {
     const response = await createUserPet(submitData);
 
     if (response.success) {
-      return { success: true, message: 'Pet created successfully!' };
+      return { success: true, message: 'Pet created successfully!', data: response.data };
     } else {
       return { success: false, message: response.message || 'Failed to create pet' };
     }
