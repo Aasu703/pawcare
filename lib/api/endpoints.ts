@@ -173,6 +173,7 @@ export const API = {
     APPROVE: (data: any) => `/api/provider/approve/${data}`,
     REJECT: (data: any) => `/api/provider/reject/${data}`,
     GET_BY_STATUS: (data: any) => `/api/provider/status/${data}`,
+    GET_VERIFIED_LOCATIONS: '/api/provider/verified-locations',
     SERVICE: {
         CREATE: '/api/provider/service',
         GET_ALL: '/api/provider/service',

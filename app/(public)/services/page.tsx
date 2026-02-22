@@ -6,12 +6,14 @@ import { Search, Clock, DollarSign, Stethoscope, Scissors, Home, ArrowRight } fr
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import ProviderNearbyShopsMap from "@/components/ProviderNearbyShopsMap";
 
 export default function PublicServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [mapMode, setMapMode] = useState<"pet-shop" | "vet-hospital">("vet-hospital");
 
   useEffect(() => {
     const load = async () => {
@@ -22,6 +24,16 @@ export default function PublicServicesPage() {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (category === "vet") {
+      setMapMode("vet-hospital");
+      return;
+    }
+    if (category === "grooming" || category === "boarding") {
+      setMapMode("pet-shop");
+    }
+  }, [category]);
 
   const filtered = services.filter((s) => {
     const matchesSearch =
@@ -146,6 +158,44 @@ export default function PublicServicesPage() {
                 </motion.button>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Nearby Verified And OSM Locations</h2>
+              <p className="text-sm text-muted-foreground">
+                Green markers are PawCare verified. Orange markers are shops near you from OpenStreetMap.
+              </p>
+            </div>
+            <div className="inline-flex rounded-xl bg-muted p-1">
+              <button
+                onClick={() => setMapMode("pet-shop")}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  mapMode === "pet-shop"
+                    ? "bg-white text-foreground shadow-sm"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Pet Shops
+              </button>
+              <button
+                onClick={() => setMapMode("vet-hospital")}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                  mapMode === "vet-hospital"
+                    ? "bg-white text-foreground shadow-sm"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Vet Hospitals
+              </button>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-background p-4 md:p-5">
+            <ProviderNearbyShopsMap mode={mapMode} />
           </div>
         </div>
       </section>
