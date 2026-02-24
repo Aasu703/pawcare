@@ -1,29 +1,38 @@
 // server side processing of both actions
 "use server";
 
-import { cookies } from "next/headers";
-import { register, login, logout, updateProfile, createUserByAdmin, requestPasswordReset, resetPassword } from "../api/auth";
+import { register, login, logout, createUserByAdmin, requestPasswordReset, resetPassword } from "../api/user/auth";
 import { setAuthToken, setUserData, getAuthToken, clearAuthCookies } from "../cookie";
 import axios from "../api/axios";
 import { API } from "../api/endpoints";
 import { providerLogin as providerLoginApi, providerRegister as providerRegisterApi } from "../api/provider/provider";
 
-const BASE_URL = process.env.API_BASE_URL || "http://localhost:5050";
+const IMAGE_KEYS = [
+    "imageUrl",
+    "avatarUrl",
+    "image",
+    "avatar",
+    "profileImage",
+    "profileImageUrl",
+] as const;
 
+const normalizeImagePayload = (payload: any) => {
+    if (!payload || typeof payload !== "object") return payload;
 
-const resolveToken = (payload: any): string | undefined => {
-    const directToken = payload?.token;
-    if (typeof directToken === 'string' && directToken.trim().length > 0 && directToken !== 'undefined') {
-        return directToken;
-    }
+    const imageValue = IMAGE_KEYS
+        .map((key) => payload[key])
+        .find((value) => typeof value === "string" && value.trim().length > 0)
+        ?.trim();
 
-    const nestedToken = payload?.data?.accessToken;
-    if (typeof nestedToken === 'string' && nestedToken.trim().length > 0 && nestedToken !== 'undefined') {
-        return nestedToken;
-    }
+    if (!imageValue) return payload;
 
-    return undefined;
+    return {
+        ...payload,
+        imageUrl: payload.imageUrl || imageValue,
+        avatarUrl: payload.avatarUrl || imageValue,
+    };
 };
+
 
 // Server-side whoAmI that uses Next.js cookies
 export const whoAmI = async () => {
@@ -65,17 +74,18 @@ export const handleRegister = async (userData: any) => {
         const result=await register(userData);
         // how to send back to component
         if(result.success){
-            const token = resolveToken(result);
+            const normalizedData = normalizeImagePayload(result.data);
+            const token = result.data?.accessToken || result.data?.token;
             if (token) {
                 await setAuthToken(token);
             }
-            if (result.data) {
-                await setUserData(result.data);
+            if (normalizedData) {
+                await setUserData(normalizedData);
             }
             return {
                 success: true,
                 message: "Registration successful",
-                data: result.data
+                data: normalizedData
                 };
         }
         return {
@@ -94,7 +104,8 @@ export const handleLogin = async (loginData: any) => {
     try{
         const result=await login(loginData);
         if(result.success){
-            const token = resolveToken(result);
+            const normalizedUser = normalizeImagePayload(result.data?.user);
+            const token = result.data?.accessToken || result.data?.token;
             if (!token) {
                 return {
                     success: false,
@@ -103,11 +114,11 @@ export const handleLogin = async (loginData: any) => {
             }
 
             await setAuthToken(token);
-            await setUserData(result.data.user);
+            await setUserData(normalizedUser);
             return {
                 success: true,
                 message: "Login successful",
-                data: result.data.user,
+                data: normalizedUser,
                 token
                 };
         }
@@ -115,8 +126,11 @@ export const handleLogin = async (loginData: any) => {
         try {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
-                const providerData = { ...providerResult.data.provider, role: "provider" };
-                const token = resolveToken(providerResult);
+                const providerData = normalizeImagePayload({
+                    ...providerResult.data.provider,
+                    role: "provider",
+                });
+                const token = providerResult.data?.accessToken || providerResult.data?.token;
                 if (token) {
                     await setAuthToken(token);
                 }
@@ -125,7 +139,7 @@ export const handleLogin = async (loginData: any) => {
                     success: true,
                     message: "Login successful",
                     data: providerData,
-                    token: resolveToken(providerResult)
+                    token: token
                 };
             }
         } catch (providerErr: any) {
@@ -140,8 +154,11 @@ export const handleLogin = async (loginData: any) => {
         try {
             const providerResult = await providerLoginApi(loginData);
             if (providerResult.success) {
-                const providerData = { ...providerResult.data.provider, role: "provider" };
-                const token = resolveToken(providerResult);
+                const providerData = normalizeImagePayload({
+                    ...providerResult.data.provider,
+                    role: "provider",
+                });
+                const token = providerResult.data?.accessToken || providerResult.data?.token;
                 if (token) {
                     await setAuthToken(token);
                 }
@@ -150,7 +167,7 @@ export const handleLogin = async (loginData: any) => {
                     success: true,
                     message: "Login successful",
                     data: providerData,
-                    token: resolveToken(providerResult)
+                    token: token
                 };
             }
         } catch (providerErr: any) {
@@ -167,8 +184,11 @@ export const handleProviderLogin = async (loginData: any) => {
     try {
         const providerResult = await providerLoginApi(loginData);
         if (providerResult.success) {
-            const providerData = { ...providerResult.data.provider, role: "provider" };
-            const token = resolveToken(providerResult);
+            const providerData = normalizeImagePayload({
+                ...providerResult.data.provider,
+                role: "provider",
+            });
+            const token = providerResult.data?.accessToken || providerResult.data?.token;
             if (!token) {
                 return {
                     success: false,
@@ -201,8 +221,11 @@ export const handleProviderRegister = async (providerData: any) => {
     try {
         const result = await providerRegisterApi(providerData);
         if (result.success) {
-            const userData = { ...result.data.provider, role: "provider" };
-            const token = resolveToken(result);
+            const userData = normalizeImagePayload({
+                ...result.data.provider,
+                role: "provider",
+            });
+            const token = result.data?.accessToken || result.data?.token;
             if (token) {
                 await setAuthToken(token);
             }
@@ -229,10 +252,11 @@ export const handlewhoAmI = async () => {
     try{
         const result = await whoAmI();
         if(result.success){
+            const normalizedUser = normalizeImagePayload(result.data);
             return {
                 success: true,
                 message: "User data fetched successfully",
-                data: result.data
+                data: normalizedUser
             };
         }
         return {
@@ -272,12 +296,13 @@ export const handleUpdateProfile = async (userId: string, formData: any) => {
         );
 
         if(response.data?.success){
+            const normalizedUser = normalizeImagePayload(response.data.data);
             // update cookie data
-            await setUserData(response.data.data);
+            await setUserData(normalizedUser);
             return {
                 success: true,
                 message: "Profile updated successfully",
-                data: response.data.data
+                data: normalizedUser
             };
         }
         return {

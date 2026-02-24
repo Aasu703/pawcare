@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { getApiBaseUrl } from "@/lib/utils/media-url";
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;
@@ -24,11 +25,7 @@ export function getClientAuthToken(): string | null {
 }
 
 function resolveSocketBaseUrl(): string {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.API_BASE_URL ||
-    "http://localhost:5050";
-  return baseUrl.replace(/\/+$/, "");
+  return getApiBaseUrl();
 }
 
 export function createChatSocket(token: string): Socket {
@@ -42,4 +39,3 @@ export function createChatSocket(token: string): Socket {
     auth: { token },
   });
 }
-

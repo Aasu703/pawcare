@@ -8,6 +8,7 @@ import { UpdateUserData, updateUserSchema } from "../schema";
 import { useState, useRef } from "react";
 import { Camera, Mail, Phone, User, UserCircle, ArrowLeft, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl, pickImagePath, resolveMediaUrl } from "@/lib/utils/media-url";
 
 export default function UpdateUserForm({
     user
@@ -28,19 +29,9 @@ export default function UpdateUserForm({
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
-    const rawImageUrl =
-        user?.imageUrl ||
-        user?.image ||
-        user?.avatar ||
-        user?.profileImage ||
-        user?.profileImageUrl ||
-        "";
-    const imageSrc = rawImageUrl
-        ? rawImageUrl.startsWith("http")
-            ? rawImageUrl
-            : `${baseUrl}${rawImageUrl}`
-        : "";
+    const baseUrl = getApiBaseUrl();
+    const rawImageUrl = pickImagePath(user);
+    const imageSrc = resolveMediaUrl(rawImageUrl, baseUrl, "image");
 
     const handleImageChange = (file: File | undefined, onChange: (file: File | undefined) => void) => {
         if (file) {

@@ -16,6 +16,7 @@ import { createChatSocket, getClientAuthToken } from "@/lib/realtime/chat-socket
 import { MessageSquare, Send, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import type { Socket } from "socket.io-client";
+import { getApiBaseUrl, pickImagePath, resolveMediaUrl } from "@/lib/utils/media-url";
 
 type ActiveParticipant = {
   participantId: string;
@@ -29,10 +30,7 @@ export default function ProviderMessagesPage() {
   const { user } = useAuth();
   const searchParams = useSearchParams();
   const currentUserId = user?._id || user?.id || "";
-  const baseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.API_BASE_URL ||
-    "http://localhost:5050";
+  const baseUrl = getApiBaseUrl();
 
   const [contacts, setContacts] = useState<ChatContact[]>([]);
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
@@ -241,8 +239,7 @@ export default function ProviderMessagesPage() {
   };
 
   const resolveImage = (raw?: string) => {
-    if (!raw) return "";
-    return raw.startsWith("http") ? raw : `${baseUrl}${raw}`;
+    return resolveMediaUrl(raw, baseUrl, "image");
   };
 
   const participants = contacts.filter((contact) => contact.participantRole === "user");
@@ -270,6 +267,7 @@ export default function ProviderMessagesPage() {
               <div className="space-y-1">
                 {participants.map((contact) => {
                   const isActive = active?.participantId === contact.participantId;
+                  const contactImage = resolveImage(pickImagePath(contact));
                   return (
                     <button
                       key={contact.participantId}
@@ -279,9 +277,9 @@ export default function ProviderMessagesPage() {
                       }`}
                     >
                       <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
-                        {contact.imageUrl ? (
+                        {contactImage ? (
                           <img
-                            src={resolveImage(contact.imageUrl)}
+                            src={contactImage}
                             alt={contact.name}
                             className="w-full h-full object-cover"
                           />

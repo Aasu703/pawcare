@@ -6,6 +6,7 @@ import { Plus, Edit, Trash2, ArrowLeft, PawPrint, ActivitySquare } from 'lucide-
 import Link from 'next/link';
 import { getUserPets, deleteUserPet } from '@/lib/api/user/pet';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getApiBaseUrl, resolveMediaUrl } from '@/lib/utils/media-url';
 
 interface Pet {
   _id: string;
@@ -24,7 +25,7 @@ export default function PetListPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
+  const baseUrl = getApiBaseUrl();
 
   useEffect(() => {
     fetchPets();
@@ -182,7 +183,7 @@ export default function PetListPage() {
                   <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     {pet.imageUrl ? (
                       <img
-                        src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
+                        src={resolveMediaUrl(pet.imageUrl, baseUrl, "image")}
                         alt={pet.name}
                         width={96}
                         height={96}

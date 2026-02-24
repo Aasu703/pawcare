@@ -23,6 +23,7 @@ import AppNotificationBell from "@/components/AppNotificationBell";
 import { getUserPets } from "@/lib/api/user/pet";
 import { getBookingsByUser } from "@/lib/api/user/booking";
 import { getUnreadNotificationCount, subscribeToNotificationUpdates } from "@/lib/notifications/app-notifications";
+import { getApiBaseUrl, pickImagePath, resolveMediaUrl } from "@/lib/utils/media-url";
 
 interface Pet {
   _id: string;
@@ -49,23 +50,8 @@ export default function ProtectedHome() {
   const [remindersCount, setRemindersCount] = useState(0);
   const userId = user?._id || user?.id;
 
-  const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
-  const mediaBaseUrl =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.API_BASE_URL ||
-    "http://localhost:5050";
-  const rawProfileImage =
-    user?.imageUrl ||
-    user?.image ||
-    user?.avatar ||
-    user?.profileImage ||
-    user?.profileImageUrl ||
-    "";
-  const profileImageSrc = rawProfileImage
-    ? rawProfileImage.startsWith("http")
-      ? rawProfileImage
-      : `${mediaBaseUrl}${rawProfileImage}`
-    : "";
+  const baseUrl = getApiBaseUrl();
+  const profileImageSrc = resolveMediaUrl(pickImagePath(user), baseUrl, "image");
 
   const handleLogout = async () => {
     await logout();
@@ -479,7 +465,7 @@ export default function ProtectedHome() {
                     <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-md">
                       {pet.imageUrl ? (
                         <img
-                          src={pet.imageUrl.startsWith('http') ? pet.imageUrl : `${baseUrl}${pet.imageUrl}`}
+                          src={resolveMediaUrl(pet.imageUrl, baseUrl, "image")}
                           alt={pet.name}
                           className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                         />

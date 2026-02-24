@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { BadgeCheck, FileUp, Paperclip, X } from "lucide-react";
 import ProviderLocationPicker, { type ProviderPinnedLocation } from "@/components/ProviderLocationPicker";
+import { getApiBaseUrl, resolveMediaUrl } from "@/lib/utils/media-url";
 
 type ProviderForm = {
   businessName: string;
@@ -41,6 +42,7 @@ type ProviderStringField =
 export default function ProviderProfilePage() {
   const router = useRouter();
   const { user, checkAuth } = useAuth();
+  const baseUrl = getApiBaseUrl();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<ProviderForm>({
@@ -99,6 +101,11 @@ export default function ProviderProfilePage() {
   const onChange = (key: ProviderStringField, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
+  const certificateUrl = resolveMediaUrl(
+    form.certificationDocumentUrl,
+    baseUrl,
+    "documents",
+  );
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -267,10 +274,10 @@ export default function ProviderProfilePage() {
                     }}
                   />
                 </label>
-                {form.certificationDocumentUrl ? (
+                {certificateUrl ? (
                   <div className="flex flex-wrap items-center gap-3 text-xs">
                     <a
-                      href={form.certificationDocumentUrl}
+                      href={certificateUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 font-semibold text-[#0f4f57] hover:underline"
