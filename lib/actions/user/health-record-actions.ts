@@ -1,90 +1,115 @@
 "use server";
 
 import { createHealthRecord, getHealthRecordsByPet, getHealthRecordById, updateHealthRecord, deleteHealthRecord, createAttachment, getAttachmentsByHealthRecord, deleteAttachment } from "@/lib/api/user/health-record";
+import { mapApiResult, withActionGuard } from "@/lib/actions/_shared";
 import { revalidatePath } from "next/cache";
 
 export async function handleCreateHealthRecord(data: any) {
-  try {
+  return withActionGuard(async () => {
     const response = await createHealthRecord(data);
-    if (response.success) {
+    if (response?.success) {
       revalidatePath(`/user/pet/${data.petId}/health`);
-      return { success: true, message: "Health record created!", data: response.data };
     }
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to create health record",
+      successMessage: "Health record created!",
+    });
+  }, {
+    fallbackMessage: "Failed to create health record",
+    logLabel: "Create health record error",
+  });
 }
 
 export async function handleGetHealthRecordsByPet(petId: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await getHealthRecordsByPet(petId);
-    if (response.success) return { success: true, data: response.data };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+    return mapApiResult(response, {
+      errorMessage: "Failed to fetch health records",
+    });
+  }, {
+    fallbackMessage: "Failed to fetch health records",
+    logLabel: "Get health records by pet error",
+  });
 }
 
 export async function handleGetHealthRecordById(id: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await getHealthRecordById(id);
-    if (response.success) return { success: true, data: response.data };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+    return mapApiResult(response, {
+      errorMessage: "Failed to fetch health record",
+    });
+  }, {
+    fallbackMessage: "Failed to fetch health record",
+    logLabel: "Get health record by id error",
+  });
 }
 
 export async function handleUpdateHealthRecord(id: string, data: any) {
-  try {
+  return withActionGuard(async () => {
     const response = await updateHealthRecord(id, data);
-    if (response.success) {
-      return { success: true, message: "Health record updated!", data: response.data };
-    }
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to update health record",
+      successMessage: response?.success ? "Health record updated!" : undefined,
+    });
+  }, {
+    fallbackMessage: "Failed to update health record",
+    logLabel: "Update health record error",
+  });
 }
 
 export async function handleDeleteHealthRecord(id: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await deleteHealthRecord(id);
-    if (response.success) return { success: true, message: "Health record deleted" };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to delete health record",
+      successMessage: response?.success ? "Health record deleted" : undefined,
+    });
+  }, {
+    fallbackMessage: "Failed to delete health record",
+    logLabel: "Delete health record error",
+  });
 }
 
 export async function handleCreateAttachment(data: any) {
-  try {
+  return withActionGuard(async () => {
     const response = await createAttachment(data);
-    if (response.success) return { success: true, message: "Attachment added!", data: response.data };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to create attachment",
+      successMessage: response?.success ? "Attachment added!" : undefined,
+    });
+  }, {
+    fallbackMessage: "Failed to create attachment",
+    logLabel: "Create attachment error",
+  });
 }
 
 export async function handleGetAttachmentsByHealthRecord(healthRecordId: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await getAttachmentsByHealthRecord(healthRecordId);
-    if (response.success) return { success: true, data: response.data };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+    return mapApiResult(response, {
+      errorMessage: "Failed to fetch attachments",
+    });
+  }, {
+    fallbackMessage: "Failed to fetch attachments",
+    logLabel: "Get attachments by health record error",
+  });
 }
 
 export async function handleDeleteAttachment(id: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await deleteAttachment(id);
-    if (response.success) return { success: true, message: "Attachment deleted" };
-    return { success: false, message: response.message };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to delete attachment",
+      successMessage: response?.success ? "Attachment deleted" : undefined,
+    });
+  }, {
+    fallbackMessage: "Failed to delete attachment",
+    logLabel: "Delete attachment error",
+  });
 }
 

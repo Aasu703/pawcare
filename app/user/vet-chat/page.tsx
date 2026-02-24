@@ -49,12 +49,17 @@ export default function UserVetChatPage() {
       | "user";
     const participantName = searchParams.get("participantName") || "Provider";
     const participantSubtitle = searchParams.get("participantSubtitle") || "";
+    const participantImage =
+      searchParams.get("participantImage") ||
+      searchParams.get("participantAvatar") ||
+      "";
     if (!participantId) return null;
     return {
       participantId,
       participantRole,
       name: participantName,
       subtitle: participantSubtitle || undefined,
+      imageUrl: participantImage || undefined,
     } satisfies ActiveParticipant;
   }, [searchParams]);
 
@@ -242,7 +247,23 @@ export default function UserVetChatPage() {
     return resolveMediaUrl(raw, baseUrl, "image");
   };
 
-  const participants = contacts.filter((contact) => contact.participantRole === "provider");
+  const participants = useMemo(() => {
+    return contacts
+      .filter((contact) => contact.participantRole === "provider")
+      .map((contact) => {
+        if (pickImagePath(contact)) return contact;
+
+        const conversation = conversations.find(
+          (item) =>
+            item.participantId === contact.participantId &&
+            item.participantRole === contact.participantRole,
+        );
+
+        return conversation?.participantImage
+          ? { ...contact, imageUrl: conversation.participantImage }
+          : contact;
+      });
+  }, [contacts, conversations]);
 
   return (
     <div>

@@ -26,6 +26,10 @@ import ProviderNearbyShopsMap from "@/components/ProviderNearbyShopsMap";
 
 type SortType = "newest" | "price-low" | "price-high" | "rating";
 
+const toLowerText = (value: unknown): string => {
+  return typeof value === "string" ? value.toLowerCase() : "";
+};
+
 export default function ServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
@@ -40,6 +44,11 @@ export default function ServicesPage() {
   });
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
   const [sortBy, setSortBy] = useState<SortType>("newest");
+
+  const mapMode: "pet-shop" | "vet-hospital" =
+    filters.serviceType === "grooming" || filters.serviceType === "boarding"
+      ? "pet-shop"
+      : "vet-hospital";
 
   async function loadServices() {
     setLoading(true);
@@ -58,12 +67,21 @@ export default function ServicesPage() {
   useEffect(() => {
     let result = services;
     if (filters.location) {
+      const locationQuery = filters.location.toLowerCase();
       result = result.filter(
-        (s) =>
-          s.provider?.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
-          s.provider?.address?.toLowerCase().includes(filters.location.toLowerCase()) ||
-          s.location?.toLowerCase().includes(filters.location.toLowerCase()) ||
-          false
+        (s) => {
+          const providerLocation = toLowerText(s?.provider?.location);
+          const providerLocationAddress = toLowerText(s?.provider?.location?.address);
+          const providerAddress = toLowerText(s?.provider?.address);
+          const serviceLocation = toLowerText(s?.location);
+
+          return (
+            providerLocation.includes(locationQuery) ||
+            providerLocationAddress.includes(locationQuery) ||
+            providerAddress.includes(locationQuery) ||
+            serviceLocation.includes(locationQuery)
+          );
+        }
       );
     }
     if (filters.serviceType !== "all") {
@@ -260,6 +278,10 @@ export default function ServicesPage() {
               <p className="text-gray-500 font-medium">Loading services...</p>
             </div>
           </div>
+        ) : viewMode === "map" ? (
+          <div className="rounded-3xl border border-[#e8d8bc] bg-white p-4 md:p-6">
+            <ProviderNearbyShopsMap address={filters.location || undefined} mode={mapMode} />
+          </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-[#e8d8bc] bg-white px-6 py-20 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#fff4de]">
@@ -267,10 +289,6 @@ export default function ServicesPage() {
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-1">No services found</h3>
             <p className="text-gray-500">Try changing filters and search again.</p>
-          </div>
-        ) : viewMode === "map" ? (
-          <div className="rounded-3xl border border-[#e8d8bc] bg-white p-4 md:p-6">
-            <ProviderNearbyShopsMap address={filters.location || undefined} mode="vet-hospital" />
           </div>
         ) : (
           <motion.div layout className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">

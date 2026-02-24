@@ -1,111 +1,90 @@
 "use server";
 
-import { 
-    createPetServer, 
-    getAllPetsServer, 
-    getPetByIdServer, 
-    updatePetServer, 
-    deletePetServer 
+import {
+    createPetServer,
+    getAllPetsServer,
+    getPetByIdServer,
+    updatePetServer,
+    deletePetServer,
 } from "@/lib/api/admin/pet-server";
+import { mapApiResult, withActionGuard } from "@/lib/actions/_shared";
 import { revalidatePath } from "next/cache";
 
 export const handleCreatePet = async (data: FormData) => {
-    try {
+    return withActionGuard(async () => {
         const response = await createPetServer(data);
         if (response.success) {
             revalidatePath("/admin/pets");
-            return { success: true, message: "Pet created successfully.", data: response.data };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to create pet.",
-        };
-    } catch (error: any) {
-        console.error('Create pet error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while creating the pet.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to create pet.",
+            successMessage: "Pet created successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while creating the pet.",
+        logLabel: "Create pet error",
+    });
 };
 
 export const handleGetAllPets = async () => {
-    try {
+    return withActionGuard(async () => {
         const response = await getAllPetsServer();
-        if (response.success) {
-            return { success: true, data: response.data };
-        }
-        return {
-            success: false,
-            message: response.message || "Failed to fetch pets.",
-        };
-    } catch (error: any) {
-        console.error('Get all pets error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while fetching pets.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to fetch pets.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while fetching pets.",
+        logLabel: "Get all pets error",
+    });
 };
 
 export const handleGetPetById = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await getPetByIdServer(id);
-        if (response.success) {
-            return { success: true, data: response.data };
-        }
-        return {
-            success: false,
-            message: response.message || "Failed to fetch pet.",
-        };
-    } catch (error: any) {
-        console.error('Get pet by id error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while fetching pet.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to fetch pet.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while fetching pet.",
+        logLabel: "Get pet by id error",
+    });
 };
 
 export const handleUpdatePet = async (id: string, data: FormData) => {
-    try {
+    return withActionGuard(async () => {
         const response = await updatePetServer(id, data);
         if (response.success) {
             revalidatePath("/admin/pets");
-            return { success: true, message: "Pet updated successfully.", data: response.data };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to update pet.",
-        };
-    } catch (error: any) {
-        console.error('Update pet error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while updating the pet.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to update pet.",
+            successMessage: "Pet updated successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while updating the pet.",
+        logLabel: "Update pet error",
+    });
 };
 
-
-
 export const handleDeletePet = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await deletePetServer(id);
-        if (response.success) {
+
+        if (response?.success) {
             revalidatePath("/admin/pets");
-            return { success: true, message: "Pet deleted successfully." };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to delete pet.",
-        };
-    } catch (error: any) {
-        console.error('Delete pet error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while deleting the pet.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to delete pet.",
+            successMessage: "Pet deleted successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while deleting the pet.",
+        logLabel: "Delete pet error",
+    });
 };
 

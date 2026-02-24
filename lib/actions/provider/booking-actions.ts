@@ -1,23 +1,24 @@
 "use server";
 
+import { withActionGuard } from "@/lib/actions/_shared";
 import { getProviderBookings, updateBookingStatus } from "@/lib/api/provider/booking";
 import { revalidatePath } from "next/cache";
 
 export async function handleGetProviderBookings() {
-  try {
-    return await getProviderBookings();
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch bookings" };
-  }
+  return withActionGuard(async () => getProviderBookings(), {
+    fallbackMessage: "Failed to fetch bookings",
+    logLabel: "Get provider bookings error",
+  });
 }
 
 export async function handleUpdateBookingStatus(id: string, status: string) {
-  try {
+  return withActionGuard(async () => {
     const result = await updateBookingStatus(id, status);
     if (result.success) revalidatePath("/provider/bookings");
     return result;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to update booking status" };
-  }
+  }, {
+    fallbackMessage: "Failed to update booking status",
+    logLabel: "Update booking status error",
+  });
 }
 

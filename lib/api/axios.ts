@@ -1,8 +1,30 @@
 import axios from 'axios';
-import { getAuthToken } from '../cookie';
 import { API_CONFIG } from './config';
 
 const BASE_URL = `${API_CONFIG.BASE_URL}`;
+
+function readClientCookie(name: string): string | null {
+    if (typeof document === 'undefined') return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const cookieValue = parts.pop()?.split(';').shift() || null;
+        return cookieValue ? decodeURIComponent(cookieValue) : null;
+    }
+    return null;
+}
+
+function getClientAuthToken(): string | null {
+    const cookieToken = readClientCookie('auth_token');
+    if (cookieToken && cookieToken !== 'undefined') return cookieToken;
+
+    if (typeof window !== 'undefined') {
+        const stored = window.localStorage.getItem('auth_token');
+        if (stored && stored !== 'undefined') return stored;
+    }
+
+    return null;
+}
 
 const axiosInstance = axios.create(
     {
@@ -15,7 +37,15 @@ const axiosInstance = axios.create(
 
 axiosInstance.interceptors.request.use(
     async (config) => {
-        const token = await getAuthToken();
+        let token: string | null = null;
+
+        if (typeof window === 'undefined') {
+            const { getAuthToken } = await import('../cookie');
+            token = await getAuthToken();
+        } else {
+            token = getClientAuthToken();
+        }
+
         if(token && config.headers){
             config.headers['Authorization'] = `Bearer ${token}`;
         }

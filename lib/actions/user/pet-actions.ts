@@ -1,69 +1,71 @@
-import { createUserPet, updateUserPet, deleteUserPet } from '@/lib/api/user/pet';
-export async function handleCreateUserPet(formData: any) {
-  try {
-    // Create FormData for file upload
-    const submitData = new FormData();
-    submitData.append('name', formData.name);
-    submitData.append('species', formData.species);
-    submitData.append('breed', formData.breed);
-    submitData.append('age', formData.age.toString());
-    submitData.append('weight', formData.weight.toString());
+"use server";
 
-    if (formData.image && formData.image instanceof File) {
-      submitData.append('image', formData.image);
-    }
+import { mapApiResult, withActionGuard } from "@/lib/actions/_shared";
+import { createUserPet, updateUserPet, deleteUserPet } from "@/lib/api/user/pet";
 
-    const response = await createUserPet(submitData);
+type PetPayload = {
+  name: string;
+  species: string;
+  breed: string;
+  age: number;
+  weight: number;
+  image?: File | null;
+};
 
-    if (response.success) {
-      return { success: true, message: 'Pet created successfully!', data: response.data };
-    } else {
-      return { success: false, message: response.message || 'Failed to create pet' };
-    }
-  } catch (error) {
-    console.error('Error creating pet:', error);
-    return { success: false, message: 'An error occurred while creating the pet' };
+const toPetFormData = (payload: PetPayload): FormData => {
+  const submitData = new FormData();
+  submitData.append("name", payload.name);
+  submitData.append("species", payload.species);
+  submitData.append("breed", payload.breed);
+  submitData.append("age", payload.age.toString());
+  submitData.append("weight", payload.weight.toString());
+
+  // Send image only when a valid file object is provided.
+  if (payload.image instanceof File) {
+    submitData.append("image", payload.image);
   }
+
+  return submitData;
+};
+
+export async function handleCreateUserPet(formData: PetPayload) {
+  return withActionGuard(async () => {
+    const response = await createUserPet(toPetFormData(formData));
+
+    return mapApiResult(response, {
+      errorMessage: "Failed to create pet",
+      successMessage: "Pet created successfully!",
+    });
+  }, {
+    fallbackMessage: "An error occurred while creating the pet",
+    logLabel: "Create pet error",
+  });
 }
 
-export async function handleUpdateUserPet(petId: string, formData: any) {
-  try {
-    // Create FormData for file upload
-    const submitData = new FormData();
-    submitData.append('name', formData.name);
-    submitData.append('species', formData.species);
-    submitData.append('breed', formData.breed);
-    submitData.append('age', formData.age.toString());
-    submitData.append('weight', formData.weight.toString());
+export async function handleUpdateUserPet(petId: string, formData: PetPayload) {
+  return withActionGuard(async () => {
+    const response = await updateUserPet(petId, toPetFormData(formData));
 
-    if (formData.image && formData.image instanceof File) {
-      submitData.append('image', formData.image);
-    }
-
-    const response = await updateUserPet(petId, submitData);
-
-    if (response.success) {
-      return { success: true, message: 'Pet updated successfully!' };
-    } else {
-      return { success: false, message: response.message || 'Failed to update pet' };
-    }
-  } catch (error) {
-    console.error('Error updating pet:', error);
-    return { success: false, message: 'An error occurred while updating the pet' };
-  }
+    return mapApiResult(response, {
+      errorMessage: "Failed to update pet",
+      successMessage: "Pet updated successfully!",
+    });
+  }, {
+    fallbackMessage: "An error occurred while updating the pet",
+    logLabel: "Update pet error",
+  });
 }
 
 export async function handleDeleteUserPet(petId: string) {
-  try {
+  return withActionGuard(async () => {
     const response = await deleteUserPet(petId);
 
-    if (response.success) {
-      return { success: true, message: 'Pet deleted successfully!' };
-    } else {
-      return { success: false, message: response.message || 'Failed to delete pet' };
-    }
-  } catch (error) {
-    console.error('Error deleting pet:', error);
-    return { success: false, message: 'An error occurred while deleting the pet' };
-  }
+    return mapApiResult(response, {
+      errorMessage: "Failed to delete pet",
+      successMessage: "Pet deleted successfully!",
+    });
+  }, {
+    fallbackMessage: "An error occurred while deleting the pet",
+    logLabel: "Delete pet error",
+  });
 }

@@ -39,12 +39,12 @@ export default function PublicServicesPage() {
     const matchesSearch =
       s.title.toLowerCase().includes(search.toLowerCase()) ||
       s.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = !category || s.catergory === category;
+    const matchesCategory = !category || (s.category || s.catergory) === category;
     return matchesSearch && matchesCategory;
   });
 
   const getCategoryIcon = (data: any) => {
-    switch (category) {
+    switch (data) {
       case "grooming": return Scissors;
       case "boarding": return Home;
       case "vet": return Stethoscope;
@@ -220,7 +220,7 @@ export default function PublicServicesPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filtered.map((service, i) => {
-                const CategoryIcon = getCategoryIcon(service.catergory || "");
+                const CategoryIcon = getCategoryIcon(service.category || service.catergory || "");
                 return (
                   <motion.div
                     key={service._id}
