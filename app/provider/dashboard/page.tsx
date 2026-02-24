@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { getProviderServices, getInventoryByProvider } from "@/lib/api/provider/provider";
 import { getProviderBookings } from "@/lib/api/provider/booking";
+import { getAssignedPetsForVet } from "@/lib/api/provider/pet";
 import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
 import AppNotificationBell from "@/components/AppNotificationBell";
-import { Wrench, Package, MessageSquare, DollarSign, CalendarCheck, HeartPulse, AlertTriangle, ClipboardList } from "lucide-react";
+import { Wrench, Package, MessageSquare, DollarSign, CalendarCheck, HeartPulse, AlertTriangle, ClipboardList, PawPrint } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -71,6 +72,27 @@ export default function ProviderDashboard() {
       }
     } else {
       setBookings([]);
+    }
+
+    if (canAccessVetFeatures(providerType)) {
+      const assignedPetsRes = await getAssignedPetsForVet();
+      if (assignedPetsRes.success && assignedPetsRes.data) {
+        const assignedPets = Array.isArray(assignedPetsRes.data) ? assignedPetsRes.data : [];
+        for (const pet of assignedPets) {
+          const petId = String(pet?._id || "");
+          if (!petId) continue;
+          addAppNotification({
+            audience: "provider",
+            providerType: "vet",
+            type: "appointment",
+            title: "New pet assignment",
+            message: `${pet?.name || "A pet"} has been assigned to you for care follow-up.`,
+            link: "/provider/assigned-pets",
+            dedupeKey: `vet-assigned-pet:${providerId}:${petId}:${pet?.assignedAt || pet?.updatedAt || "na"}`,
+            pushToBrowser: true,
+          });
+        }
+      }
     }
 
     if (canManageInventory(providerType) && providerId) {
@@ -199,6 +221,13 @@ export default function ProviderDashboard() {
                 <HeartPulse className="h-8 w-8 text-[#0f4f57] mx-auto mb-3" />
                 <p className="font-semibold text-gray-900">Vet Appointments</p>
                 <p className="text-sm text-gray-500 mt-1">Create checkup reports for pets</p>
+              </Link>
+            )}
+            {isVet && (
+              <Link href="/provider/assigned-pets" className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow text-center">
+                <PawPrint className="h-8 w-8 text-[#0f4f57] mx-auto mb-3" />
+                <p className="font-semibold text-gray-900">Assigned Pets</p>
+                <p className="text-sm text-gray-500 mt-1">Review pets assigned by users</p>
               </Link>
             )}
             {canManageBookings(providerType) && (

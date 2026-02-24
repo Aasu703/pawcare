@@ -1,6 +1,8 @@
 import React from 'react'
 import { Clock, DollarSign, Star, ArrowRight, PawPrint } from 'lucide-react'
+import Link from 'next/link'
 interface ServiceCardProps {
+  serviceId?: string
   title: string
   description: string
   duration: string
@@ -8,6 +10,7 @@ interface ServiceCardProps {
   category?: string
 }
 export function ServiceCard({
+  serviceId,
   title,
   description,
   duration,
@@ -66,14 +69,34 @@ export function ServiceCard({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3 mt-auto pt-4 border-t border-stone-100">
-          <button className="flex-1 py-2 px-4 rounded-full border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors">
-            View Details
-          </button>
-          <button className="flex-1 py-2 px-4 rounded-full bg-[#f59e0b] text-white text-sm font-medium hover:bg-[#d97706] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn">
-            Book Now
-            <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-          </button>
+        <div className="mt-auto flex flex-col gap-2 border-t border-stone-100 pt-4 sm:flex-row sm:items-center sm:gap-3">
+          {serviceId ? (
+            <>
+              <Link
+                href={`/user/services/${serviceId}`}
+                className="flex-1 py-2 px-4 rounded-full border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors text-center"
+              >
+                View Details
+              </Link>
+              <Link
+                href={`/user/bookings/new?serviceId=${serviceId}`}
+                className="flex-1 py-2 px-4 rounded-full bg-[#f59e0b] text-white text-sm font-medium hover:bg-[#d97706] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn"
+              >
+                Book Now
+                <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+              </Link>
+            </>
+          ) : (
+            <>
+              <button className="flex-1 py-2 px-4 rounded-full border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors">
+                View Details
+              </button>
+              <button className="flex-1 py-2 px-4 rounded-full bg-[#f59e0b] text-white text-sm font-medium hover:bg-[#d97706] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn">
+                Book Now
+                <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

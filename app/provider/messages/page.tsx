@@ -282,7 +282,7 @@ export default function ProviderMessagesPage() {
             <h2 className="px-2 py-2 text-sm font-semibold text-gray-700">Pet Owners</h2>
             {participants.length === 0 ? (
               <p className="px-2 py-8 text-sm text-gray-500">
-                No chat contacts yet. Contacts appear after bookings.
+                No chat contacts yet. Contacts appear after bookings or pet assignments.
               </p>
             ) : (
               <div className="space-y-1">

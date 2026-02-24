@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Search,
   MapPin,
@@ -6,11 +6,46 @@ import {
   ChevronDown,
   SlidersHorizontal,
 } from 'lucide-react'
-export function SearchBar() {
-  const [activeType, setActiveType] = useState('All')
-  const types = ['All', 'Vet', 'Grooming', 'Boarding']
+
+export type ServiceSearchFilters = {
+  location: string
+  serviceType: 'all' | 'vet' | 'grooming' | 'boarding'
+  petType: 'all' | 'dog' | 'cat' | 'other'
+  dateFrom: string
+  dateTo: string
+}
+
+const DEFAULT_FILTERS: ServiceSearchFilters = {
+  location: '',
+  serviceType: 'all',
+  petType: 'all',
+  dateFrom: '',
+  dateTo: '',
+}
+
+type SearchBarProps = {
+  onSearch?: (filters: ServiceSearchFilters) => void
+}
+
+export function SearchBar({ onSearch }: SearchBarProps) {
+  const [filters, setFilters] = useState<ServiceSearchFilters>(DEFAULT_FILTERS)
+  const types: Array<{ label: string; value: ServiceSearchFilters['serviceType'] }> = [
+    { label: 'All', value: 'all' },
+    { label: 'Vet', value: 'vet' },
+    { label: 'Grooming', value: 'grooming' },
+    { label: 'Boarding', value: 'boarding' },
+  ]
+
+  useEffect(() => {
+    onSearch?.(filters)
+  }, [filters, onSearch])
+
+  const applySearch = () => {
+    onSearch?.(filters)
+  }
+
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 relative z-20 -mt-10 mb-8">
+    <div className="relative z-20 mx-auto mb-8 w-full max-w-6xl px-4 -mt-6 md:-mt-10">
       <div className="bg-white rounded-3xl shadow-xl border border-[#e7e5e4] p-6 md:p-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -21,14 +56,16 @@ export function SearchBar() {
             </span>
           </div>
 
-          <div className="flex bg-stone-100 p-1 rounded-full">
+          <div className="flex max-w-full overflow-x-auto rounded-full bg-stone-100 p-1">
             {types.map((type) => (
               <button
-                key={type}
-                onClick={() => setActiveType(type)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${activeType === type ? 'bg-[#f59e0b] text-white shadow-sm' : 'text-[#78716c] hover:text-[#1c1917]'}`}
+                key={type.value}
+                onClick={() =>
+                  setFilters((prev) => ({ ...prev, serviceType: type.value }))
+                }
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all ${filters.serviceType === type.value ? 'bg-[#f59e0b] text-white shadow-sm' : 'text-[#78716c] hover:text-[#1c1917]'}`}
               >
-                {type}
+                {type.label}
               </button>
             ))}
           </div>
@@ -45,6 +82,10 @@ export function SearchBar() {
               <input
                 type="text"
                 placeholder="City or zip code"
+                value={filters.location}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, location: e.target.value }))
+                }
                 className="w-full h-12 pl-4 pr-4 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b] transition-all"
               />
             </div>
@@ -56,10 +97,20 @@ export function SearchBar() {
               Service Type
             </label>
             <div className="relative">
-              <select className="w-full h-12 pl-4 pr-8 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b] cursor-pointer text-[#1c1917]">
-                <option>All Services</option>
-                <option>Checkup</option>
-                <option>Grooming</option>
+              <select
+                value={filters.serviceType}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    serviceType: e.target.value as ServiceSearchFilters['serviceType'],
+                  }))
+                }
+                className="w-full h-12 pl-4 pr-8 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b] cursor-pointer text-[#1c1917]"
+              >
+                <option value="all">All Services</option>
+                <option value="vet">Vet</option>
+                <option value="grooming">Grooming</option>
+                <option value="boarding">Boarding</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
             </div>
@@ -72,8 +123,11 @@ export function SearchBar() {
                 <Calendar className="w-3 h-3" /> Check-in
               </label>
               <input
-                type="text"
-                placeholder="mm/dd"
+                type="date"
+                value={filters.dateFrom}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))
+                }
                 className="w-full h-12 px-3 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b]"
               />
             </div>
@@ -82,8 +136,11 @@ export function SearchBar() {
                 <Calendar className="w-3 h-3" /> Check-out
               </label>
               <input
-                type="text"
-                placeholder="mm/dd"
+                type="date"
+                value={filters.dateTo}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, dateTo: e.target.value }))
+                }
                 className="w-full h-12 px-3 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b]"
               />
             </div>
@@ -95,10 +152,20 @@ export function SearchBar() {
               Pet Type
             </label>
             <div className="relative">
-              <select className="w-full h-12 pl-4 pr-8 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b] cursor-pointer text-[#1c1917]">
-                <option>All Pets</option>
-                <option>Dog</option>
-                <option>Cat</option>
+              <select
+                value={filters.petType}
+                onChange={(e) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    petType: e.target.value as ServiceSearchFilters['petType'],
+                  }))
+                }
+                className="w-full h-12 pl-4 pr-8 bg-stone-50 border border-[#e7e5e4] rounded-xl text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#f59e0b]/20 focus:border-[#f59e0b] cursor-pointer text-[#1c1917]"
+              >
+                <option value="all">All Pets</option>
+                <option value="dog">Dog</option>
+                <option value="cat">Cat</option>
+                <option value="other">Other</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none" />
             </div>
@@ -106,7 +173,11 @@ export function SearchBar() {
 
           {/* Search Button */}
           <div className="md:col-span-2">
-            <button className="w-full h-12 bg-[#f59e0b] hover:bg-[#d97706] text-white font-semibold rounded-full shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={applySearch}
+              className="w-full h-12 bg-[#f59e0b] hover:bg-[#d97706] text-white font-semibold rounded-full shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2"
+            >
               <Search className="w-4 h-4" />
               Search
             </button>

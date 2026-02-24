@@ -103,6 +103,7 @@ export const API = {
         GET_BY_ID: (data: any) => `/api/user/pet/${data}`,
         UPDATE: (data: any) => `/api/user/pet/${data}`,
         DELETE: (data: any) => `/api/user/pet/${data}`,
+        ASSIGN_VET: (data: any) => `/api/user/pet/${data}/assign-vet`,
         CARE: {
             GET: (data: any) => `/api/user/pet/${data}/care`,
             UPDATE: (data: any) => `/api/user/pet/${data}/care`,
@@ -199,6 +200,9 @@ export const API = {
         GET_MY: '/api/provider/booking/my',
         UPDATE_STATUS: (data: any) => `/api/provider/booking/${data}/status`,
         GET_BY_ID: (data: any) => `/api/provider/booking/${data}`,
+    },
+    PET: {
+        GET_ASSIGNED: '/api/provider/pet/assigned',
     },
     POST: {
         CREATE: '/api/provider/post',

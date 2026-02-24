@@ -282,7 +282,7 @@ export default function UserVetChatPage() {
             <h2 className="px-2 py-2 text-sm font-semibold text-gray-700">Your Vets</h2>
             {participants.length === 0 ? (
               <p className="px-2 py-8 text-sm text-gray-500">
-                No vet contacts yet. Vet contacts appear after bookings.
+                No vet contacts yet. Contacts appear after bookings or vet assignment.
               </p>
             ) : (
               <div className="space-y-1">
