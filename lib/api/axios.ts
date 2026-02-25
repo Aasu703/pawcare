@@ -1,9 +1,13 @@
 import axios from 'axios';
 import { API_CONFIG } from './config';
-
+// Axios is a popular HTTP client library for making API requests. 
+// This module configures a custom Axios instance with a base URL and an interceptor to automatically include the authentication token in the headers of each request. 
+// The token is retrieved from cookies or local storage, depending on whether the code is running on the server or client side.
 const BASE_URL = `${API_CONFIG.BASE_URL}`;
 
 function readClientCookie(name: string): string | null {
+    // This function reads a cookie value from the document.cookie string. 
+    // It returns the decoded value of the specified cookie name, or null if the cookie is not found.
     if (typeof document === 'undefined') return null;
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -15,6 +19,9 @@ function readClientCookie(name: string): string | null {
 }
 
 function getClientAuthToken(): string | null {
+    // This function retrieves the authentication token from cookies or local storage on the client side.
+    // It first checks for the token in cookies using the readClientCookie function. If not found, it checks local storage.
+
     const cookieToken = readClientCookie('auth_token');
     if (cookieToken && cookieToken !== 'undefined') return cookieToken;
 
@@ -36,6 +43,8 @@ const axiosInstance = axios.create(
 );
 
 axiosInstance.interceptors.request.use(
+    // This interceptor function is called before each request is sent. 
+    // It retrieves the authentication token and adds it to the Authorization header of the request if it exists.
     async (config) => {
         let token: string | null = null;
 
