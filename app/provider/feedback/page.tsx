@@ -36,7 +36,7 @@ export default function ProviderFeedbackPage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Feedback</h1>
-        <p className="text-gray-500 mt-1">Feedback from your customers</p>
+        <p className="text-gray-500 mt-1">Feedback you have shared for users after completed bookings</p>
       </div>
 
       {/* Summary */}
@@ -56,7 +56,7 @@ export default function ProviderFeedbackPage() {
         <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
           <MessageCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
           <p className="text-lg text-gray-500">No feedback yet</p>
-          <p className="text-sm text-gray-400 mt-1">Feedback will appear here once customers submit it</p>
+          <p className="text-sm text-gray-400 mt-1">Submit feedback from completed bookings to see it here</p>
         </div>
       ) : (
         <div className="space-y-4">

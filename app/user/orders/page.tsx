@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { getMyOrders, deleteOrder } from "@/lib/api/user/order";
+import { createReview, getMyReviews } from "@/lib/api/user/review";
+import { getProductById } from "@/lib/api/public/product";
 import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
-import { Package, Clock, Truck, CheckCircle, XCircle, ShoppingBag } from "lucide-react";
+import { Package, Clock, Truck, CheckCircle, XCircle, ShoppingBag, Star, X } from "lucide-react";
 import Link from "next/link";
 
 const statusConfig: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -19,18 +21,85 @@ export default function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [productReviewMap, setProductReviewMap] = useState<Record<string, any>>({});
+  const [productProviderMap, setProductProviderMap] = useState<Record<string, string>>({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const getEntityId = (value: any): string => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    if (value?._id) return getEntityId(value._id);
+    if (value?.id) return getEntityId(value.id);
+    if (typeof value?.toHexString === "function") return value.toHexString();
+    if (typeof value?.toString === "function") {
+      const stringified = value.toString();
+      return stringified === "[object Object]" ? "" : stringified;
+    }
+    return "";
+  };
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
+  const loadProviderMapForOrders = async (ordersList: any[]) => {
+    const productIds = Array.from(
+      new Set(
+        ordersList
+          .flatMap((order) => (Array.isArray(order?.items) ? order.items : []))
+          .map((item) => getEntityId(item?.productId))
+          .filter(Boolean),
+      ),
+    );
+
+    if (!productIds.length) {
+      setProductProviderMap({});
+      return;
+    }
+
+    const entries = await Promise.all(
+      productIds.map(async (productId) => {
+        const productRes = await getProductById(productId);
+        if (productRes.success && productRes.data) {
+          const providerId = getEntityId(productRes.data?.providerId || productRes.data?.provider?._id);
+          return [productId, providerId] as const;
+        }
+        return [productId, ""] as const;
+      }),
+    );
+
+    setProductProviderMap(
+      Object.fromEntries(entries.filter(([, providerId]) => Boolean(providerId))),
+    );
+  };
+
   const fetchOrders = async () => {
     setLoading(true);
-    const res = await getMyOrders();
-    if (res.success && res.data) {
-      setOrders(Array.isArray(res.data) ? res.data : []);
+    const [ordersRes, reviewsRes] = await Promise.all([getMyOrders(), getMyReviews()]);
+
+    if (ordersRes.success && ordersRes.data) {
+      const ordersList = Array.isArray(ordersRes.data) ? ordersRes.data : [];
+      setOrders(ordersList);
+      await loadProviderMapForOrders(ordersList);
     } else {
-      toast.error(res.message);
+      toast.error(ordersRes.message);
+    }
+
+    if (reviewsRes.success && reviewsRes.data) {
+      const nextMap = (Array.isArray(reviewsRes.data) ? reviewsRes.data : []).reduce(
+        (acc: Record<string, any>, review: any) => {
+          const productId = getEntityId(review?.productId);
+          if (productId) {
+            acc[productId] = review;
+          }
+          return acc;
+        },
+        {},
+      );
+      setProductReviewMap(nextMap);
     }
     setLoading(false);
   };
@@ -51,6 +120,56 @@ export default function OrdersPage() {
     } else {
       toast.error(res.message);
     }
+  };
+
+  const openReviewModal = (item: any) => {
+    setSelectedItem(item);
+    setReviewForm({ rating: 5, comment: "" });
+    setIsReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedItem(null);
+    setReviewForm({ rating: 5, comment: "" });
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedItem) return;
+
+    const productId = getEntityId(selectedItem?.productId);
+    if (!productId) {
+      toast.error("Product details are missing");
+      return;
+    }
+
+    const providerId = productProviderMap[productId];
+    if (!providerId) {
+      toast.error("Provider details are not available for this product");
+      return;
+    }
+    const payload: Record<string, any> = {
+      rating: reviewForm.rating,
+      comment: reviewForm.comment.trim() || undefined,
+      productId,
+      providerId,
+      reviewType: "product",
+    };
+
+    setSubmittingReview(true);
+    const res = await createReview(payload);
+    if (res.success) {
+      toast.success("Thanks for rating your purchase");
+      setProductReviewMap((prev) => ({
+        ...prev,
+        [productId]: res.data ?? { ...payload, _id: `temp-${productId}` },
+      }));
+      closeReviewModal();
+    } else {
+      toast.error(res.message);
+    }
+    setSubmittingReview(false);
   };
 
   const filteredOrders = filter === "all" ? orders : orders.filter((o) => o.status === filter);
@@ -123,11 +242,45 @@ export default function OrdersPage() {
 
                 <div className="space-y-2 mb-4">
                   {order.items?.map((item: any, idx: number) => (
-                    <div key={idx} className="flex justify-between text-sm">
-                      <span>
-                        {item.productName} x {item.quantity}
-                      </span>
-                      <span className="text-gray-500">${(item.unitPrice * item.quantity).toFixed(2)}</span>
+                    <div key={idx} className="rounded-lg border border-gray-100 p-3">
+                      <div className="flex justify-between text-sm">
+                        <span>
+                          {item.productName} x {item.quantity}
+                        </span>
+                        <span className="text-gray-500">
+                          ${(Number(item.price ?? item.unitPrice ?? 0) * Number(item.quantity ?? 0)).toFixed(2)}
+                        </span>
+                      </div>
+
+                      {order.status === "delivered" && (
+                        <div className="mt-2">
+                          {(() => {
+                            const productId = getEntityId(item.productId);
+                            const hasReview = Boolean(productReviewMap[productId]);
+                            const canRate = Boolean(productProviderMap[productId]);
+
+                            if (hasReview) {
+                              return (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                                  <Star className="h-3.5 w-3.5 fill-current" />
+                                  Rated
+                                </span>
+                              );
+                            }
+
+                            return (
+                              <button
+                                onClick={() => openReviewModal(item)}
+                                disabled={!canRate}
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60 transition-colors"
+                              >
+                                <Star className="h-4 w-4" />
+                                {canRate ? "Rate Provider" : "Provider unavailable"}
+                              </button>
+                            );
+                          })()}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -149,6 +302,65 @@ export default function OrdersPage() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {isReviewModalOpen && selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Rate Provider</h2>
+                <p className="text-sm text-gray-500">
+                  {selectedItem?.productName || "Share your shopping experience"}
+                </p>
+              </div>
+              <button onClick={closeReviewModal} className="text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Rating</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewForm((prev) => ({ ...prev, rating: star }))}
+                      className="rounded p-0.5"
+                    >
+                      <Star
+                        className={`h-6 w-6 ${
+                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Comment (optional)</label>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm((prev) => ({ ...prev, comment: e.target.value }))}
+                  rows={4}
+                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  placeholder="Tell us what went well (or not)"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+              >
+                {submittingReview ? "Submitting..." : "Submit Rating"}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

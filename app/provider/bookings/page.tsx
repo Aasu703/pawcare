@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getProviderBookings, updateBookingStatus } from "@/lib/api/provider/booking";
+import { createFeedback, getFeedbackByProvider } from "@/lib/api/provider/provider";
 import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
-import { Calendar, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Calendar, Clock, CheckCircle, XCircle, MessageSquare, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { canManageBookings, isVetProvider } from "@/lib/provider-access";
 
@@ -24,6 +25,24 @@ export default function ProviderBookingsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [updating, setUpdating] = useState<string | null>(null);
+  const [feedbackByBookingMap, setFeedbackByBookingMap] = useState<Record<string, any>>({});
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+
+  const getEntityId = (value: any): string => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    if (value?._id) return getEntityId(value._id);
+    if (value?.id) return getEntityId(value.id);
+    if (typeof value?.toHexString === "function") return value.toHexString();
+    if (typeof value?.toString === "function") {
+      const stringified = value.toString();
+      return stringified === "[object Object]" ? "" : stringified;
+    }
+    return "";
+  };
 
   async function fetchBookings() {
     setLoading(true);
@@ -54,6 +73,24 @@ export default function ProviderBookingsPage() {
         statuses: ["confirmed"],
         link: isVet ? "/provider/vet-appointments" : "/provider/bookings",
       });
+
+      const providerId = getEntityId(user?._id || user?.id || nextBookings[0]?.providerId);
+      if (providerId) {
+        const feedbackRes = await getFeedbackByProvider(providerId);
+        if (feedbackRes.success && feedbackRes.data) {
+          const nextMap = (Array.isArray(feedbackRes.data) ? feedbackRes.data : []).reduce(
+            (acc: Record<string, any>, feedback: any) => {
+              const bookingId = getEntityId(feedback?.bookingId);
+              if (bookingId) {
+                acc[bookingId] = feedback;
+              }
+              return acc;
+            },
+            {},
+          );
+          setFeedbackByBookingMap(nextMap);
+        }
+      }
     } else {
       toast.error(res.message);
     }
@@ -83,6 +120,62 @@ export default function ProviderBookingsPage() {
       toast.error(res.message);
     }
     setUpdating(null);
+  };
+
+  const openFeedbackModal = (booking: any) => {
+    setSelectedBooking(booking);
+    setFeedbackText("");
+    setIsFeedbackModalOpen(true);
+  };
+
+  const closeFeedbackModal = () => {
+    setIsFeedbackModalOpen(false);
+    setSelectedBooking(null);
+    setFeedbackText("");
+  };
+
+  const handleFeedbackSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBooking) return;
+    if (!feedbackText.trim()) {
+      toast.error("Please write feedback before submitting");
+      return;
+    }
+
+    const providerId = getEntityId(user?._id || user?.id || selectedBooking?.providerId);
+    const targetUserId = getEntityId(selectedBooking?.user?._id || selectedBooking?.userId);
+    const bookingId = getEntityId(selectedBooking?._id || selectedBooking?.id);
+
+    if (!providerId || !targetUserId || !bookingId) {
+      toast.error("Booking details are incomplete");
+      return;
+    }
+
+    setSubmittingFeedback(true);
+    const res = await createFeedback({
+      providerId,
+      userId: targetUserId,
+      bookingId,
+      feedback: feedbackText.trim(),
+    });
+
+    if (res.success) {
+      toast.success("Feedback submitted");
+      setFeedbackByBookingMap((prev) => ({
+        ...prev,
+        [bookingId]: res.data ?? {
+          providerId,
+          userId: targetUserId,
+          bookingId,
+          feedback: feedbackText.trim(),
+          _id: `temp-${bookingId}`,
+        },
+      }));
+      closeFeedbackModal();
+    } else {
+      toast.error(res.message);
+    }
+    setSubmittingFeedback(false);
   };
 
   const filteredBookings = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
@@ -214,10 +307,66 @@ export default function ProviderBookingsPage() {
                       <CheckCircle className="h-4 w-4" /> Mark Complete
                     </button>
                   )}
+                  {booking.status === "completed" && booking.user && (
+                    <>
+                      {feedbackByBookingMap[getEntityId(booking._id)] ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                          <CheckCircle className="h-3.5 w-3.5" />
+                          Feedback sent
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => openFeedbackModal(booking)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-sm font-medium hover:bg-amber-100 transition"
+                        >
+                          <MessageSquare className="h-4 w-4" /> Give Feedback
+                        </button>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             );
           })}
+        </div>
+      )}
+
+      {isFeedbackModalOpen && selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Give User Feedback</h2>
+                <p className="text-sm text-gray-500">
+                  {selectedBooking?.user?.name || selectedBooking?.user?.email || "Booking customer"}
+                </p>
+              </div>
+              <button onClick={closeFeedbackModal} className="text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Feedback</label>
+                <textarea
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  rows={5}
+                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  placeholder="Share your experience with this user..."
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingFeedback}
+                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+              >
+                {submittingFeedback ? "Submitting..." : "Submit Feedback"}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>
