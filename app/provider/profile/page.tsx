@@ -7,9 +7,10 @@ import {
   getMyProviderProfile,
   updateMyProviderProfile,
   uploadProviderCertificate,
+  uploadProviderProfileImage,
 } from "@/lib/api/provider/provider";
 import { toast } from "sonner";
-import { BadgeCheck, FileUp, Paperclip, X } from "lucide-react";
+import { BadgeCheck, FileUp, Paperclip, X, Camera } from "lucide-react";
 import ProviderLocationPicker, { type ProviderPinnedLocation } from "@/components/ProviderLocationPicker";
 import { getApiBaseUrl, resolveMediaUrl } from "@/lib/utils/media-url";
 
@@ -28,6 +29,7 @@ type ProviderForm = {
   pawcareVerified: boolean;
   locationVerified: boolean;
   status: "pending" | "approved" | "rejected" | "";
+  profileImageUrl: string;
 };
 type ProviderStringField =
   | "businessName"
@@ -45,6 +47,8 @@ export default function ProviderProfilePage() {
   const baseUrl = getApiBaseUrl();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState(false);
   const [form, setForm] = useState<ProviderForm>({
     businessName: "",
     address: "",
@@ -64,6 +68,7 @@ export default function ProviderProfilePage() {
     pawcareVerified: false,
     locationVerified: false,
     status: "",
+    profileImageUrl: "",
   });
 
   useEffect(() => {
@@ -92,7 +97,9 @@ export default function ProviderProfilePage() {
         pawcareVerified: Boolean(src?.pawcareVerified),
         locationVerified: Boolean(src?.locationVerified),
         status: src?.status || "",
+        profileImageUrl: src?.profileImageUrl || "",
       });
+      setImageLoadError(false);
       setLoading(false);
     };
     load();
@@ -105,6 +112,11 @@ export default function ProviderProfilePage() {
     form.certificationDocumentUrl,
     baseUrl,
     "documents",
+  );
+  const profileImageUrl = resolveMediaUrl(
+    photoPreview || form.profileImageUrl,
+    baseUrl,
+    "image",
   );
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -176,6 +188,43 @@ export default function ProviderProfilePage() {
     }
   };
 
+  const handleProfilePhotoUpload = async (file: File | null) => {
+    if (!file) return;
+
+    setSaving(true);
+    try {
+      const result = await uploadProviderProfileImage(file);
+      if (!result.success) {
+        toast.error(result.message || "Failed to upload profile image.");
+        return;
+      }
+      const uploadedPath = result.data?.path || result.data?.url || "";
+      if (!uploadedPath) {
+        toast.error("Upload succeeded but file path was not returned.");
+        return;
+      }
+      setForm((prev) => ({
+        ...prev,
+        profileImageUrl: uploadedPath,
+      }));
+      setPhotoPreview(null);
+      setImageLoadError(false);
+      toast.success("Profile photo updated!");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePhotoPreview = (file: File | null) => {
+    if (!file) return;
+    setImageLoadError(false);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -198,6 +247,78 @@ export default function ProviderProfilePage() {
       </div>
 
       <form onSubmit={onSubmit} className="space-y-6">
+        {/* Profile Photo Section */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold mb-4">Profile Photo</h2>
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* Photo Preview */}
+            <div className="relative w-full md:w-40 h-40 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden shrink-0">
+              {profileImageUrl && !imageLoadError ? (
+                <img
+                  src={profileImageUrl}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onError={() => setImageLoadError(true)}
+                />
+              ) : profileImageUrl && imageLoadError ? (
+                <div className="text-center">
+                  <svg className="h-8 w-8 text-gray-400 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <p className="text-xs text-gray-500">Failed to load image</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-xs text-gray-500">No photo yet</p>
+                </div>
+              )}
+            </div>
+
+            {/* Upload Button */}
+            <div className="flex-1 space-y-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-3 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10 transition-colors">
+                <FileUp className="h-5 w-5" />
+                {saving ? "Uploading..." : "Change Photo"}
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp"
+                  className="hidden"
+                  disabled={saving}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    if (file) {
+                      handlePhotoPreview(file);
+                      void handleProfilePhotoUpload(file);
+                    }
+                    e.currentTarget.value = "";
+                  }}
+                />
+              </label>
+              <p className="text-xs text-gray-500">
+                Accepted formats: JPG, PNG, WEBP (max 5MB).
+              </p>
+              {profileImageUrl && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm((prev) => ({
+                      ...prev,
+                      profileImageUrl: "",
+                    }));
+                    setPhotoPreview(null);
+                  }}
+                  className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 hover:bg-red-100 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                  Remove Photo
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold mb-4">Business Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

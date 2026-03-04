@@ -72,4 +72,23 @@ export async function getProviderRating(data: any): Promise<{ success: boolean; 
   }
 }
 
+export async function getEnrichedReviewsByProvider(providerId: string): Promise<{ success: boolean; message: string; data?: any[] }> {
+  try {
+    const response = await axios.get(API.REVIEW.GET_BY_PROVIDER(providerId), { params: { enriched: true } });
+    const reviews = response.data?.data?.reviews || response.data?.data || [];
+    return { success: true, message: "Enriched reviews fetched", data: Array.isArray(reviews) ? reviews : [] };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch enriched reviews" };
+  }
+}
+
+export async function getProviderRatingBreakdown(providerId: string): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const response = await axios.get(API.REVIEW.GET_PROVIDER_RATING_BREAKDOWN(providerId));
+    return { success: true, message: "Rating breakdown fetched", data: response.data.data };
+  } catch (err: any) {
+    return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch rating breakdown" };
+  }
+}
+
 

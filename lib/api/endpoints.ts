@@ -132,6 +132,7 @@ export const API = {
     GET_BY_PROVIDER: (data: any) => `/api/review/provider/${data}`,
     GET_BY_PRODUCT: (data: any) => `/api/review/product/${data}`,
     GET_PROVIDER_RATING: (data: any) => `/api/review/provider/${data}/rating`,
+    GET_PROVIDER_RATING_BREAKDOWN: (data: any) => `/api/review/provider/${data}/rating-breakdown`,
  },
  MESSAGE: {
     CREATE: '/api/message',
@@ -213,6 +214,7 @@ export const API = {
  },
  UPLOAD: {
     PROVIDER_CERTIFICATE: '/api/upload/provider-certificate',
+    PROVIDER_PROFILE_IMAGE: '/api/upload/profile-image',
  },
  ORDER: {
     CREATE: '/api/order',

@@ -1,6 +1,6 @@
 type UploadKind = "image" | "documents";
 
-const hasProtocol = (value: string) => /^https?:\/\//i.test(value);
+const hasProtocol = (value: string) => /^(https?|data):\/?\//i.test(value);
 const IMAGE_KEYS = [
   "imageUrl",
   "avatarUrl",

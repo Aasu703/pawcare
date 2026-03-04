@@ -1,6 +1,6 @@
 import z, { email } from "zod";
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export const updateUserSchema = z.object({
     Firstname: z.string().min(1, "First name is required").max(50, "First name is too long"),
@@ -14,7 +14,7 @@ export const updateUserSchema = z.object({
             message: "Max file size is 5MB",
         })
         .refine((file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type), {
-            message: "Only .jpg, .jpeg, and .png formats are accepted",
+            message: "Only .jpg, .jpeg, .png, and .webp formats are accepted",
         }),
 
 
@@ -36,7 +36,7 @@ export const addPetSchema = z.object({
             message: "Max file size is 5MB",
         })
         .refine((file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type), {
-            message: "Only .jpg, .jpeg, and .png formats are accepted",
+            message: "Only .jpg, .jpeg, .png, and .webp formats are accepted",
         }),
 })
 
@@ -53,7 +53,7 @@ export const updatePetSchema = z.object({
             message: "Max file size is 5MB",
         })
         .refine((file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type), {
-            message: "Only .jpg, .jpeg, and .png formats are accepted",
+            message: "Only .jpg, .jpeg, .png, and .webp formats are accepted",
         }),
 })
 

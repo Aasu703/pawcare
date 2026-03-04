@@ -81,7 +81,7 @@ export default function ProviderInventoryPage() {
         } successfully.`,
         link: "/provider/inventory",
       });
-      toast.success(editingId ? "Item updated!" : "Item added!");
+      toast.success(editingId ? "Item updated!" : res.message || "Item added!");
       resetForm();
       loadItems();
     } else {
@@ -203,25 +203,39 @@ export default function ProviderInventoryPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map((item) => (
-            <div key={item._id} className="bg-white rounded-xl border border-gray-200 p-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
-                  {item.description && <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>}
-                  <p className="text-2xl font-bold text-[#0f4f57] mt-2">
-                    {item.quantity ?? 0} <span className="text-sm font-normal text-gray-400">units</span>
-                  </p>
+          {items.map((item) => {
+            const statusColor = 
+              item.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+              item.approvalStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+              'bg-amber-100 text-amber-800';
+            
+            return (
+              <div key={item._id} className="bg-white rounded-xl border border-gray-200 p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
+                    {item.description && <p className="text-xs text-gray-400 mt-0.5">{item.description}</p>}
+                    <p className="text-2xl font-bold text-[#0f4f57] mt-2">
+                      {item.quantity ?? 0} <span className="text-sm font-normal text-gray-400">units</span>
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    <button onClick={() => handleEdit(item)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
+                    <button onClick={() => handleDelete(item._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  <button onClick={() => handleEdit(item)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
-                  <button onClick={() => handleDelete(item._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                {item.price ? <p className="text-xs text-gray-400 mt-2">${item.price}</p> : null}
+                {item.category && <p className="text-xs text-gray-400 mt-1">Category: {item.category}</p>}
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusColor}`}>
+                    {item.approvalStatus === 'approved' ? 'Approved' :
+                     item.approvalStatus === 'rejected' ? 'Rejected' :
+                     'Pending'}
+                  </span>
                 </div>
               </div>
-              {item.price ? <p className="text-xs text-gray-400 mt-2">${item.price}</p> : null}
-              {item.category && <p className="text-xs text-gray-400 mt-1">Category: {item.category}</p>}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -79,6 +79,26 @@ export async function updateMyProviderProfile(data: Record<string, any>): Promis
   }
 }
 
+export async function uploadProviderProfileImage(
+  file: File,
+): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const form = new FormData();
+    form.append("profile_image", file);
+    const response = await axios.post(API.UPLOAD.PROVIDER_PROFILE_IMAGE, form, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (err: any) {
+    return {
+      success: false,
+      message: err.response?.data?.message || err.message || "Failed to upload profile image",
+    };
+  }
+}
+
 // Provider Services
 export async function createProviderService(data: any): Promise<{ success: boolean; message: string; data?: any }> {
   try {

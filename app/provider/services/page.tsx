@@ -53,7 +53,7 @@ export default function ProviderServicesPage() {
       res = await createProviderService(payload as any);
     }
     if (res.success) {
-      toast.success(editingId ? "Service updated!" : "Service created!");
+      toast.success(editingId ? "Service updated!" : res.message || "Service created!");
       resetForm();
       loadServices();
     } else {
@@ -199,27 +199,42 @@ export default function ProviderServicesPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {serviceList.map((s, idx) => (
-                <tr key={s._id || s.id || `${s.title || "service"}-${idx}`} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">{s.title}</div>
-                    <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || s.category || "-"}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">${s.price}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{s.duration_minutes} min</td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex gap-2 justify-end">
-                      <button onClick={() => handleEdit(s)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => handleDelete(s._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {serviceList.map((s, idx) => {
+                const statusColor = 
+                  s.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                  s.approvalStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+                  'bg-amber-100 text-amber-800';
+                
+                return (
+                  <tr key={s._id || s.id || `${s.title || "service"}-${idx}`} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">{s.title}</div>
+                      <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || s.category || "-"}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${s.price}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{s.duration_minutes} min</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusColor}`}>
+                        {s.approvalStatus === 'approved' ? 'Approved' :
+                         s.approvalStatus === 'rejected' ? 'Rejected' :
+                         'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => handleEdit(s)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
+                        <button onClick={() => handleDelete(s._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

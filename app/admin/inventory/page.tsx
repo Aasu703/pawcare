@@ -78,38 +78,53 @@ export default function AdminInventoryPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Threshold</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Approval Status</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {items.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-400">No inventory items found</td></tr>
-              ) : items.map((item) => (
-                <tr key={item._id} className={`hover:bg-gray-50 ${isLow(item) ? "bg-amber-50/50" : ""}`}>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium">{item.itemName}</div>
-                    {item.notes && <div className="text-xs text-gray-400">{item.notes}</div>}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    {typeof item.providerId === "object" ? (item.providerId as any).businessName || (item.providerId as any).email : item.providerId || "-"}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">{item.quantity} {item.unit}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{item.minThreshold || "-"}</td>
-                  <td className="px-6 py-4">
-                    {isLow(item) ? (
-                      <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-700">Low</span>
-                    ) : (
-                      <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">OK</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button onClick={() => handleDelete(item._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-gray-400">No inventory items found</td></tr>
+              ) : items.map((item) => {
+                const approvalColor =
+                  item.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                  item.approvalStatus === 'rejected' ? 'bg-red-100 text-red-800' :
+                  'bg-amber-100 text-amber-800';
+                
+                return (
+                  <tr key={item._id} className={`hover:bg-gray-50 ${isLow(item) ? "bg-amber-50/50" : ""}`}>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium">{item.itemName}</div>
+                      {item.notes && <div className="text-xs text-gray-400">{item.notes}</div>}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      {typeof item.providerId === "object" ? (item.providerId as any).businessName || (item.providerId as any).email : item.providerId || "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium">{item.quantity} {item.unit}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{item.minThreshold || "-"}</td>
+                    <td className="px-6 py-4">
+                      {isLow(item) ? (
+                        <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-700">Low</span>
+                      ) : (
+                        <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">OK</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${approvalColor}`}>
+                        {item.approvalStatus === 'approved' ? 'Approved' :
+                         item.approvalStatus === 'rejected' ? 'Rejected' :
+                         'Pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button onClick={() => handleDelete(item._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
