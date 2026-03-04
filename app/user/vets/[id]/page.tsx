@@ -91,7 +91,7 @@ export default function VetDetailPage() {
       setProvider(found ?? null);
     }
     if (revRes.success && revRes.data) {
-      setReviews(revRes.data);
+      setReviews(revRes.data.reviews);
     }
     if (breakdownRes.success && breakdownRes.data) {
       setBreakdown(breakdownRes.data);
@@ -119,7 +119,7 @@ export default function VetDetailPage() {
         getReviewsByProvider(providerId),
         getProviderRatingBreakdown(providerId),
       ]);
-      if (revRes.success && revRes.data) setReviews(revRes.data);
+      if (revRes.success && revRes.data) setReviews(revRes.data.reviews);
       if (breakdownRes.success && breakdownRes.data)
         setBreakdown(breakdownRes.data);
     }
