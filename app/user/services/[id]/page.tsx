@@ -78,6 +78,20 @@ export default function ServiceDetailPage() {
   }
 
   const category = service.category || service.catergory || "general";
+  const providerId = service.provider?._id || service.providerId || "";
+  const providerName = service.provider?.name || service.provider?.businessName || "Vet Provider";
+  const providerSubtitle = service.provider?.providerType
+    ? `${service.provider.providerType} provider`
+    : "provider";
+  const providerIsPawcareVerified = Boolean(
+    service.provider?.pawcareVerified &&
+      (service.provider?.providerType === "shop" || service.provider?.providerType === "vet"),
+  );
+  const providerVerificationLabel = providerIsPawcareVerified
+    ? service.provider?.providerType === "shop"
+      ? "PawCare Verified Shop"
+      : "PawCare Verified Vet"
+    : "Trusted care provider";
   const categoryBadge =
     category === "vet"
       ? "bg-[#dbeafe] text-[#1d4ed8]"
@@ -88,7 +102,7 @@ export default function ServiceDetailPage() {
       : "bg-gray-100 text-gray-700";
 
   const includedItems = [
-    "Provider verified by PawCare team",
+    providerVerificationLabel,
     "Transparent pricing with no hidden fees",
     "In-app booking and schedule updates",
     "Post-service support and follow-up",
@@ -110,7 +124,7 @@ export default function ServiceDetailPage() {
           </button>
           <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#7a4d0b]">
             <ShieldCheck className="h-4 w-4 text-[#f59e0b]" />
-            Trusted care provider
+            {providerVerificationLabel}
           </div>
         </div>
       </div>
@@ -195,6 +209,12 @@ export default function ServiceDetailPage() {
                   <h3 className="text-lg font-bold text-gray-900">
                     {service.provider.name || service.provider.businessName || "Provider"}
                   </h3>
+                  {providerIsPawcareVerified ? (
+                    <p className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      {providerVerificationLabel}
+                    </p>
+                  ) : null}
                   {service.provider.address && (
                     <p className="inline-flex items-center gap-2 text-sm text-gray-600">
                       <MapPin className="h-4 w-4 text-[#f59e0b]" />
@@ -282,6 +302,19 @@ export default function ServiceDetailPage() {
                 Continue to Booking
               </button>
             </Link>
+
+            {category === "vet" && providerId && (
+              <Link
+                href={`/user/vet-chat?participantId=${providerId}&participantRole=provider&participantName=${encodeURIComponent(
+                  providerName,
+                )}&participantSubtitle=${encodeURIComponent(providerSubtitle)}`}
+              >
+                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#e8d8bc] bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-[#fff8ec]">
+                  <Mail className="h-4 w-4" />
+                  Chat with Vet
+                </button>
+              </Link>
+            )}
 
             <p className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-gray-500">
               <HeartPulse className="h-4 w-4 text-[#f59e0b]" />

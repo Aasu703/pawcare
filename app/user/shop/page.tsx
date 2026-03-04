@@ -65,13 +65,36 @@ export default function ShopPage() {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const res = await getAllProducts(1, 50);
-    if (res.success && res.data) {
-      setProducts(res.data.items || []);
-    } else {
-      toast.error(res.message);
+    try {
+      const pageSize = 100;
+      const maxPages = 20;
+      const firstPageRes = await getAllProducts(1, pageSize);
+
+      if (!firstPageRes.success || !firstPageRes.data) {
+        toast.error(firstPageRes.message);
+        return;
+      }
+
+      const allItems = [...(firstPageRes.data.items || [])];
+      const totalPages = Math.max(Number(firstPageRes.data.totalPages || 1), 1);
+      const pagesToFetch = Math.min(totalPages, maxPages);
+
+      for (let page = 2; page <= pagesToFetch; page += 1) {
+        const pageRes = await getAllProducts(page, pageSize);
+        if (!pageRes.success || !pageRes.data) {
+          toast.error(pageRes.message);
+          break;
+        }
+        allItems.push(...(pageRes.data.items || []));
+      }
+
+      const uniqueById = Array.from(
+        new Map(allItems.map((item) => [item._id, item])).values(),
+      );
+      setProducts(uniqueById);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const addToCart = async (product: Product | { _id: string; product_name: string; price?: number }) => {

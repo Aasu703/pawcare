@@ -1,51 +1,53 @@
 "use server";
 
+import { withActionGuard } from "@/lib/actions/_shared";
 import { createOrder, getMyOrders, getOrderById, updateOrder, deleteOrder } from "@/lib/api/user/order";
 import { revalidatePath } from "next/cache";
 
 export async function handleCreateOrder(data: any) {
-  try {
+  return withActionGuard(async () => {
     const result = await createOrder(data);
     if (result.success) revalidatePath("/user/orders");
     return result;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to create order" };
-  }
+  }, {
+    fallbackMessage: "Failed to create order",
+    logLabel: "Create order error",
+  });
 }
 
 export async function handleGetMyOrders() {
-  try {
-    return await getMyOrders();
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch orders" };
-  }
+  return withActionGuard(async () => getMyOrders(), {
+    fallbackMessage: "Failed to fetch orders",
+    logLabel: "Get my orders error",
+  });
 }
 
 export async function handleGetOrderById(id: string) {
-  try {
-    return await getOrderById(id);
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to fetch order" };
-  }
+  return withActionGuard(async () => getOrderById(id), {
+    fallbackMessage: "Failed to fetch order",
+    logLabel: "Get order by id error",
+  });
 }
 
 export async function handleUpdateOrder(id: string, data: any) {
-  try {
+  return withActionGuard(async () => {
     const result = await updateOrder(id, data);
     if (result.success) revalidatePath("/user/orders");
     return result;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to update order" };
-  }
+  }, {
+    fallbackMessage: "Failed to update order",
+    logLabel: "Update order error",
+  });
 }
 
 export async function handleDeleteOrder(id: string) {
-  try {
+  return withActionGuard(async () => {
     const result = await deleteOrder(id);
     if (result.success) revalidatePath("/user/orders");
     return result;
-  } catch (error: any) {
-    return { success: false, message: error.message || "Failed to cancel order" };
-  }
+  }, {
+    fallbackMessage: "Failed to cancel order",
+    logLabel: "Delete order error",
+  });
 }
 

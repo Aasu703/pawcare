@@ -1,9 +1,19 @@
-﻿"use client";
+"use client";
 
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { LocateFixed, MapPin, RefreshCw, Store } from "lucide-react";
+import {
+  LocateFixed,
+  MapPin,
+  RefreshCw,
+  ShieldCheck,
+  Store,
+} from "lucide-react";
 import type { LayerGroup, Map as LeafletMap } from "leaflet";
+import {
+  getVerifiedProviderLocations,
+  type VerifiedProviderLocation,
+} from "@/lib/api/public/provider";
 
 type Coordinates = {
   lat: number;
@@ -18,15 +28,17 @@ type OverpassElement = {
   tags?: Record<string, string>;
 };
 
+type NearbySearchMode = "pet-shop" | "vet-hospital";
+type ShopSource = "pawcare" | "osm";
+
 type NearbyShop = {
   id: string;
   name: string;
   address: string;
   location: Coordinates;
   distanceKm: number;
+  source: ShopSource;
 };
-
-type NearbySearchMode = "pet-shop" | "vet-hospital";
 
 const DEFAULT_CENTER: Coordinates = { lat: 40.7128, lng: -74.006 };
 const SEARCH_RADIUS_METERS = 5000;
@@ -34,23 +46,47 @@ const OVERPASS_ENDPOINTS = [
   "https://overpass-api.de/api/interpreter",
   "https://overpass.kumi.systems/api/interpreter",
 ];
+
+const SOURCE_STYLES: Record<ShopSource, { label: string; marker: string; chip: string }> = {
+  pawcare: {
+    label: "PawCare Verified",
+    marker: "#16a34a",
+    chip: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  },
+  osm: {
+    label: "Near You (OSM)",
+    marker: "#ea580c",
+    chip: "bg-orange-50 text-orange-700 border-orange-200",
+  },
+};
+
 const SEARCH_MODE_CONFIG: Record<
   NearbySearchMode,
   {
     title: string;
     fallbackName: string;
+    pawcareFallbackName: string;
     loadingText: string;
-    errorText: string;
-    emptyText: string;
+    pawcareErrorText: string;
+    osmErrorText: string;
+    pawcareEmptyText: string;
+    osmEmptyText: string;
+    pawcareSectionTitle: string;
+    osmSectionTitle: string;
     queryLines: string[];
   }
 > = {
   "pet-shop": {
-    title: "Pet Shops",
+    title: "Pet Shop Locations",
     fallbackName: "Pet Shop",
+    pawcareFallbackName: "PawCare Shop",
     loadingText: "Finding pet shops near you...",
-    errorText: "Could not fetch nearby pet shops right now.",
-    emptyText: "No pet shops found within",
+    pawcareErrorText: "Could not fetch PawCare verified shops.",
+    osmErrorText: "Could not fetch nearby OSM pet shops.",
+    pawcareEmptyText: "No PawCare verified shops near your location.",
+    osmEmptyText: "No nearby OSM pet shops within 5 km.",
+    pawcareSectionTitle: "PawCare Verified Shops",
+    osmSectionTitle: "Shops Near You (OSM)",
     queryLines: [
       '  node["shop"="pet"]',
       '  way["shop"="pet"]',
@@ -58,11 +94,16 @@ const SEARCH_MODE_CONFIG: Record<
     ],
   },
   "vet-hospital": {
-    title: "Vet Hospitals",
+    title: "Vet Location Map",
     fallbackName: "Vet Hospital",
+    pawcareFallbackName: "PawCare Vet",
     loadingText: "Finding vet hospitals near you...",
-    errorText: "Could not fetch nearby vet hospitals right now.",
-    emptyText: "No vet hospitals found within",
+    pawcareErrorText: "Could not fetch PawCare verified vets.",
+    osmErrorText: "Could not fetch nearby OSM vet hospitals.",
+    pawcareEmptyText: "No PawCare verified vets near your location.",
+    osmEmptyText: "No nearby OSM vet hospitals within 5 km.",
+    pawcareSectionTitle: "PawCare Verified Vets",
+    osmSectionTitle: "Vet Hospitals Near You (OSM)",
     queryLines: [
       '  node["amenity"="veterinary"]',
       '  way["amenity"="veterinary"]',
@@ -117,7 +158,69 @@ function buildAddress(tags?: Record<string, string>) {
   return pieces || tags["addr:full"] || tags["contact:street"] || "";
 }
 
-async function fetchNearbyPlaces(
+function toNearbyFromProvider(
+  provider: VerifiedProviderLocation,
+  center: Coordinates,
+  fallbackName: string,
+): NearbyShop | null {
+  const lat = Number(provider?.location?.latitude);
+  const lng = Number(provider?.location?.longitude);
+  if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lng, -180, 180)) {
+    return null;
+  }
+
+  const location = { lat, lng };
+  const name = provider.clinicOrShopName || provider.businessName || fallbackName;
+  const address = provider.location.address || provider.address || "Address unavailable";
+  return {
+    id: `pawcare-${provider._id}`,
+    name,
+    address,
+    location,
+    distanceKm: distanceInKm(center, location),
+    source: "pawcare",
+  };
+}
+
+function toNearbyFromOverpass(
+  item: OverpassElement,
+  center: Coordinates,
+  fallbackName: string,
+): NearbyShop | null {
+  const lat = item.lat ?? item.center?.lat;
+  const lng = item.lon ?? item.center?.lon;
+  if (lat === undefined || lng === undefined) return null;
+  if (!isValidCoordinate(lat, -90, 90) || !isValidCoordinate(lng, -180, 180)) return null;
+
+  const location = { lat, lng };
+  const name = item.tags?.name || fallbackName;
+  const address = buildAddress(item.tags) || "Address unavailable";
+  return {
+    id: `osm-${item.id}`,
+    name,
+    address,
+    location,
+    distanceKm: distanceInKm(center, location),
+    source: "osm",
+  };
+}
+
+async function fetchPawcarePlaces(center: Coordinates, mode: NearbySearchMode): Promise<NearbyShop[]> {
+  const config = SEARCH_MODE_CONFIG[mode];
+  const res = await getVerifiedProviderLocations(mode);
+  if (!res.success) {
+    throw new Error(res.message || config.pawcareErrorText);
+  }
+
+  const providers = Array.isArray(res.data) ? res.data : [];
+  return providers
+    .map((provider) => toNearbyFromProvider(provider, center, config.pawcareFallbackName))
+    .filter((item): item is NearbyShop => Boolean(item))
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .slice(0, 40);
+}
+
+async function fetchOsmPlaces(
   center: Coordinates,
   signal: AbortSignal,
   mode: NearbySearchMode,
@@ -142,15 +245,22 @@ async function fetchNearbyPlaces(
   let response: Response | null = null;
 
   for (const endpoint of OVERPASS_ENDPOINTS) {
-    response = await fetch(endpoint, {
-      method: "POST",
-      body: new URLSearchParams({ data: overpassQuery }),
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        Accept: "application/json",
-      },
-      signal,
-    });
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        body: new URLSearchParams({ data: overpassQuery }),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          Accept: "application/json",
+        },
+        signal,
+      });
+    } catch (error) {
+      if (signal.aborted) {
+        throw error;
+      }
+      continue;
+    }
 
     if (response.ok) break;
     if (response.status !== 429 && response.status < 500) {
@@ -164,29 +274,17 @@ async function fetchNearbyPlaces(
 
   const data: { elements?: OverpassElement[] } = await response.json();
   const elements = Array.isArray(data.elements) ? data.elements : [];
-
-  const shops = elements
-    .map((item) => {
-      const lat = item.lat ?? item.center?.lat;
-      const lng = item.lon ?? item.center?.lon;
-      if (lat === undefined || lng === undefined) return null;
-
-      const location = { lat, lng };
-      const name = item.tags?.name || config.fallbackName;
-      const address = buildAddress(item.tags);
-
-      return {
-        id: `${item.id}`,
-        name,
-        address,
-        location,
-        distanceKm: distanceInKm(center, location),
-      } satisfies NearbyShop;
-    })
+  return elements
+    .map((item) => toNearbyFromOverpass(item, center, config.fallbackName))
     .filter((item): item is NearbyShop => Boolean(item))
-    .sort((a, b) => a.distanceKm - b.distanceKm);
+    .sort((a, b) => a.distanceKm - b.distanceKm)
+    .slice(0, 40);
+}
 
-  return shops.slice(0, 40);
+function listItemClass(source: ShopSource) {
+  return source === "pawcare"
+    ? "border-emerald-100 bg-emerald-50/40"
+    : "border-orange-100 bg-orange-50/40";
 }
 
 export default function ProviderNearbyShopsMap({
@@ -203,14 +301,33 @@ export default function ProviderNearbyShopsMap({
   const [center, setCenter] = useState<Coordinates | null>(null);
   const [loading, setLoading] = useState(true);
   const [locationError, setLocationError] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pawcareError, setPawcareError] = useState<string | null>(null);
+  const [osmError, setOsmError] = useState<string | null>(null);
   const [reloadToken, setReloadToken] = useState(0);
+  const [sourceVisibility, setSourceVisibility] = useState<Record<ShopSource, boolean>>({
+    pawcare: true,
+    osm: true,
+  });
+
   const modeConfig = SEARCH_MODE_CONFIG[mode];
 
   const subtitle = useMemo(() => {
     if (address) return `Using your location near ${address}`;
     return "Using your current location";
   }, [address]);
+
+  const pawcareShops = useMemo(
+    () => shops.filter((shop) => shop.source === "pawcare"),
+    [shops],
+  );
+  const osmShops = useMemo(
+    () => shops.filter((shop) => shop.source === "osm"),
+    [shops],
+  );
+  const visibleShops = useMemo(
+    () => shops.filter((shop) => sourceVisibility[shop.source]),
+    [shops, sourceVisibility],
+  );
 
   useEffect(() => {
     let ignore = false;
@@ -255,24 +372,44 @@ export default function ProviderNearbyShopsMap({
   useEffect(() => {
     if (!center) return;
     const controller = new AbortController();
+    let active = true;
 
     const loadNearbyShops = async () => {
       setLoading(true);
-      setErrorMessage(null);
-      try {
-        const results = await fetchNearbyPlaces(center, controller.signal, mode);
-        setShops(results);
-      } catch {
-        setErrorMessage(modeConfig.errorText);
-        setShops([]);
-      } finally {
-        setLoading(false);
+      setPawcareError(null);
+      setOsmError(null);
+
+      const [pawcareResult, osmResult] = await Promise.allSettled([
+        fetchPawcarePlaces(center, mode),
+        fetchOsmPlaces(center, controller.signal, mode),
+      ]);
+
+      if (!active) return;
+
+      const merged: NearbyShop[] = [];
+
+      if (pawcareResult.status === "fulfilled") {
+        merged.push(...pawcareResult.value);
+      } else {
+        setPawcareError(modeConfig.pawcareErrorText);
       }
+
+      if (osmResult.status === "fulfilled") {
+        merged.push(...osmResult.value);
+      } else if (!controller.signal.aborted) {
+        setOsmError(modeConfig.osmErrorText);
+      }
+
+      setShops(merged.sort((a, b) => a.distanceKm - b.distanceKm));
+      setLoading(false);
     };
 
     void loadNearbyShops();
-    return () => controller.abort();
-  }, [center, mode, modeConfig.errorText]);
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [center, mode, modeConfig.osmErrorText, modeConfig.pawcareErrorText]);
 
   useEffect(() => {
     if (!mapRef.current || !center) return;
@@ -281,16 +418,6 @@ export default function ProviderNearbyShopsMap({
     const renderMap = async () => {
       const leaflet = await import("leaflet");
       if (!active || !mapRef.current) return;
-
-      type IconPrototypeWithInternalGetter = typeof leaflet.Icon.Default.prototype & {
-        _getIconUrl?: string;
-      };
-      delete (leaflet.Icon.Default.prototype as IconPrototypeWithInternalGetter)._getIconUrl;
-      leaflet.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-      });
 
       if (!leafletMapRef.current) {
         leafletMapRef.current = leaflet.map(mapRef.current, {
@@ -326,12 +453,19 @@ export default function ProviderNearbyShopsMap({
         .bindPopup("You are here");
       centerMarker.addTo(markerLayer);
 
-      shops.forEach((shop) => {
+      visibleShops.forEach((shop) => {
+        const sourceStyle = SOURCE_STYLES[shop.source];
         const popup = `<strong>${escapeHtml(shop.name)}</strong><br/>${escapeHtml(
-          shop.address || "Address unavailable",
-        )}<br/>${shop.distanceKm.toFixed(2)} km away`;
+          sourceStyle.label,
+        )}<br/>${escapeHtml(shop.address)}<br/>${shop.distanceKm.toFixed(2)} km away`;
         leaflet
-          .marker([shop.location.lat, shop.location.lng])
+          .circleMarker([shop.location.lat, shop.location.lng], {
+            radius: 6,
+            color: sourceStyle.marker,
+            fillColor: sourceStyle.marker,
+            fillOpacity: 0.9,
+            weight: 1.5,
+          })
           .bindPopup(popup)
           .addTo(markerLayer);
       });
@@ -341,7 +475,7 @@ export default function ProviderNearbyShopsMap({
     return () => {
       active = false;
     };
-  }, [center, shops]);
+  }, [center, visibleShops]);
 
   useEffect(
     () => () => {
@@ -358,11 +492,18 @@ export default function ProviderNearbyShopsMap({
     setReloadToken((prev) => prev + 1);
   };
 
+  const toggleSource = (source: ShopSource) => {
+    setSourceVisibility((prev) => ({
+      ...prev,
+      [source]: !prev[source],
+    }));
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-[#0c4148]">Nearby {modeConfig.title} (OpenStreetMap)</h3>
+          <h3 className="text-sm font-semibold text-[#0c4148]">Nearby {modeConfig.title}</h3>
           <p className="text-xs text-gray-500">{subtitle}</p>
         </div>
         <button
@@ -375,18 +516,54 @@ export default function ProviderNearbyShopsMap({
         </button>
       </div>
 
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => toggleSource("pawcare")}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition ${
+            sourceVisibility.pawcare
+              ? SOURCE_STYLES.pawcare.chip
+              : "border-gray-200 bg-gray-100 text-gray-500"
+          }`}
+        >
+          <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" />
+          PawCare Verified ({pawcareShops.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => toggleSource("osm")}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition ${
+            sourceVisibility.osm
+              ? SOURCE_STYLES.osm.chip
+              : "border-gray-200 bg-gray-100 text-gray-500"
+          }`}
+        >
+          <span className="h-2.5 w-2.5 rounded-full bg-orange-600" />
+          Near You OSM ({osmShops.length})
+        </button>
+      </div>
+
       {locationError && (
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700">
           {locationError}
         </p>
       )}
-      {errorMessage && (
+      {pawcareError && (
         <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
-          {errorMessage}
+          {pawcareError}
+        </p>
+      )}
+      {osmError && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+          {osmError}
         </p>
       )}
 
-      <div ref={mapRef} style={{ height: 340, width: "100%" }} className="overflow-hidden rounded-xl border border-gray-200" />
+      <div
+        ref={mapRef}
+        style={{ height: 340, width: "100%" }}
+        className="overflow-hidden rounded-xl border border-gray-200"
+      />
 
       <div className="rounded-xl border border-gray-200 bg-white p-3">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -397,37 +574,95 @@ export default function ProviderNearbyShopsMap({
             <LocateFixed className="h-4 w-4 animate-pulse text-[#0f4f57]" />
             {modeConfig.loadingText}
           </div>
-        ) : shops.length === 0 ? (
-          <p className="text-sm text-gray-500">{modeConfig.emptyText} {SEARCH_RADIUS_METERS / 1000} km.</p>
+        ) : !sourceVisibility.pawcare && !sourceVisibility.osm ? (
+          <p className="text-sm text-gray-500">Enable at least one source to see results.</p>
         ) : (
-          <ul className="space-y-2">
-            {shops.slice(0, 8).map((shop) => (
-              <li key={shop.id} className="rounded-lg border border-gray-100 p-2.5">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-semibold text-[#0c4148]">{shop.name}</p>
-                    <p className="text-xs text-gray-500">{shop.address || "Address unavailable"}</p>
-                  </div>
-                  <span className="text-xs font-semibold text-[#0f4f57]">{shop.distanceKm.toFixed(2)} km</span>
-                </div>
-                <a
-                  href={`https://www.openstreetmap.org/?mlat=${shop.location.lat}&mlon=${shop.location.lng}#map=18/${shop.location.lat}/${shop.location.lng}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
-                >
-                  <MapPin className="h-3.5 w-3.5" />
-                  Open in OSM
-                </a>
-              </li>
-            ))}
-          </ul>
+          <div className="space-y-3">
+            {sourceVisibility.pawcare && (
+              <div>
+                <p className="mb-2 text-xs font-semibold text-emerald-700">
+                  {modeConfig.pawcareSectionTitle}
+                </p>
+                {pawcareShops.length === 0 ? (
+                  <p className="text-sm text-gray-500">{modeConfig.pawcareEmptyText}</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {pawcareShops.slice(0, 5).map((shop) => (
+                      <li
+                        key={shop.id}
+                        className={`rounded-lg border p-2.5 ${listItemClass("pawcare")}`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-semibold text-[#0c4148]">{shop.name}</p>
+                            <p className="text-xs text-gray-500">{shop.address}</p>
+                          </div>
+                          <span className="text-xs font-semibold text-[#0f4f57]">
+                            {shop.distanceKm.toFixed(2)} km
+                          </span>
+                        </div>
+                        <a
+                          href={`https://www.openstreetmap.org/?mlat=${shop.location.lat}&mlon=${shop.location.lng}#map=18/${shop.location.lat}/${shop.location.lng}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                        >
+                          <MapPin className="h-3.5 w-3.5" />
+                          Open in OSM
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
+            {sourceVisibility.osm && (
+              <div>
+                <p className="mb-2 text-xs font-semibold text-orange-700">
+                  {modeConfig.osmSectionTitle}
+                </p>
+                {osmShops.length === 0 ? (
+                  <p className="text-sm text-gray-500">{modeConfig.osmEmptyText}</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {osmShops.slice(0, 5).map((shop) => (
+                      <li key={shop.id} className={`rounded-lg border p-2.5 ${listItemClass("osm")}`}>
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="text-sm font-semibold text-[#0c4148]">{shop.name}</p>
+                            <p className="text-xs text-gray-500">{shop.address}</p>
+                          </div>
+                          <span className="text-xs font-semibold text-[#0f4f57]">
+                            {shop.distanceKm.toFixed(2)} km
+                          </span>
+                        </div>
+                        <a
+                          href={`https://www.openstreetmap.org/?mlat=${shop.location.lat}&mlon=${shop.location.lng}#map=18/${shop.location.lat}/${shop.location.lng}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                        >
+                          <MapPin className="h-3.5 w-3.5" />
+                          Open in OSM
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
         )}
       </div>
 
       <p className="inline-flex items-center gap-1 text-[11px] text-gray-400">
+        <ShieldCheck className="h-3.5 w-3.5" />
+        Data source: PawCare verified providers + OpenStreetMap/Overpass
+      </p>
+      <p className="inline-flex items-center gap-1 text-[11px] text-gray-400">
         <Store className="h-3.5 w-3.5" />
-        Data source: OpenStreetMap / Overpass API
+        Marker colors: green = PawCare verified, orange = OSM nearby
       </p>
     </div>
   );

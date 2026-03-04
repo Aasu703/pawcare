@@ -1,108 +1,89 @@
 "use server";
-    
-import { 
-    createUserServer, 
-    getAllUsersServer, 
-    getUserByIdServer, 
-    updateUserServer, 
-    deleteUserServer 
+
+import {
+    createUserServer,
+    getAllUsersServer,
+    getUserByIdServer,
+    updateUserServer,
+    deleteUserServer,
 } from "@/lib/api/admin/user-server";
+import { mapApiResult, withActionGuard } from "@/lib/actions/_shared";
 import { revalidatePath } from "next/cache";
 
 export const handleCreateUser = async (data: FormData) => {
-    try {
+    return withActionGuard(async () => {
         const response = await createUserServer(data);
         if (response.success) {
             revalidatePath("/admin/users");
-            return { success: true, message: "User created successfully.", data: response.data };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to create user.",
-        };
-    } catch (error: any) {
-        console.error('Create user error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while creating the user.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to create user.",
+            successMessage: "User created successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while creating the user.",
+        logLabel: "Create user error",
+    });
 };
 
 export const handleGetAllUsers = async (page: number = 1, limit: number = 10) => {
-    try {
+    return withActionGuard(async () => {
         const response = await getAllUsersServer(page, limit);
-        if (response.success) {
-            return { success: true, data: response.data };
-        }
-        return {
-            success: false,
-            message: response.message || "Failed to fetch users.",
-        };
-    } catch (error: any) {
-        console.error('Get all users error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while fetching users.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to fetch users.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while fetching users.",
+        logLabel: "Get all users error",
+    });
 };
 
 export const handleGetUserById = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await getUserByIdServer(id);
-        if (response.success) {
-            return { success: true, data: response.data };
-        }
-        return {
-            success: false,
-            message: response.message || "Failed to fetch user.",
-        };
-    } catch (error: any) {
-        console.error('Get user by id error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while fetching user.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to fetch user.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while fetching user.",
+        logLabel: "Get user by id error",
+    });
 };
 
 export const handleUpdateUser = async (id: string, data: FormData) => {
-    try {
+    return withActionGuard(async () => {
         const response = await updateUserServer(id, data);
         if (response.success) {
             revalidatePath("/admin/users");
-            return { success: true, message: "User updated successfully.", data: response.data };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to update user.",
-        };
-    } catch (error: any) {
-        console.error('Update user error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while updating the user.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to update user.",
+            successMessage: "User updated successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while updating the user.",
+        logLabel: "Update user error",
+    });
 };
 
 export const handleDeleteUser = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await deleteUserServer(id);
-        if (response.success) {
+
+        if (response?.success) {
             revalidatePath("/admin/users");
-            return { success: true, message: "User deleted successfully." };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to delete user.",
-        };
-    } catch (error: any) {
-        console.error('Delete user error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while deleting the user.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to delete user.",
+            successMessage: "User deleted successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while deleting the user.",
+        logLabel: "Delete user error",
+    });
 };

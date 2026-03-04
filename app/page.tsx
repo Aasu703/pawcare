@@ -102,7 +102,7 @@ export default function Page() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="space-y-8"
+            className="relative z-30 space-y-8"
           >
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1">
@@ -165,7 +165,7 @@ export default function Page() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative z-10"
           >
             <div className="relative z-10 w-full max-w-[600px] mx-auto">
               <motion.div
@@ -183,40 +183,6 @@ export default function Page() {
               </motion.div>
             </div>
 
-            {/* Floating Cards */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="absolute top-10 right-10 bg-white rounded-2xl p-4 shadow-xl border border-border"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">Vaccination Due</p>
-                  <p className="text-xs text-muted-foreground">Next: Dec 15</p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="absolute bottom-20 left-10 bg-white rounded-2xl p-4 shadow-xl border border-border"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Pill className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="font-semibold text-sm">Medication Reminder</p>
-                  <p className="text-xs text-muted-foreground">2:00 PM Today</p>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </section>

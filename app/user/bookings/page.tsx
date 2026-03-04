@@ -3,8 +3,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { getBookingsByUser, deleteBooking } from "@/lib/api/user/booking";
+import { createReview, getMyReviews } from "@/lib/api/user/review";
 import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
-import { Calendar, Clock, Trash2, Plus } from "lucide-react";
+import { Calendar, Clock, Trash2, Plus, Star, X } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -20,21 +21,54 @@ export default function BookingsPage() {
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [bookingReviewMap, setBookingReviewMap] = useState<Record<string, any>>({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
   const userId = user?._id || user?.id;
+
+  const getEntityId = (value: any): string => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    if (value?._id) return getEntityId(value._id);
+    if (value?.id) return getEntityId(value.id);
+    if (typeof value?.toHexString === "function") return value.toHexString();
+    if (typeof value?.toString === "function") {
+      const stringified = value.toString();
+      return stringified === "[object Object]" ? "" : stringified;
+    }
+    return "";
+  };
 
   async function loadBookings(uid: string) {
     setLoading(true);
-    const res = await getBookingsByUser(uid);
-    if (res.success && res.data) {
-      const nextBookings = Array.isArray(res.data) ? res.data : [];
+    const [bookingsRes, reviewsRes] = await Promise.all([getBookingsByUser(uid), getMyReviews()]);
+
+    if (bookingsRes.success && bookingsRes.data) {
+      const nextBookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : [];
       setBookings(nextBookings);
       createUpcomingAppointmentNotifications(nextBookings, {
         audience: "user",
         statuses: ["confirmed"],
         link: "/user/bookings",
       });
-    } else if (!res.success) {
-      toast.error(res.message || "Failed to fetch bookings");
+    } else if (!bookingsRes.success) {
+      toast.error(bookingsRes.message || "Failed to fetch bookings");
+    }
+
+    if (reviewsRes.success && reviewsRes.data) {
+      const nextMap = (Array.isArray(reviewsRes.data) ? reviewsRes.data : []).reduce(
+        (acc: Record<string, any>, review: any) => {
+          const bookingId = getEntityId(review?.bookingId);
+          if (bookingId) {
+            acc[bookingId] = review;
+          }
+          return acc;
+        },
+        {},
+      );
+      setBookingReviewMap(nextMap);
     }
     setLoading(false);
   }
@@ -59,6 +93,58 @@ export default function BookingsPage() {
     } else {
       toast.error(res.message);
     }
+  };
+
+  const openReviewModal = (booking: any) => {
+    setSelectedBooking(booking);
+    setReviewForm({ rating: 5, comment: "" });
+    setIsReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedBooking(null);
+    setReviewForm({ rating: 5, comment: "" });
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedBooking) return;
+
+    const bookingId = getEntityId(selectedBooking?._id || selectedBooking?.id);
+    const providerId = getEntityId(selectedBooking?.provider?._id || selectedBooking?.providerId);
+    const providerServiceId = getEntityId(selectedBooking?.providerServiceId);
+
+    if (!bookingId || !providerId) {
+      toast.error("Provider details are missing for this booking");
+      return;
+    }
+
+    setSubmittingReview(true);
+    const payload: Record<string, any> = {
+      rating: reviewForm.rating,
+      comment: reviewForm.comment.trim() || undefined,
+      providerId,
+      bookingId,
+      reviewType: "provider",
+    };
+
+    if (providerServiceId) {
+      payload.providerServiceId = providerServiceId;
+    }
+
+    const res = await createReview(payload);
+    if (res.success) {
+      toast.success("Thanks for rating your provider");
+      setBookingReviewMap((prev) => ({
+        ...prev,
+        [bookingId]: res.data ?? { ...payload, _id: `temp-${bookingId}` },
+      }));
+      closeReviewModal();
+    } else {
+      toast.error(res.message);
+    }
+    setSubmittingReview(false);
   };
 
   const filtered = filter === "all" ? bookings : bookings.filter((b) => b.status === filter);
@@ -137,6 +223,25 @@ export default function BookingsPage() {
                 {booking.notes && (
                   <p className="text-sm text-gray-600 mt-2">{booking.notes}</p>
                 )}
+
+                {booking.status === "completed" && (
+                  <div className="mt-3">
+                    {bookingReviewMap[getEntityId(booking._id || booking.id)] ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                        <Star className="h-3.5 w-3.5 fill-current" />
+                        Rated
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => openReviewModal(booking)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors"
+                      >
+                        <Star className="h-4 w-4" />
+                        Rate Provider
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               {(booking.status === "pending" || booking.status === "confirmed") && (
@@ -150,6 +255,65 @@ export default function BookingsPage() {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {isReviewModalOpen && selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Rate Provider</h2>
+                <p className="text-sm text-gray-500">
+                  {selectedBooking?.provider?.businessName || "Share your booking experience"}
+                </p>
+              </div>
+              <button onClick={closeReviewModal} className="text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">Rating</label>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewForm((prev) => ({ ...prev, rating: star }))}
+                      className="rounded p-0.5"
+                    >
+                      <Star
+                        className={`h-6 w-6 ${
+                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Comment (optional)</label>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={(e) => setReviewForm((prev) => ({ ...prev, comment: e.target.value }))}
+                  rows={4}
+                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  placeholder="How was your experience?"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+              >
+                {submittingReview ? "Submitting..." : "Submit Rating"}
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

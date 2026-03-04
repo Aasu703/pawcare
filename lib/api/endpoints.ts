@@ -103,6 +103,11 @@ export const API = {
         GET_BY_ID: (data: any) => `/api/user/pet/${data}`,
         UPDATE: (data: any) => `/api/user/pet/${data}`,
         DELETE: (data: any) => `/api/user/pet/${data}`,
+        ASSIGN_VET: (data: any) => `/api/user/pet/${data}/assign-vet`,
+        CARE: {
+            GET: (data: any) => `/api/user/pet/${data}/care`,
+            UPDATE: (data: any) => `/api/user/pet/${data}/care`,
+        },
     },
  },
  BOOKING: {
@@ -127,6 +132,7 @@ export const API = {
     GET_BY_PROVIDER: (data: any) => `/api/review/provider/${data}`,
     GET_BY_PRODUCT: (data: any) => `/api/review/product/${data}`,
     GET_PROVIDER_RATING: (data: any) => `/api/review/provider/${data}/rating`,
+    GET_PROVIDER_RATING_BREAKDOWN: (data: any) => `/api/review/provider/${data}/rating-breakdown`,
  },
  MESSAGE: {
     CREATE: '/api/message',
@@ -135,6 +141,12 @@ export const API = {
     GET_BY_ID: (data: any) => `/api/message/${data}`,
     UPDATE: (data: any) => `/api/message/${data}`,
     DELETE: (data: any) => `/api/message/${data}`,
+ },
+ CHAT: {
+    GET_CONVERSATIONS: '/api/chat/conversations',
+    GET_CONTACTS: '/api/chat/contacts',
+    GET_MESSAGES: (participantId: string) => `/api/chat/messages/${participantId}`,
+    SEND_MESSAGE: (participantId: string) => `/api/chat/messages/${participantId}`,
  },
  HEALTH_RECORD: {
     CREATE: '/api/health-record',
@@ -163,6 +175,7 @@ export const API = {
     APPROVE: (data: any) => `/api/provider/approve/${data}`,
     REJECT: (data: any) => `/api/provider/reject/${data}`,
     GET_BY_STATUS: (data: any) => `/api/provider/status/${data}`,
+    GET_VERIFIED_LOCATIONS: '/api/provider/verified-locations',
     SERVICE: {
         CREATE: '/api/provider/service',
         GET_ALL: '/api/provider/service',
@@ -189,12 +202,19 @@ export const API = {
         UPDATE_STATUS: (data: any) => `/api/provider/booking/${data}/status`,
         GET_BY_ID: (data: any) => `/api/provider/booking/${data}`,
     },
+    PET: {
+        GET_ASSIGNED: '/api/provider/pet/assigned',
+    },
     POST: {
         CREATE: '/api/provider/post',
         GET_MY: '/api/provider/post/my',
         UPDATE: (data: any) => `/api/provider/post/${data}`,
         DELETE: (data: any) => `/api/provider/post/${data}`,
     },
+ },
+ UPLOAD: {
+    PROVIDER_CERTIFICATE: '/api/upload/provider-certificate',
+    PROVIDER_PROFILE_IMAGE: '/api/upload/profile-image',
  },
  ORDER: {
     CREATE: '/api/order',

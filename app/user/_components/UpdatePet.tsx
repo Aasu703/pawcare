@@ -8,6 +8,7 @@ import { UpdatePetData, updatePetSchema } from "../schema";
 import { useState, useRef } from "react";
 import { Camera, Heart, PawPrint, ArrowLeft, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getApiBaseUrl, resolveMediaUrl } from "@/lib/utils/media-url";
 
 interface Pet {
     _id: string;
@@ -37,12 +38,8 @@ export default function UpdatePetForm({ pet }: { pet: Pet }) {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const baseUrl = process.env.API_BASE_URL || "http://localhost:5050";
-    const imageSrc = pet?.imageUrl
-        ? pet.imageUrl.startsWith("http")
-            ? pet.imageUrl
-            : `${baseUrl}${pet.imageUrl}`
-        : "";
+    const baseUrl = getApiBaseUrl();
+    const imageSrc = resolveMediaUrl(pet?.imageUrl, baseUrl, "image");
 
     const handleImageChange = (file: File | undefined, onChange: (file: File | undefined) => void) => {
         if (file) {

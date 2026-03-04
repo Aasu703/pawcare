@@ -5,6 +5,7 @@ import { getAllMessages, createMessage, deleteMessage } from "@/lib/api/user/mes
 import { MessageSquare, Send, Trash2, UserCircle } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { getApiBaseUrl, pickImagePath, resolveMediaUrl } from "@/lib/utils/media-url";
 
 export default function MessagesPage() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function MessagesPage() {
   const [content, setContent] = useState("");
   const [sending, setSending] = useState(false);
   const currentUserId = user?._id || user?.id || "";
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.API_BASE_URL || "http://localhost:5050";
+  const baseUrl = getApiBaseUrl();
 
   useEffect(() => { loadMessages(); }, []);
 
@@ -98,8 +99,8 @@ export default function MessagesPage() {
             const author = typeof msg.userId === "object" ? msg.userId : null;
             const authorId = typeof msg.userId === "string" ? msg.userId : author?._id || author?.id || (msg.userId as any)?.toString?.() || "";
             const isOwnMessage = Boolean(currentUserId && authorId && currentUserId === authorId);
-            const rawImageUrl = author?.imageUrl || (isOwnMessage ? (user?.imageUrl || user?.image || user?.avatar || user?.profileImage || user?.profileImageUrl || "") : "");
-            const imageSrc = rawImageUrl ? (rawImageUrl.startsWith("http") ? rawImageUrl : `${baseUrl}${rawImageUrl}`) : "";
+            const rawImageUrl = pickImagePath(author) || (isOwnMessage ? pickImagePath(user) : "");
+            const imageSrc = resolveMediaUrl(rawImageUrl, baseUrl, "image");
             const displayName = author
               ? `${author.Firstname || ""} ${author.Lastname || ""}`.trim() || author.email || "User"
               : (isOwnMessage ? (user?.Firstname || user?.firstName || user?.name || user?.email || "You") : "User");

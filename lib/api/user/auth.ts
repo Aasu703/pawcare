@@ -1,8 +1,9 @@
 // API layer
 // Call api from backend
 
-import axios from "./axios";
-import { API } from "./endpoints";
+import axios from "../axios";  // IMP 
+import { API } from "../endpoints";
+import { LoginData, RegisterData} from "@/app/(auth)/schema";
 
 export const register = async ( registerData : any ) => {
     try{
@@ -35,6 +36,20 @@ export const login = async ( loginData : any ) => {
             || err.message 
             ||"Login failed"
         )
+    }
+}
+
+export const whoami = async () => {
+    try{
+        const response = await axios.get(API.AUTH.WHOAMI);
+        return response.data;
+    }
+    catch (err: Error | any) {
+        throw new Error(
+            err.response?.data?.message
+            || err.message
+            || "Failed to fetch user info"
+        );
     }
 }
 

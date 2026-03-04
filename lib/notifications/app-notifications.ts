@@ -2,6 +2,7 @@
 
 export type NotificationType = "booking" | "appointment" | "order" | "general";
 export type NotificationAudience = "user" | "provider" | "all";
+export type NotificationProviderType = "vet" | "shop" | "babysitter";
 
 export interface AppNotification {
   id: string;
@@ -10,6 +11,7 @@ export interface AppNotification {
   createdAt: string;
   type: NotificationType;
   audience: NotificationAudience;
+  providerType?: NotificationProviderType;
   read: boolean;
   link?: string;
 }
@@ -20,6 +22,7 @@ export interface NewNotificationInput {
   message: string;
   type?: NotificationType;
   audience?: NotificationAudience;
+  providerType?: NotificationProviderType;
   link?: string;
   dedupeKey?: string;
   createdAt?: string;
@@ -94,6 +97,16 @@ function canNotifyAudience(notification: AppNotification, audience?: Notificatio
   return notification.audience === "all" || notification.audience === audience;
 }
 
+function canNotifyProviderType(
+  notification: AppNotification,
+  providerType?: NotificationProviderType,
+) {
+  if (!providerType) return true;
+  if (notification.audience !== "provider") return true;
+  if (!notification.providerType) return true;
+  return notification.providerType === providerType;
+}
+
 function notifyBrowser(title: string, message: string) {
   if (typeof window === "undefined" || !("Notification" in window)) return;
   if (Notification.permission !== "granted") return;
@@ -136,14 +149,24 @@ export function subscribeToNotificationUpdates(listener: () => void): () => void
   };
 }
 
-export function getAppNotifications(audience?: NotificationAudience): AppNotification[] {
+export function getAppNotifications(
+  audience?: NotificationAudience,
+  providerType?: NotificationProviderType,
+): AppNotification[] {
   return readNotifications()
-    .filter((item) => canNotifyAudience(item, audience))
+    .filter(
+      (item) =>
+        canNotifyAudience(item, audience) &&
+        canNotifyProviderType(item, providerType),
+    )
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
-export function getUnreadNotificationCount(audience?: NotificationAudience): number {
-  return getAppNotifications(audience).filter((item) => !item.read).length;
+export function getUnreadNotificationCount(
+  audience?: NotificationAudience,
+  providerType?: NotificationProviderType,
+): number {
+  return getAppNotifications(audience, providerType).filter((item) => !item.read).length;
 }
 
 export function addAppNotification(input: NewNotificationInput): AppNotification | null {
@@ -166,6 +189,7 @@ export function addAppNotification(input: NewNotificationInput): AppNotification
     createdAt: input.createdAt || new Date().toISOString(),
     type: input.type || "general",
     audience: input.audience || "all",
+    providerType: input.providerType,
     read: false,
     link: input.link,
   };
@@ -188,9 +212,15 @@ export function markNotificationAsRead(id: string) {
   writeNotifications(next);
 }
 
-export function markAllNotificationsAsRead(audience?: NotificationAudience) {
+export function markAllNotificationsAsRead(
+  audience?: NotificationAudience,
+  providerType?: NotificationProviderType,
+) {
   const next = readNotifications().map((notification) => {
-    if (canNotifyAudience(notification, audience)) {
+    if (
+      canNotifyAudience(notification, audience) &&
+      canNotifyProviderType(notification, providerType)
+    ) {
       return { ...notification, read: true };
     }
     return notification;
@@ -198,7 +228,10 @@ export function markAllNotificationsAsRead(audience?: NotificationAudience) {
   writeNotifications(next);
 }
 
-export function clearNotifications(audience?: NotificationAudience) {
+export function clearNotifications(
+  audience?: NotificationAudience,
+  providerType?: NotificationProviderType,
+) {
   if (!canUseBrowserStorage()) return;
   if (!audience || audience === "all") {
     window.localStorage.removeItem(STORAGE_KEY);
@@ -206,7 +239,11 @@ export function clearNotifications(audience?: NotificationAudience) {
     return;
   }
   const next = readNotifications().filter(
-    (notification) => !canNotifyAudience(notification, audience),
+    (notification) =>
+      !(
+        canNotifyAudience(notification, audience) &&
+        canNotifyProviderType(notification, providerType)
+      ),
   );
   writeNotifications(next);
 }
@@ -222,7 +259,9 @@ export function createUpcomingAppointmentNotifications(
   bookings: BookingLike[],
   options: {
     audience: "user" | "provider";
+    providerType?: NotificationProviderType;
     statuses?: string[];
+    serviceLabel?: string;
     link?: string;
   },
 ): number {
@@ -251,12 +290,20 @@ export function createUpcomingAppointmentNotifications(
     if (!level) continue;
 
     const bookingId = booking._id || booking.id || booking.startTime;
-    const serviceTitle = booking.service?.title || "Vet appointment";
+    const fallbackService =
+      options.serviceLabel ||
+      (options.providerType === "babysitter"
+        ? "Grooming appointment"
+        : options.providerType === "shop"
+          ? "Order pickup"
+          : "Appointment");
+    const serviceTitle = booking.service?.title || fallbackService;
     const petName = booking.pet?.name ? ` for ${booking.pet.name}` : "";
     const label = level === 1440 ? "in less than 24 hours" : level === 120 ? "in about 2 hours" : "in 30 minutes";
 
     const notification = addAppNotification({
       audience: options.audience,
+      providerType: options.providerType,
       type: "appointment",
       title: "Upcoming appointment",
       message: `${serviceTitle}${petName} starts ${label} (${formatAppointmentTime(start)}).`,

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, LucideIcon } from "lucide-react";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, MessageCircle, ClipboardList, LucideIcon } from "lucide-react";
 import { useAuth } from '@/context/AuthContext';
 import {
   canAccessVetFeatures,
@@ -33,6 +33,8 @@ export default function ProviderSidebar() {
     ...(canManageInventory(providerType) ? [{ label: "Inventory", href: "/provider/inventory", icon: Package }] : []),
     ...(canManageBookings(providerType) ? [{ label: "Bookings", href: "/provider/bookings", icon: CalendarCheck }] : []),
     ...(canAccessVetFeatures(providerType) ? [{ label: "Vet Appointments", href: "/provider/vet-appointments", icon: HeartPulse }] : []),
+    ...(canAccessVetFeatures(providerType) ? [{ label: "Assigned Pets", href: "/provider/assigned-pets", icon: ClipboardList }] : []),
+    ...(canManageBookings(providerType) ? [{ label: "Messages", href: "/provider/messages", icon: MessageCircle }] : []),
     { label: "Posts", href: "/provider/posts", icon: FileText },
     { label: "Feedback", href: "/provider/feedback", icon: MessageSquare },
   ];
@@ -57,7 +59,7 @@ export default function ProviderSidebar() {
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[#0c4148] border-r border-[#f8d548]/20 flex flex-col">
       <div className="flex items-center gap-3 px-6 py-5 border-b border-[#f8d548]/20">
         <Image src="/images/pawcare.png" alt="PawCare" width={36} height={36} />
-        <div>
+        <div className="flex-1">
           <span className="text-xl font-bold text-white">PawCare</span>
           <p className="text-xs text-[#f8d548]">{getProviderTypeLabel(providerType)}</p>
         </div>

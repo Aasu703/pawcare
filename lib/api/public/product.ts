@@ -3,11 +3,40 @@ import { API } from "../endpoints";
 export async function getAllProducts(page: number = 1, limit: number = 20): Promise<{ success: boolean; message: string; data?: { items: any[]; total: number; page: number; totalPages: number } }> {
   try {
     const response = await axios.get(API.PRODUCT.GET_ALL, { params: { page, limit } });
-    const rawData = response.data.data;
-    if (rawData && rawData.items) {
-      rawData.items = rawData.items.map((item: any) => item._doc || item);
+    const rawData = response.data?.data;
+
+    let items: any[] = [];
+    let total = 0;
+    let totalPages = 1;
+    let currentPage = page;
+
+    if (Array.isArray(rawData)) {
+      items = rawData;
+      total = rawData.length;
+      totalPages = 1;
+    } else if (Array.isArray(rawData?.items)) {
+      items = rawData.items;
+      total = Number(rawData.total ?? rawData.items.length ?? 0);
+      totalPages = Number(rawData.totalPages ?? (Math.ceil(total / Math.max(Number(limit) || 1, 1)) || 1));
+      currentPage = Number(rawData.page ?? page);
+    } else if (rawData && Array.isArray(rawData?.data)) {
+      items = rawData.data;
+      total = Number(rawData.total ?? rawData.data.length ?? 0);
+      totalPages = Number(rawData.totalPages ?? (Math.ceil(total / Math.max(Number(limit) || 1, 1)) || 1));
+      currentPage = Number(rawData.page ?? page);
     }
-    return { success: true, message: "Products fetched", data: rawData };
+
+    const normalizedItems = items.map((item: any) => item?._doc || item);
+    return {
+      success: true,
+      message: "Products fetched",
+      data: {
+        items: normalizedItems,
+        total,
+        page: currentPage,
+        totalPages,
+      },
+    };
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch products" };
   }

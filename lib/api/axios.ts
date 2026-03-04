@@ -1,77 +1,74 @@
-import axios from "axios";
+import axios from 'axios';
+import { API_CONFIG } from './config';
+// Axios is a popular HTTP client library for making API requests. 
+// This module configures a custom Axios instance with a base URL and an interceptor to automatically include the authentication token in the headers of each request. 
+// The token is retrieved from cookies or local storage, depending on whether the code is running on the server or client side.
+const BASE_URL = `${API_CONFIG.BASE_URL}`;
 
-// Client-safe cookie helper
-function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    const cookieValue = parts.pop()?.split(";").shift() || null;
-    return cookieValue ? decodeURIComponent(cookieValue) : null;
-  }
-  return null;
+function readClientCookie(name: string): string | null {
+    // This function reads a cookie value from the document.cookie string. 
+    // It returns the decoded value of the specified cookie name, or null if the cookie is not found.
+    if (typeof document === 'undefined') return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        const cookieValue = parts.pop()?.split(';').shift() || null;
+        return cookieValue ? decodeURIComponent(cookieValue) : null;
+    }
+    return null;
 }
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.API_BASE_URL ||
-  "http://localhost:5050";
+function getClientAuthToken(): string | null {
+    // This function retrieves the authentication token from cookies or local storage on the client side.
+    // It first checks for the token in cookies using the readClientCookie function. If not found, it checks local storage.
 
-const normalizedBaseUrl = BASE_URL.replace(/\/+$/, "");
+    const cookieToken = readClientCookie('auth_token');
+    if (cookieToken && cookieToken !== 'undefined') return cookieToken;
 
-const axiosInstance = axios.create({
-  baseURL: normalizedBaseUrl,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-axiosInstance.interceptors.request.use(
-  async (config) => {
-    const token = getCookie("auth_token");
-    if (token && config.headers) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+    if (typeof window !== 'undefined') {
+        const stored = window.localStorage.getItem('auth_token');
+        if (stored && stored !== 'undefined') return stored;
     }
 
-    // Don't set Content-Type if FormData is being sent (let browser handle it)
-    if (config.data instanceof FormData) {
-      delete config.headers["Content-Type"];
-    }
+    return null;
+}
 
-    const requestUrl = `${config.baseURL || ""}${config.url || ""}`;
-    console.log(`[HTTP REQUEST] [${config.method?.toUpperCase()}] ${requestUrl}`);
-    return config;
-  },
-  (error) => Promise.reject(error)
+const axiosInstance = axios.create(
+    {
+        baseURL: BASE_URL,
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }
 );
 
-axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log(`[HTTP RESPONSE] [${response.status}] ${response.config.url}`, response.data);
-    return response;
-  },
-  (error) => {
-    try {
-      const cfg = error?.config || {};
-      const method = (cfg.method || "").toUpperCase();
-      const errorUrl = `${cfg.baseURL || ""}${cfg.url || ""}` || cfg.url || "<unknown>";
-      const reqData = cfg.data ? (typeof cfg.data === 'string' ? cfg.data : JSON.stringify(cfg.data)) : undefined;
-      const status = error.response?.status || "Network Error";
-      const respData = error.response?.data;
+axiosInstance.interceptors.request.use(
+    // This interceptor function is called before each request is sent. 
+    // It retrieves the authentication token and adds it to the Authorization header of the request if it exists.
+    async (config) => {
+        let token: string | null = null;
 
-      console.error(
-        `[HTTP ERROR] [${status}] [${method}] ${errorUrl}`,
-        reqData ? { requestBody: reqData } : undefined,
-        respData || error.message
-      );
-    } catch (logErr) {
-      // Fallback logging if anything goes wrong here
-      console.error('[HTTP ERROR] (failed to format error)', error?.message || error, logErr);
+        if (typeof window === 'undefined') {
+            const { getAuthToken } = await import('../cookie');
+            token = await getAuthToken();
+        } else {
+            token = getClientAuthToken();
+        }
+
+        if(token && config.headers){
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        // Debug: log outgoing requests to help diagnose 404s in browser
+        try{
+            const fullUrl = `${config.baseURL || ''}${config.url || ''}`;
+            // eslint-disable-next-line no-console
+            console.debug('[API Request]', config.method?.toUpperCase(), fullUrl);
+        }catch(e){/* ignore */}
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
 
 export default axiosInstance;
-
-

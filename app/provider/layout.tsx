@@ -77,6 +77,10 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
         router.replace("/provider/dashboard");
         return;
       }
+      if (pathname.startsWith("/provider/assigned-pets") && !canAccessVetFeatures(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
 
       if (isAuthPage) {
         if (user.providerType && user.status === "approved") {

@@ -3,65 +3,56 @@
 import {
     getAllProviderServicesServer,
     approveProviderServiceServer,
-    rejectProviderServiceServer
+    rejectProviderServiceServer,
 } from "@/lib/api/admin/provider-service-server";
+import { mapApiResult, withActionGuard } from "@/lib/actions/_shared";
 import { revalidatePath } from "next/cache";
 
 export const handleGetAllProviderServices = async () => {
-    try {
+    return withActionGuard(async () => {
         const response = await getAllProviderServicesServer();
-        if (response.success) {
-            return { success: true, data: response.data };
-        }
-        return {
-            success: false,
-            message: response.message || "Failed to fetch provider services.",
-        };
-    } catch (error: any) {
-        console.error('Get all provider services error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while fetching provider services.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to fetch provider services.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while fetching provider services.",
+        logLabel: "Get all provider services error",
+    });
 };
 
 export const handleApproveProviderService = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await approveProviderServiceServer(id);
-        if (response.success) {
+
+        if (response?.success) {
             revalidatePath("/admin/providers");
-            return { success: true, message: "Provider service approved successfully." };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to approve provider service.",
-        };
-    } catch (error: any) {
-        console.error('Approve provider service error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while approving the provider service.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to approve provider service.",
+            successMessage: "Provider service approved successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while approving the provider service.",
+        logLabel: "Approve provider service error",
+    });
 };
 
 export const handleRejectProviderService = async (id: string) => {
-    try {
+    return withActionGuard(async () => {
         const response = await rejectProviderServiceServer(id);
-        if (response.success) {
+
+        if (response?.success) {
             revalidatePath("/admin/providers");
-            return { success: true, message: "Provider service rejected successfully." };
         }
-        return {
-            success: false,
-            message: response.message || "Failed to reject provider service.",
-        };
-    } catch (error: any) {
-        console.error('Reject provider service error:', error);
-        return {
-            success: false,
-            message: error.message || "An error occurred while rejecting the provider service.",
-        };
-    }
+
+        return mapApiResult(response, {
+            errorMessage: "Failed to reject provider service.",
+            successMessage: "Provider service rejected successfully.",
+        });
+    }, {
+        fallbackMessage: "An error occurred while rejecting the provider service.",
+        logLabel: "Reject provider service error",
+    });
 };

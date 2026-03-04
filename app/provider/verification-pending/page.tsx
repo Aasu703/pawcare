@@ -19,6 +19,12 @@ export default function ProviderVerificationPendingPage() {
         </p>
         <div className="flex items-center justify-center gap-4">
           <button
+            onClick={() => router.push("/")}
+            className="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+          >
+            Home
+          </button>
+          <button
             onClick={() => router.push("/provider/select-type")}
             className="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-50 transition-colors"
           >
