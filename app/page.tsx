@@ -67,7 +67,7 @@ export default function Page() {
       </motion.nav>
 
       {/* ================= HERO ================= */}
-      <section className="relative pt-16 pb-24 lg:pt-24 lg:pb-32 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50">
+      <section className="relative pt-16 pb-24 lg:pt-24 lg:pb-32 overflow-hidden bg-gradient-to-br from-[var(--pc-cream)] via-white to-[var(--pc-primary-light)]">
         {/* Enhanced Animated Background Elements */}
         <div className="absolute inset-0 -z-10 bg-gradient-mesh"></div>
         <motion.div
@@ -76,7 +76,7 @@ export default function Page() {
             y: [0, -30, 0],
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-0 right-0 -z-10 w-[800px] h-[800px] bg-gradient-to-br from-primary/20 to-orange-200/30 rounded-full blur-3xl"
+          className="absolute top-0 right-0 -z-10 w-[800px] h-[800px] bg-gradient-to-br from-[var(--pc-primary)]/20 to-[var(--pc-sage)]/20 rounded-full blur-3xl"
         ></motion.div>
         <motion.div
           animate={{
@@ -84,7 +84,7 @@ export default function Page() {
             y: [0, 50, 0],
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-gradient-to-tr from-blue-200/30 to-primary/20 rounded-full blur-3xl"
+          className="absolute bottom-0 left-0 -z-10 w-[600px] h-[600px] bg-gradient-to-tr from-[var(--pc-teal-light)] to-[var(--pc-primary)]/20 rounded-full blur-3xl"
         ></motion.div>
         <motion.div
           animate={{
@@ -92,7 +92,7 @@ export default function Page() {
             opacity: [0.3, 0.5, 0.3],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] bg-gradient-to-br from-purple-200/20 to-pink-200/20 rounded-full blur-3xl"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[400px] h-[400px] bg-gradient-to-br from-[var(--pc-sage)]/20 to-[var(--pc-primary)]/10 rounded-full blur-3xl"
         ></motion.div>
 
         <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
@@ -131,7 +131,7 @@ export default function Page() {
               >
                 <span className="relative z-10">Start Free Trial</span>
                 <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--pc-primary-hover)] to-[var(--pc-primary)] opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </Link>
               <Link
                 href="/about"
@@ -149,7 +149,7 @@ export default function Page() {
                   <span className="text-sm font-medium">HIPAA Compliant</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-blue-600" />
+                  <Award className="w-5 h-5 text-[var(--pc-teal)]" />
                   <span className="text-sm font-medium">Vet Approved</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -190,8 +190,8 @@ export default function Page() {
       {/* ================= SERVICES ================= */}
       <section className="py-24 relative overflow-hidden">
         {/* Decorative background */}
-        <div className="absolute top-0 right-0 w-1/3 h-full bg-orange-50/50 -skew-x-12 transform origin-top translate-x-1/2 -z-10"></div>
-        <div className="absolute bottom-0 left-0 w-1/3 h-full bg-blue-50/50 -skew-x-12 transform origin-bottom -translate-x-1/2 -z-10"></div>
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-[var(--pc-primary-light)]/50 -skew-x-12 transform origin-top translate-x-1/2 -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-1/3 h-full bg-[var(--pc-sage-light)]/50 -skew-x-12 transform origin-bottom -translate-x-1/2 -z-10"></div>
 
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -219,9 +219,9 @@ export default function Page() {
               {
                 title: "Health Monitoring",
                 icon: Activity,
-                color: "text-blue-600",
-                bg: "bg-blue-100/50",
-                border: "border-blue-200",
+                color: "text-[var(--pc-teal)]",
+                bg: "bg-[var(--pc-teal-light)]/50",
+                border: "border-[var(--pc-teal)]/20",
                 desc: "Track vital signs, weight, and health metrics with professional-grade tools.",
                 features: ["Vital signs tracking", "Weight monitoring", "Health alerts"]
               },
@@ -292,7 +292,7 @@ export default function Page() {
       </section>
 
       {/* ================= TESTIMONIALS ================= */}
-      <section className="py-24 bg-gradient-to-b from-white to-orange-50/50">
+      <section className="py-24 bg-gradient-to-b from-white to-[var(--pc-primary-light)]/50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-4xl font-bold mb-6 text-foreground">Trusted by <span className="text-primary">Pet Parents & Vets</span></h2>
@@ -309,7 +309,7 @@ export default function Page() {
                 image: "/images/vet1.jpg",
                 quote: "PawCare has revolutionized how I communicate with pet owners. The health tracking features are incredibly accurate and help me provide better care.",
                 rating: 5,
-                color: "bg-blue-50 border-blue-100"
+                color: "bg-[var(--pc-teal-light)] border-blue-100"
               },
               {
                 name: "Mike Chen",
@@ -317,7 +317,7 @@ export default function Page() {
                 image: "/images/owner1.jpg",
                 quote: "Since using PawCare, Max's health has improved dramatically. The medication reminders and vet appointment scheduling saved us so much stress.",
                 rating: 5,
-                color: "bg-orange-50 border-orange-100"
+                color: "bg-[var(--pc-primary-light)] border-[var(--pc-primary)]/20"
               },
               {
                 name: "Emily Rodriguez",
@@ -374,7 +374,7 @@ export default function Page() {
 
       {/* ================= FEATURES ================= */}
       <section className="py-24 bg-white relative">
-        <div className="absolute inset-0 bg-[radial-gradient(#fb8c00_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.03]"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(var(--pc-primary)_1px,transparent_1px)] [background-size:20px_20px] opacity-[0.03]"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-20">
@@ -389,8 +389,8 @@ export default function Page() {
               {
                 title: "Veterinary-Grade Accuracy",
                 icon: Stethoscope,
-                color: "text-blue-600",
-                bg: "bg-blue-50",
+                color: "text-[var(--pc-teal)]",
+                bg: "bg-[var(--pc-teal-light)]",
                 desc: "Medical-grade health monitoring with clinically validated algorithms."
               },
               {
@@ -417,8 +417,8 @@ export default function Page() {
               {
                 title: "Expert Care Network",
                 icon: Users,
-                color: "text-orange-600",
-                bg: "bg-orange-50",
+                color: "text-[var(--pc-primary-hover)]",
+                bg: "bg-[var(--pc-primary-light)]",
                 desc: "Connect with certified veterinarians and pet care specialists."
               },
               {
@@ -538,16 +538,16 @@ export default function Page() {
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-slate-950 text-white pt-24 pb-12 relative overflow-hidden">
+      <footer className="bg-[#1C1917] text-white pt-24 pb-12 relative overflow-hidden">
         {/* Background blobs */}
         <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 opacity-30"></div>
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-30"></div>
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[var(--pc-teal)]/20 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 opacity-30"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid md:grid-cols-4 gap-12 mb-16">
             <div className="space-y-6">
               <div className="flex items-center gap-3 text-white font-bold text-2xl">
-                <div className="w-12 h-12 bg-gradient-to-br from-primary to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 p-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-[var(--pc-primary)] to-[var(--pc-primary-hover)] rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 p-2">
                   <Image
                     src="/images/pawcare.png"
                     alt="PawCare Logo"
@@ -606,8 +606,8 @@ export default function Page() {
               <p>© 2025 PawCare. All rights reserved.</p>
               <div className="flex items-center gap-6 text-xs font-medium uppercase tracking-wider">
                 <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> HIPAA Compliant</span>
-                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Vet Approved</span>
-                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-purple-500"></div> ISO 27001</span>
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--pc-teal)]"></div> Vet Approved</span>
+                <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[var(--pc-sage)]"></div> ISO 27001</span>
               </div>
             </div>
           </div>

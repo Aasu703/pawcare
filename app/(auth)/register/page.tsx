@@ -3,30 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
 import RegisterForm from "../_components/RegisterForm";
 import { ArrowLeft, Shield, Award, CheckCircle, Heart } from "lucide-react";
 
 export default function RegisterPage() {
-  useEffect(() => {
-    const href = "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap";
-    if (!document.querySelector(`link[href=\"${href}\"]`)) {
-      const l = document.createElement('link');
-      l.rel = 'stylesheet';
-      l.href = href;
-      document.head.appendChild(l);
-      return () => { document.head.removeChild(l); };
-    }
-  }, []);
-
   return (
-    <main style={{ fontFamily: 'Poppins, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial' }} className="min-h-screen bg-background flex">
+    <main className="min-h-screen bg-background flex">
       {/* Left Side - Branding */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8 }}
-        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary via-blue-600 to-primary relative overflow-hidden"
+        className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[var(--pc-teal)] via-[var(--pc-teal-dark)] to-[var(--pc-teal)] relative overflow-hidden"
       >
         {/* Background Elements */}
         <div className="absolute inset-0">
@@ -68,7 +56,7 @@ export default function RegisterPage() {
                 <span className="text-sm font-medium">Secure health records</span>
               </div>
               <div className="flex items-center gap-3 justify-center">
-                <Award className="w-5 h-5 text-blue-400" />
+                <Award className="w-5 h-5 text-[var(--pc-teal)]" />
                 <span className="text-sm font-medium">Vet-backed protocols</span>
               </div>
             </div>

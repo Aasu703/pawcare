@@ -149,7 +149,7 @@ export default function ProtectedHome() {
       icon: <Calendar className="w-6 h-6" />,
       title: "Appointments",
       description: "Schedule and manage upcoming visits",
-      color: "from-blue-500 to-cyan-500",
+      color: "from-[var(--pc-cream)]0 to-[var(--pc-sage)]",
       badge: appointmentStatusText,
       cta: "Manage bookings",
       onClick: () => router.push("/user/bookings"),
@@ -167,7 +167,7 @@ export default function ProtectedHome() {
       icon: <Bell className="w-6 h-6" />,
       title: "Reminders",
       description: "Never miss important pet care tasks",
-      color: "from-primary to-orange-600",
+      color: "from-primary to-[var(--pc-primary-hover)]",
       badge: reminderStatusText,
       cta: "Open notifications",
       count: remindersCount,
@@ -186,7 +186,7 @@ export default function ProtectedHome() {
       icon: <Shield className="w-6 h-6" />,
       title: "Insurance",
       description: "Track coverage and file claims easily",
-      color: "from-indigo-500 to-blue-500",
+      color: "from-[var(--pc-primary)] to-[var(--pc-cream)]0",
       badge: "Book trusted services quickly",
       cta: "Explore services",
       onClick: () => router.push("/user/services"),
@@ -215,7 +215,7 @@ export default function ProtectedHome() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-900 overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--pc-cream)] via-white to-[var(--pc-teal-light)] text-foreground overflow-hidden relative">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div
@@ -233,7 +233,7 @@ export default function ProtectedHome() {
             y: [0, -30, 0],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-300/20 rounded-full blur-[100px]"
+          className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[var(--pc-teal)]/10 rounded-full blur-[100px]"
         />
       </div>
 
@@ -257,14 +257,14 @@ export default function ProtectedHome() {
               registerOpenHandler={(handler) => {
                 openNotificationsRef.current = handler;
               }}
-              buttonClassName="h-10 w-10 bg-transparent text-gray-700 hover:bg-white/70"
+              buttonClassName="h-10 w-10 bg-transparent text-foreground hover:bg-white/70"
               iconClassName="w-5 h-5"
             />
             <button
               onClick={handleProfileClick}
               className="px-3 py-1.5 rounded-full bg-white/50 hover:bg-white border border-white/20 transition-all duration-300 flex items-center gap-2 group"
             >
-              <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-primary to-[var(--pc-cream)]0 flex items-center justify-center text-white text-xs font-bold">
                 {profileImageSrc ? (
                   <img
                     src={profileImageSrc}
@@ -275,13 +275,13 @@ export default function ProtectedHome() {
                   user?.Firstname?.charAt(0) || <User className="w-4 h-4" />
                 )}
               </div>
-              <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 hidden sm:block">
+              <span className="text-sm font-medium text-foreground group-hover:text-foreground hidden sm:block">
                 {user?.Firstname || "Profile"}
               </span>
             </button>
             <button
               onClick={handleLogout}
-              className="p-2.5 rounded-full hover:bg-red-50 text-gray-700 hover:text-red-500 transition duration-300"
+              className="p-2.5 rounded-full hover:bg-red-50 text-foreground hover:text-red-500 transition duration-300"
               title="Logout"
             >
               <LogOut className="w-5 h-5" />
@@ -307,12 +307,12 @@ export default function ProtectedHome() {
 
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               {user?.Firstname ? `Hey, ${user.Firstname}!` : "Your pet,"}<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--pc-primary)] to-[var(--pc-teal)]">
                 {user?.Firstname ? "Ready for care?" : "our priority"}
               </span>
             </h1>
 
-            <p className="text-xl text-gray-600 mb-8 max-w-lg leading-relaxed">
+            <p className="text-xl text-muted-foreground mb-8 max-w-lg leading-relaxed">
               Manage your pets&apos; health, appointments, and daily activities all in one place. We make pet care simple and stress-free.
             </p>
 
@@ -325,14 +325,14 @@ export default function ProtectedHome() {
 
             <div className="flex flex-wrap gap-4">
               <Link href="/user/pet/add">
-                <button className="px-8 py-4 rounded-2xl bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold hover:from-primary hover:to-blue-600 transition-all duration-300 shadow-xl hover:shadow-primary/25 hover:-translate-y-1 flex items-center gap-3 group">
+                <button className="px-8 py-4 rounded-2xl bg-gradient-to-r from-gray-900 to-gray-800 text-white font-semibold hover:from-[var(--pc-primary-hover)] hover:to-[var(--pc-teal)] transition-all duration-300 shadow-xl hover:shadow-primary/25 hover:-translate-y-1 flex items-center gap-3 group">
                   <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
                   Add New Pet
                 </button>
               </Link>
               <button
                 onClick={handleBackToLanding}
-                className="px-8 py-4 rounded-2xl bg-white text-gray-900 font-semibold border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300 shadow-sm hover:translate-y-px"
+                className="px-8 py-4 rounded-2xl bg-white text-foreground font-semibold border border-border hover:border-border hover:bg-muted transition-all duration-300 shadow-sm hover:translate-y-px"
               >
                 Back to Home
               </button>
@@ -353,11 +353,11 @@ export default function ProtectedHome() {
                 onClick={stat.onClick}
                 className={`bg-white/60 backdrop-blur-xl border border-white/50 p-6 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 text-left ${index === 0 ? 'col-span-2' : ''}`}
               >
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-blue-100 flex items-center justify-center text-primary mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-[var(--pc-teal-light)] flex items-center justify-center text-primary mb-4">
                   {stat.icon}
                 </div>
-                <div className="text-4xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-sm font-medium text-gray-500">{stat.label}</div>
+                <div className="text-4xl font-bold text-foreground mb-1">{stat.value}</div>
+                <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
               </button>
             ))}
           </motion.div>
@@ -366,8 +366,8 @@ export default function ProtectedHome() {
         <section className="rounded-[2rem] border border-white/70 bg-white/70 p-6 shadow-lg shadow-gray-200/40 backdrop-blur-xl md:p-8">
           <div className="mb-5 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Quick Care Actions</h2>
-              <p className="mt-1 text-sm text-gray-500">
+              <h2 className="text-2xl font-bold text-foreground">Quick Care Actions</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
                 Jump straight to the tasks you do most often.
               </p>
             </div>
@@ -384,26 +384,26 @@ export default function ProtectedHome() {
             <button
               type="button"
               onClick={() => router.push("/user/pet/add")}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="rounded-2xl border border-border bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <p className="text-sm font-semibold text-gray-900">Add Pet</p>
-              <p className="mt-1 text-xs text-gray-500">Create profile and care plan.</p>
+              <p className="text-sm font-semibold text-foreground">Add Pet</p>
+              <p className="mt-1 text-xs text-muted-foreground">Create profile and care plan.</p>
             </button>
             <button
               type="button"
               onClick={() => router.push("/user/bookings")}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="rounded-2xl border border-border bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <p className="text-sm font-semibold text-gray-900">Manage Appointments</p>
-              <p className="mt-1 text-xs text-gray-500">Review and schedule vet visits.</p>
+              <p className="text-sm font-semibold text-foreground">Manage Appointments</p>
+              <p className="mt-1 text-xs text-muted-foreground">Review and schedule vet visits.</p>
             </button>
             <button
               type="button"
               onClick={() => router.push("/user/pet")}
-              className="rounded-2xl border border-gray-200 bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+              className="rounded-2xl border border-border bg-white px-4 py-4 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <p className="text-sm font-semibold text-gray-900">Open Pet Care</p>
-              <p className="mt-1 text-xs text-gray-500">Update feeding and vaccination tasks.</p>
+              <p className="text-sm font-semibold text-foreground">Open Pet Care</p>
+              <p className="mt-1 text-xs text-muted-foreground">Update feeding and vaccination tasks.</p>
             </button>
           </div>
         </section>
@@ -412,11 +412,11 @@ export default function ProtectedHome() {
         <section>
           <div className="flex items-end justify-between mb-10">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Your Pets</h2>
-              <p className="text-gray-500">Manage profiles and health records</p>
+              <h2 className="text-3xl font-bold text-foreground mb-2">Your Pets</h2>
+              <p className="text-muted-foreground">Manage profiles and health records</p>
             </div>
             <Link href="/user/pet">
-              <button className="group flex items-center gap-2 text-primary font-semibold hover:text-blue-700 transition-colors">
+              <button className="group flex items-center gap-2 text-primary font-semibold hover:text-[var(--pc-primary-hover)] transition-colors">
                 View All Pets
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -426,7 +426,7 @@ export default function ProtectedHome() {
           {petsLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(3)].map((_, index) => (
-                <div key={index} className="h-64 rounded-3xl bg-gray-100 animate-pulse" />
+                <div key={index} className="h-64 rounded-3xl bg-muted animate-pulse" />
               ))}
             </div>
           ) : petsError ? (
@@ -435,14 +435,14 @@ export default function ProtectedHome() {
               <button onClick={fetchPets} className="text-sm underline text-red-700">Try Again</button>
             </div>
           ) : pets.length === 0 ? (
-            <div className="bg-gradient-to-br from-white to-gray-50 border border-dashed border-gray-300 rounded-[2rem] p-12 text-center shadow-sm">
-              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <PawPrint className="w-10 h-10 text-gray-400" />
+            <div className="bg-gradient-to-br from-white to-gray-50 border border-dashed border-border rounded-[2rem] p-12 text-center shadow-sm">
+              <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+                <PawPrint className="w-10 h-10 text-muted-foreground" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">No Pets Yet</h3>
-              <p className="text-gray-500 mb-8 max-w-md mx-auto">Start by adding your first pet to track their health and happiness.</p>
+              <h3 className="text-2xl font-bold text-foreground mb-2">No Pets Yet</h3>
+              <p className="text-muted-foreground mb-8 max-w-md mx-auto">Start by adding your first pet to track their health and happiness.</p>
               <Link href="/user/pet/add">
-                <button className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-primary/20">
+                <button className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-xl hover:bg-[var(--pc-primary-hover)] transition-colors shadow-lg shadow-primary/20">
                   <Plus className="w-5 h-5" />
                   Add Pet
                 </button>
@@ -471,25 +471,25 @@ export default function ProtectedHome() {
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                          <PawPrint className="w-10 h-10 text-gray-400" />
+                          <PawPrint className="w-10 h-10 text-muted-foreground" />
                         </div>
                       )}
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-1">{pet.name}</h3>
+                      <h3 className="text-2xl font-bold text-foreground mb-1">{pet.name}</h3>
                       <p className="text-primary font-medium mb-2">{pet.breed}</p>
-                      <div className="flex gap-2 text-xs font-semibold text-gray-500">
-                        <span className="px-2 py-1 rounded-lg bg-gray-100">{pet.age} yrs</span>
-                        <span className="px-2 py-1 rounded-lg bg-gray-100">{pet.weight} kg</span>
+                      <div className="flex gap-2 text-xs font-semibold text-muted-foreground">
+                        <span className="px-2 py-1 rounded-lg bg-muted">{pet.age} yrs</span>
+                        <span className="px-2 py-1 rounded-lg bg-muted">{pet.weight} kg</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-                    <button onClick={(e) => { e.stopPropagation(); router.push(`/user/pet/${pet._id}/edit`); }} className="py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold text-sm transition-colors">
+                    <button onClick={(e) => { e.stopPropagation(); router.push(`/user/pet/${pet._id}/edit`); }} className="py-2.5 rounded-xl bg-muted hover:bg-muted text-foreground font-semibold text-sm transition-colors">
                       Edit Profile
                     </button>
-                    <button onClick={(e) => { e.stopPropagation(); router.push('/user/pet'); }} className="py-2.5 rounded-xl bg-primary text-white hover:bg-blue-700 font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+                    <button onClick={(e) => { e.stopPropagation(); router.push('/user/pet'); }} className="py-2.5 rounded-xl bg-primary text-white hover:bg-[var(--pc-primary-hover)] font-semibold text-sm transition-colors flex items-center justify-center gap-2">
                       Details <ChevronRight className="w-3 h-3" />
                     </button>
                   </div>
@@ -501,12 +501,12 @@ export default function ProtectedHome() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   onClick={() => router.push('/user/pet')}
-                  className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-[2rem] flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-white hover:border-primary/50 hover:shadow-xl transition-all duration-300 group"
+                  className="bg-muted border-2 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center p-6 cursor-pointer hover:bg-white hover:border-primary/50 hover:shadow-xl transition-all duration-300 group"
                 >
                   <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                    <Plus className="w-8 h-8 text-gray-400 group-hover:text-primary transition-colors" />
+                    <Plus className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <span className="font-semibold text-gray-500 group-hover:text-primary transition-colors">View {pets.length - 3} more pets</span>
+                  <span className="font-semibold text-muted-foreground group-hover:text-primary transition-colors">View {pets.length - 3} more pets</span>
                 </motion.div>
               )}
             </div>
@@ -516,8 +516,8 @@ export default function ProtectedHome() {
         {/* Features Section */}
         <section>
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Everything you need</h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">From health tracking to appointment scheduling, we&apos;ve got you covered.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Everything you need</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">From health tracking to appointment scheduling, we&apos;ve got you covered.</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -545,9 +545,9 @@ export default function ProtectedHome() {
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                   {feature.icon}
                 </div>
-                <h3 className="font-semibold text-gray-900 mb-1 text-sm md:text-base">{feature.title}</h3>
-                <p className="text-xs text-gray-500 hidden md:block">{feature.description}</p>
-                <p className="mt-2 text-[11px] font-medium text-gray-500">{feature.badge}</p>
+                <h3 className="font-semibold text-foreground mb-1 text-sm md:text-base">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground hidden md:block">{feature.description}</p>
+                <p className="mt-2 text-[11px] font-medium text-muted-foreground">{feature.badge}</p>
                 <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-primary">
                   {feature.cta}
                   <ChevronRight className="h-3.5 w-3.5" />
@@ -564,7 +564,7 @@ export default function ProtectedHome() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
             <div className="text-center md:text-left">
               <h2 className="text-3xl font-bold mb-4">Why rely on PawCare?</h2>
-              <p className="text-gray-400 mb-8">We combine technology with care to give your pet the best life possible.</p>
+              <p className="text-muted-foreground mb-8">We combine technology with care to give your pet the best life possible.</p>
               <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mx-auto md:mx-0">
                 <Heart className="w-8 h-8 text-primary" />
               </div>
@@ -572,14 +572,14 @@ export default function ProtectedHome() {
 
             <div className="col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
               <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                <Shield className="w-10 h-10 text-blue-400 mb-4" />
+                <Shield className="w-10 h-10 text-[var(--pc-teal)] mb-4" />
                 <h3 className="text-xl font-bold mb-2">Secure Records</h3>
-                <p className="text-sm text-gray-400">Your data is encrypted and safe with us. Access it anytime, anywhere.</p>
+                <p className="text-sm text-muted-foreground">Your data is encrypted and safe with us. Access it anytime, anywhere.</p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                <Bell className="w-10 h-10 text-orange-400 mb-4" />
+                <Bell className="w-10 h-10 text-[var(--pc-primary)] mb-4" />
                 <h3 className="text-xl font-bold mb-2">Smart Alerts</h3>
-                <p className="text-sm text-gray-400">Get timely reminders for vaccinations, appointments, and daily medications.</p>
+                <p className="text-sm text-muted-foreground">Get timely reminders for vaccinations, appointments, and daily medications.</p>
               </div>
             </div>
           </div>

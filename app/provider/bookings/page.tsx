@@ -182,9 +182,9 @@ export default function ProviderBookingsPage() {
 
   if (!hasBookingAccess) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Bookings Not Available</h1>
-        <p className="text-gray-500">
+      <div className="bg-white rounded-xl border border-border p-8 text-center">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Bookings Not Available</h1>
+        <p className="text-muted-foreground">
           Shop owners cannot accept service bookings. Manage products from Inventory instead.
         </p>
       </div>
@@ -194,7 +194,7 @@ export default function ProviderBookingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f4f57]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -202,10 +202,10 @@ export default function ProviderBookingsPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#0c4148]">
+        <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)]">
           {isVet ? "Vet Appointment Bookings" : "Booking Management"}
         </h1>
-        <p className="text-gray-500 mt-1">
+        <p className="text-muted-foreground mt-1">
           {isVet ? "Accept appointments and complete checkups" : "Manage customer bookings"}
         </p>
       </div>
@@ -218,13 +218,13 @@ export default function ProviderBookingsPage() {
             onClick={() => setFilter(status)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
               filter === status
-                ? "bg-[#0f4f57] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-[var(--pc-teal)] text-white"
+                : "bg-muted text-muted-foreground hover:bg-muted"
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
             {status === "pending" && bookings.filter((b) => b.status === "pending").length > 0 && (
-              <span className="ml-1.5 bg-[#f8d548] text-[#0c4148] text-xs px-1.5 py-0.5 rounded-full">
+              <span className="ml-1.5 bg-[var(--pc-primary)] text-[var(--pc-teal-dark)] text-xs px-1.5 py-0.5 rounded-full">
                 {bookings.filter((b) => b.status === "pending").length}
               </span>
             )}
@@ -234,8 +234,8 @@ export default function ProviderBookingsPage() {
 
       {filteredBookings.length === 0 ? (
         <div className="text-center py-16">
-          <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-600">No bookings found</h3>
+          <Calendar className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-muted-foreground">No bookings found</h3>
         </div>
       ) : (
         <div className="space-y-4">
@@ -249,31 +249,31 @@ export default function ProviderBookingsPage() {
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${status.bgColor} ${status.color}`}>
                         {status.label}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-muted-foreground">
                         ID: {booking._id.slice(-8)}
                       </span>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
                         {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleTimeString()}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-500">
-                      <span className="font-medium text-gray-700">Service:</span> {booking.service?.title || "Not specified"}
+                    <div className="text-sm text-muted-foreground">
+                      <span className="font-medium text-foreground">Service:</span> {booking.service?.title || "Not specified"}
                     </div>
                     {booking.pet && (
-                      <div className="text-sm text-gray-500">
-                        <span className="font-medium text-gray-700">Pet:</span> {booking.pet.name} ({booking.pet.species || "unknown"})
+                      <div className="text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">Pet:</span> {booking.pet.name} ({booking.pet.species || "unknown"})
                       </div>
                     )}
                     {booking.user && (
-                      <div className="text-sm text-gray-500">
-                        <span className="font-medium text-gray-700">Owner:</span> {booking.user.name || booking.user.email || "N/A"}
+                      <div className="text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">Owner:</span> {booking.user.name || booking.user.email || "N/A"}
                       </div>
                     )}
                     {booking.notes && (
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-muted-foreground">
                         <span className="font-medium">Notes:</span> {booking.notes}
                       </p>
                     )}
@@ -302,7 +302,7 @@ export default function ProviderBookingsPage() {
                     <button
                       onClick={() => handleStatusChange(booking._id, "completed")}
                       disabled={updating === booking._id}
-                      className="flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium hover:bg-blue-100 disabled:opacity-50 transition"
+                      className="flex items-center gap-1 px-3 py-1.5 bg-[var(--pc-teal-light)] text-blue-700 border border-[var(--pc-teal)]/20 rounded-lg text-sm font-medium hover:bg-[var(--pc-teal-light)] disabled:opacity-50 transition"
                     >
                       <CheckCircle className="h-4 w-4" /> Mark Complete
                     </button>
@@ -336,24 +336,24 @@ export default function ProviderBookingsPage() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Give User Feedback</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-xl font-bold text-foreground">Give User Feedback</h2>
+                <p className="text-sm text-muted-foreground">
                   {selectedBooking?.user?.name || selectedBooking?.user?.email || "Booking customer"}
                 </p>
               </div>
-              <button onClick={closeFeedbackModal} className="text-gray-400 hover:text-gray-600">
+              <button onClick={closeFeedbackModal} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleFeedbackSubmit} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Feedback</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Feedback</label>
                 <textarea
                   value={feedbackText}
                   onChange={(e) => setFeedbackText(e.target.value)}
                   rows={5}
-                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full resize-none rounded-lg border border-border px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Share your experience with this user..."
                 />
               </div>
@@ -361,7 +361,7 @@ export default function ProviderBookingsPage() {
               <button
                 type="submit"
                 disabled={submittingFeedback}
-                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+                className="w-full rounded-lg bg-[var(--pc-teal)] py-2.5 font-semibold text-white hover:bg-[var(--pc-teal-dark)] disabled:opacity-50"
               >
                 {submittingFeedback ? "Submitting..." : "Submit Feedback"}
               </button>

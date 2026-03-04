@@ -125,7 +125,7 @@ export default function AppNotificationBell({
       >
         <Bell className={cn("h-5 w-5", iconClassName)} />
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-[#f8d548] px-1.5 py-0.5 text-[10px] font-bold leading-none text-[#0c4148]">
+          <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-[var(--pc-primary)] px-1.5 py-0.5 text-[10px] font-bold leading-none text-[var(--pc-teal-dark)]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -134,19 +134,19 @@ export default function AppNotificationBell({
       {open && (
         <div
           className={cn(
-            "absolute right-0 z-50 mt-2 w-[340px] rounded-2xl border border-gray-200 bg-white p-3 shadow-xl",
+            "absolute right-0 z-50 mt-2 w-[340px] rounded-2xl border border-border bg-white p-3 shadow-xl",
             panelClassName,
           )}
         >
           <div className="mb-2 flex items-center justify-between px-1">
             <div>
-              <p className="text-sm font-semibold text-gray-900">Notifications</p>
-              <p className="text-xs text-gray-500">{unreadCount} unread</p>
+              <p className="text-sm font-semibold text-foreground">Notifications</p>
+              <p className="text-xs text-muted-foreground">{unreadCount} unread</p>
             </div>
             <button
               type="button"
               onClick={() => markAllNotificationsAsRead(audience, providerType)}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[#0f4f57] hover:bg-[#0f4f57]/10"
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10"
             >
               <CheckCheck className="h-3.5 w-3.5" />
               Mark all
@@ -157,14 +157,14 @@ export default function AppNotificationBell({
             <button
               type="button"
               onClick={enableBrowserNotifications}
-              className="mb-2 w-full rounded-lg border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-3 py-2 text-left text-xs font-medium text-[#0f4f57] hover:bg-[#0f4f57]/10"
+              className="mb-2 w-full rounded-lg border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-3 py-2 text-left text-xs font-medium text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10"
             >
               Enable browser alerts for booking and appointment reminders
             </button>
           )}
 
           {items.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-gray-200 px-4 py-8 text-center text-sm text-gray-500">
+            <div className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
               No notifications yet.
             </div>
           ) : (
@@ -177,13 +177,13 @@ export default function AppNotificationBell({
                     className={cn(
                       "w-full rounded-xl border px-3 py-2 text-left transition",
                       item.read
-                        ? "border-gray-200 bg-white hover:bg-gray-50"
-                        : "border-[#0f4f57]/25 bg-[#0f4f57]/5 hover:bg-[#0f4f57]/10",
+                        ? "border-border bg-white hover:bg-muted"
+                        : "border-[var(--pc-teal)]/25 bg-[var(--pc-teal)]/5 hover:bg-[var(--pc-teal)]/10",
                     )}
                   >
-                    <p className="line-clamp-1 text-sm font-semibold text-gray-900">{item.title}</p>
-                    <p className="mt-0.5 line-clamp-2 text-xs text-gray-600">{item.message}</p>
-                    <p className="mt-1 text-[11px] text-gray-400">{formatRelativeTime(item.createdAt)}</p>
+                    <p className="line-clamp-1 text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{item.message}</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{formatRelativeTime(item.createdAt)}</p>
                   </button>
                 </li>
               ))}

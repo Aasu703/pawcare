@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, ExternalLink, MapPin, XCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   handleApproveProvider,
   handleGetProvidersByStatus,
@@ -79,7 +79,7 @@ export default function ProviderAccountsTable() {
       <h2 className="text-xl font-semibold mb-4">Provider Account Verification</h2>
       {loading ? (
         <div className="flex h-32 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -132,7 +132,7 @@ export default function ProviderAccountsTable() {
                             href={provider.certificationDocumentUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-[#0f4f57] hover:underline"
+                            className="text-[var(--pc-teal)] hover:underline"
                           >
                             View file
                           </a>
@@ -161,7 +161,7 @@ export default function ProviderAccountsTable() {
                             href={mapUrl || "#"}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--pc-teal)] hover:underline"
                           >
                             <MapPin className="h-3.5 w-3.5" />
                             Open Pin

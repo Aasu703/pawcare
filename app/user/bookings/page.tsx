@@ -153,12 +153,12 @@ export default function BookingsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-          <p className="text-gray-500 mt-1">Manage your pet care appointments</p>
+          <h1 className="text-3xl font-bold text-foreground">My Bookings</h1>
+          <p className="text-muted-foreground mt-1">Manage your pet care appointments</p>
         </div>
         <Link
           href="/user/services"
-          className="flex items-center gap-2 bg-[#0f4f57] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-[#0c4148] transition-colors"
+          className="flex items-center gap-2 bg-[var(--pc-teal)] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-[var(--pc-teal-dark)] transition-colors"
         >
           <Plus className="h-5 w-5" />
           New Booking
@@ -172,7 +172,7 @@ export default function BookingsPage() {
             key={s}
             onClick={() => setFilter(s)}
             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
-              filter === s ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              filter === s ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-muted-foreground hover:bg-muted"
             }`}
           >
             {s}
@@ -182,13 +182,13 @@ export default function BookingsPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-lg text-gray-500">No bookings found</p>
-          <Link href="/user/services" className="text-[#0f4f57] hover:underline mt-2 inline-block">
+        <div className="text-center py-20 bg-white rounded-xl border border-border">
+          <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">No bookings found</p>
+          <Link href="/user/services" className="text-[var(--pc-teal)] hover:underline mt-2 inline-block">
             Browse services to create a booking
           </Link>
         </div>
@@ -197,31 +197,31 @@ export default function BookingsPage() {
           {filtered.map((booking, idx) => (
             <div
               key={booking._id ?? `booking-${idx}`}
-              className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between hover:shadow-md transition-shadow"
+              className="bg-white rounded-xl border border-border p-6 flex items-center justify-between hover:shadow-md transition-shadow"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColors[booking.status] || "bg-gray-100 text-gray-600"}`}>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColors[booking.status] || "bg-muted text-muted-foreground"}`}>
                     {booking.status}
                   </span>
                   {booking.price && (
-                    <span className="text-sm font-semibold text-gray-700">${booking.price}</span>
+                    <span className="text-sm font-semibold text-foreground">${booking.price}</span>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
                     {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleString()}
                   </span>
                 </div>
                 {(booking.provider?.businessName || booking.providerId) && (
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     <span className="font-medium">Provider:</span>{" "}
                     {booking.provider?.businessName || booking.providerId}
                   </p>
                 )}
                 {booking.notes && (
-                  <p className="text-sm text-gray-600 mt-2">{booking.notes}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{booking.notes}</p>
                 )}
 
                 {booking.status === "completed" && (
@@ -263,19 +263,19 @@ export default function BookingsPage() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Rate Provider</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-xl font-bold text-foreground">Rate Provider</h2>
+                <p className="text-sm text-muted-foreground">
                   {selectedBooking?.provider?.businessName || "Share your booking experience"}
                 </p>
               </div>
-              <button onClick={closeReviewModal} className="text-gray-400 hover:text-gray-600">
+              <button onClick={closeReviewModal} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Rating</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">Rating</label>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -286,7 +286,7 @@ export default function BookingsPage() {
                     >
                       <Star
                         className={`h-6 w-6 ${
-                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
                         }`}
                       />
                     </button>
@@ -295,12 +295,12 @@ export default function BookingsPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Comment (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Comment (optional)</label>
                 <textarea
                   value={reviewForm.comment}
                   onChange={(e) => setReviewForm((prev) => ({ ...prev, comment: e.target.value }))}
                   rows={4}
-                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full resize-none rounded-lg border border-border px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="How was your experience?"
                 />
               </div>
@@ -308,7 +308,7 @@ export default function BookingsPage() {
               <button
                 type="submit"
                 disabled={submittingReview}
-                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+                className="w-full rounded-lg bg-[var(--pc-teal)] py-2.5 font-semibold text-white hover:bg-[var(--pc-teal-dark)] disabled:opacity-50"
               >
                 {submittingReview ? "Submitting..." : "Submit Rating"}
               </button>

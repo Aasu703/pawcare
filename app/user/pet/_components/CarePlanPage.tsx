@@ -348,7 +348,7 @@ export function CarePlanPage() {
         <div className="mb-5 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
           <div>
             <div className="mb-1 flex items-center gap-2">
-              <Bell className="h-5 w-5 text-[#f59e0b]" />
+              <Bell className="h-5 w-5 text-[var(--pc-primary)]" />
               <h2 className="text-lg font-semibold text-[#1c1917]">Smart Reminders</h2>
             </div>
             <p className="text-xs text-[#78716c] md:text-sm">
@@ -362,7 +362,7 @@ export function CarePlanPage() {
                 type="checkbox"
                 checked={remindersEnabled}
                 onChange={(e) => setRemindersEnabled(e.target.checked)}
-                className="h-4 w-4 rounded accent-[#f59e0b]"
+                className="h-4 w-4 rounded accent-[var(--pc-primary)]"
               />
               Enable reminders
             </label>
@@ -378,7 +378,7 @@ export function CarePlanPage() {
                 <option value={5}>Every 5 min</option>
                 <option value={10}>Every 10 min</option>
               </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#f59e0b]" />
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--pc-primary)]" />
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ export function CarePlanPage() {
               {upcomingFeeding ? "Schedule active" : "No feeding times"}
             </p>
           </div>
-          <div className="rounded-xl border border-[#fcd34d]/30 border-l-4 border-l-blue-400 bg-white/80 p-4 shadow-sm">
+          <div className="rounded-xl border border-[#fcd34d]/30 border-l-4 border-l-[var(--pc-teal)] bg-white/80 p-4 shadow-sm">
             <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
               Next Feeding
             </p>

@@ -58,25 +58,25 @@ export default function MessagesPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Community Blogs</h1>
-        <p className="text-gray-500 mt-1">Write a blog and see updates from all users</p>
+        <h1 className="text-3xl font-bold text-foreground">Community Blogs</h1>
+        <p className="text-muted-foreground mt-1">Write a blog and see updates from all users</p>
       </div>
 
       {/* Compose */}
-      <form onSubmit={handleSend} className="bg-white rounded-xl border border-gray-200 p-5 mb-8">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Write Blog</label>
+      <form onSubmit={handleSend} className="bg-white rounded-xl border border-border p-5 mb-8">
+        <label className="block text-sm font-medium text-foreground mb-2">Write Blog</label>
         <div className="flex gap-3">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={2}
-            className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none"
+            className="flex-1 px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent resize-none"
             placeholder="Share your thoughts..."
           />
           <button
             type="submit"
             disabled={sending || !content.trim()}
-            className="px-5 bg-[#0f4f57] text-white rounded-lg font-medium hover:bg-[#0c4148] transition-colors disabled:opacity-50 self-end"
+            className="px-5 bg-[var(--pc-teal)] text-white rounded-lg font-medium hover:bg-[var(--pc-teal-dark)] transition-colors disabled:opacity-50 self-end"
           >
             <Send className="h-5 w-5" />
           </button>
@@ -86,12 +86,12 @@ export default function MessagesPage() {
       {/* Messages List */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>
         </div>
       ) : messages.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-lg text-gray-500">No messages yet</p>
+        <div className="text-center py-20 bg-white rounded-xl border border-border">
+          <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">No messages yet</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -106,31 +106,31 @@ export default function MessagesPage() {
               : (isOwnMessage ? (user?.Firstname || user?.firstName || user?.name || user?.email || "You") : "User");
 
             return (
-              <div key={msg._id} className="bg-white rounded-xl border border-gray-200 p-5 flex items-start justify-between group">
+              <div key={msg._id} className="bg-white rounded-xl border border-border p-5 flex items-start justify-between group">
                 <div className="flex gap-4 flex-1">
                   <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
                     {imageSrc ? (
                       <img src={imageSrc} alt={displayName} width={48} height={48} className="object-cover w-12 h-12" />
                     ) : (
-                      <div className="w-12 h-12 bg-gray-100 flex items-center justify-center">
-                        <UserCircle className="h-7 w-7 text-gray-400" />
+                      <div className="w-12 h-12 bg-muted flex items-center justify-center">
+                        <UserCircle className="h-7 w-7 text-muted-foreground" />
                       </div>
                     )}
                   </div>
 
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <p className="font-medium text-gray-900">{displayName}</p>
-                      <p className="text-xs text-gray-400">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}</p>
+                      <p className="font-medium text-foreground">{displayName}</p>
+                      <p className="text-xs text-muted-foreground">{msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ""}</p>
                     </div>
-                    <p className="text-gray-800 mt-2">{msg.content}</p>
+                    <p className="text-foreground mt-2">{msg.content}</p>
                   </div>
                 </div>
 
                 {isOwnMessage && (
                   <button
                     onClick={() => handleDelete(msg._id)}
-                    className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 ml-4"
+                    className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100 ml-4"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

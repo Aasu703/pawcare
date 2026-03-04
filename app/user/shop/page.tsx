@@ -208,7 +208,7 @@ export default function ShopPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-[#0f4f57]" />
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -216,7 +216,7 @@ export default function ShopPage() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <section className="grid gap-4 lg:grid-cols-[1.3fr_1fr]">
-        <div className="rounded-3xl bg-gradient-to-r from-[#0f4f57] via-[#15636d] to-[#0c4148] p-6 text-white shadow-lg shadow-[#0f4f57]/20">
+        <div className="rounded-3xl bg-gradient-to-r from-[var(--pc-teal)] via-[var(--pc-teal)] to-[var(--pc-teal-dark)] p-6 text-white shadow-lg shadow-[var(--pc-teal)]/20">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide">
             <Sparkles className="h-3.5 w-3.5" />
             Curated Products
@@ -238,14 +238,14 @@ export default function ShopPage() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-semibold text-gray-500">Shopping Cart</p>
-          <p className="mt-1 text-3xl font-bold text-[#0c4148]">{cartCount}</p>
-          <p className="text-sm text-gray-500">items selected</p>
-          <p className="mt-4 text-xl font-bold text-[#0f4f57]">${cartTotal.toFixed(2)}</p>
+        <div className="rounded-3xl border border-border bg-white p-5 shadow-sm">
+          <p className="text-sm font-semibold text-muted-foreground">Shopping Cart</p>
+          <p className="mt-1 text-3xl font-bold text-[var(--pc-teal-dark)]">{cartCount}</p>
+          <p className="text-sm text-muted-foreground">items selected</p>
+          <p className="mt-4 text-xl font-bold text-[var(--pc-teal)]">${cartTotal.toFixed(2)}</p>
           <button
             onClick={() => setShowCart((prev) => !prev)}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f4f57] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0c4148]"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--pc-teal)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--pc-teal-dark)]"
           >
             <ShoppingCart className="h-4 w-4" />
             {showCart ? "Hide Cart" : "View Cart"}
@@ -253,16 +253,16 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-border bg-white p-4 shadow-sm">
         <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
               placeholder="Search by name, category, or description..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-[#0f4f57] focus:ring-2 focus:ring-[#0f4f57]/15"
+              className="w-full rounded-xl border border-border py-2.5 pl-10 pr-3 text-sm outline-none transition focus:border-[var(--pc-teal)] focus:ring-2 focus:ring-[var(--pc-teal)]/15"
             />
           </div>
 
@@ -270,7 +270,7 @@ export default function ShopPage() {
             <button
               onClick={() => setSortMode("featured")}
               className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                sortMode === "featured" ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                sortMode === "featured" ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-foreground hover:bg-muted"
               }`}
             >
               Featured
@@ -278,7 +278,7 @@ export default function ShopPage() {
             <button
               onClick={() => setSortMode("price-low")}
               className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                sortMode === "price-low" ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                sortMode === "price-low" ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-foreground hover:bg-muted"
               }`}
             >
               Price Low
@@ -286,7 +286,7 @@ export default function ShopPage() {
             <button
               onClick={() => setSortMode("price-high")}
               className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                sortMode === "price-high" ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                sortMode === "price-high" ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-foreground hover:bg-muted"
               }`}
             >
               Price High
@@ -294,7 +294,7 @@ export default function ShopPage() {
             <button
               onClick={() => setSortMode("name")}
               className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                sortMode === "name" ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                sortMode === "name" ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-foreground hover:bg-muted"
               }`}
             >
               Name
@@ -309,8 +309,8 @@ export default function ShopPage() {
               onClick={() => setActiveCategory(category)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                 activeCategory === category
-                  ? "bg-[#0f4f57] text-white"
-                  : "bg-[#0f4f57]/10 text-[#0f4f57] hover:bg-[#0f4f57]/20"
+                  ? "bg-[var(--pc-teal)] text-white"
+                  : "bg-[var(--pc-teal)]/10 text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/20"
               }`}
             >
               {category === "all" ? "All Categories" : category}
@@ -319,16 +319,16 @@ export default function ShopPage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-border bg-white p-4 shadow-sm">
         <ProviderNearbyShopsMap mode="pet-shop" />
       </section>
 
       {showCart && (
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-lg">
+        <section className="rounded-2xl border border-border bg-white p-5 shadow-lg">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-semibold text-[#0c4148]">Shopping Cart</h2>
-              <p className="text-sm text-gray-500">{cartCount} item(s) selected</p>
+              <h2 className="text-xl font-semibold text-[var(--pc-teal-dark)]">Shopping Cart</h2>
+              <p className="text-sm text-muted-foreground">{cartCount} item(s) selected</p>
             </div>
             {cart.length > 0 && (
               <button onClick={clearCartItems} className="text-sm font-semibold text-red-600 hover:text-red-700">
@@ -338,7 +338,7 @@ export default function ShopPage() {
           </div>
 
           {cart.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-500">
+            <p className="rounded-xl border border-dashed border-border bg-muted px-4 py-8 text-center text-sm text-muted-foreground">
               Your cart is empty.
             </p>
           ) : (
@@ -350,17 +350,17 @@ export default function ShopPage() {
                   const canIncrease = maxQuantity === undefined || item.quantity < maxQuantity;
 
                   return (
-                    <div key={item.productId} className="rounded-xl border border-gray-200 p-3">
+                    <div key={item.productId} className="rounded-xl border border-border p-3">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div>
-                          <p className="font-semibold text-[#0c4148]">{item.product?.product_name || item.productName}</p>
-                          <p className="text-xs text-gray-500">${unit.toFixed(2)} each</p>
+                          <p className="font-semibold text-[var(--pc-teal-dark)]">{item.product?.product_name || item.productName}</p>
+                          <p className="text-xs text-muted-foreground">${unit.toFixed(2)} each</p>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateCartQuantity(item.productId, item.quantity - 1)}
-                            className="rounded-md bg-gray-100 p-1.5 transition hover:bg-gray-200"
+                            className="rounded-md bg-muted p-1.5 transition hover:bg-muted"
                           >
                             <Minus className="h-4 w-4" />
                           </button>
@@ -371,7 +371,7 @@ export default function ShopPage() {
                                 ? updateCartQuantity(item.productId, item.quantity + 1)
                                 : toast.error("No more stock available")
                             }
-                            className="rounded-md bg-gray-100 p-1.5 transition hover:bg-gray-200"
+                            className="rounded-md bg-muted p-1.5 transition hover:bg-muted"
                           >
                             <Plus className="h-4 w-4" />
                           </button>
@@ -382,7 +382,7 @@ export default function ShopPage() {
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
-                          <span className="ml-2 w-20 text-right text-sm font-bold text-[#0c4148]">
+                          <span className="ml-2 w-20 text-right text-sm font-bold text-[var(--pc-teal-dark)]">
                             ${(unit * item.quantity).toFixed(2)}
                           </span>
                         </div>
@@ -393,7 +393,7 @@ export default function ShopPage() {
               </div>
 
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
-                <span className="text-lg font-bold text-[#0c4148]">Total: ${cartTotal.toFixed(2)}</span>
+                <span className="text-lg font-bold text-[var(--pc-teal-dark)]">Total: ${cartTotal.toFixed(2)}</span>
                 <Link
                   href={{
                     pathname: "/user/checkout",
@@ -408,7 +408,7 @@ export default function ShopPage() {
                       ),
                     },
                   }}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#f8d548] px-6 py-2.5 text-sm font-bold text-[#0c4148] transition hover:brightness-95"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[var(--pc-primary)] px-6 py-2.5 text-sm font-bold text-[var(--pc-teal-dark)] transition hover:brightness-95"
                 >
                   Checkout
                   <ArrowRight className="h-4 w-4" />
@@ -420,10 +420,10 @@ export default function ShopPage() {
       )}
 
       {filteredProducts.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-300 bg-white py-16 text-center">
-          <Package className="mx-auto mb-4 h-16 w-16 text-gray-300" />
-          <h3 className="text-lg font-semibold text-gray-700">No products found</h3>
-          <p className="mt-1 text-sm text-gray-500">Try changing category, search text, or sort mode.</p>
+        <div className="rounded-2xl border border-dashed border-border bg-white py-16 text-center">
+          <Package className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
+          <h3 className="text-lg font-semibold text-foreground">No products found</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Try changing category, search text, or sort mode.</p>
         </div>
       ) : (
         <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -433,28 +433,28 @@ export default function ShopPage() {
             return (
               <article
                 key={product._id}
-                className="group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex h-36 items-center justify-center bg-gradient-to-br from-[#0f4f57]/10 via-[#0f4f57]/5 to-transparent">
-                  <Package className="h-14 w-14 text-[#0f4f57]/40" />
+                <div className="flex h-36 items-center justify-center bg-gradient-to-br from-[var(--pc-teal)]/10 via-[var(--pc-teal)]/5 to-transparent">
+                  <Package className="h-14 w-14 text-[var(--pc-teal)]/40" />
                 </div>
 
                 <div className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="line-clamp-2 text-base font-semibold text-[#0c4148]">{product.product_name}</h3>
+                    <h3 className="line-clamp-2 text-base font-semibold text-[var(--pc-teal-dark)]">{product.product_name}</h3>
                     {product.category && (
-                      <span className="rounded-full bg-[#0f4f57]/10 px-2.5 py-1 text-[10px] font-semibold uppercase text-[#0f4f57]">
+                      <span className="rounded-full bg-[var(--pc-teal)]/10 px-2.5 py-1 text-[10px] font-semibold uppercase text-[var(--pc-teal)]">
                         {product.category}
                       </span>
                     )}
                   </div>
 
                   {product.description && (
-                    <p className="line-clamp-2 text-sm text-gray-500">{product.description}</p>
+                    <p className="line-clamp-2 text-sm text-muted-foreground">{product.description}</p>
                   )}
 
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-bold text-[#0f4f57]">${product.price?.toFixed(2) || "0.00"}</span>
+                    <span className="text-xl font-bold text-[var(--pc-teal)]">${product.price?.toFixed(2) || "0.00"}</span>
                     <span
                       className={`text-xs font-semibold ${outOfStock ? "text-red-500" : "text-emerald-600"}`}
                     >
@@ -465,7 +465,7 @@ export default function ShopPage() {
                   <button
                     onClick={() => addToCart(product)}
                     disabled={outOfStock || cartLoading}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0f4f57] py-2.5 text-sm font-semibold text-white transition hover:bg-[#0c4148] disabled:cursor-not-allowed disabled:bg-gray-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--pc-teal)] py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--pc-teal-dark)] disabled:cursor-not-allowed disabled:bg-gray-300"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     {outOfStock ? "Out of Stock" : "Add to Cart"}

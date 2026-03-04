@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, Search, CheckCircle, XCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   handleGetAllProviderServices,
   handleApproveProviderService,
@@ -94,9 +94,9 @@ export default function ProvidersTable() {
   );
 
   const specialtyColors: Record<string, string> = {
-    general: "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400",
+    general: "bg-muted text-foreground dark:bg-gray-900/20 dark:text-muted-foreground",
     grooming: "bg-pink-100 text-pink-700 dark:bg-pink-900/20 dark:text-pink-400",
-    veterinary: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+    veterinary: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-[var(--pc-teal)]",
     training: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
     boarding: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
     daycare: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-primary",
@@ -115,7 +115,7 @@ export default function ProvidersTable() {
               placeholder="Search provider services..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
         </div>
@@ -124,7 +124,7 @@ export default function ProvidersTable() {
       {/* Table */}
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -160,7 +160,7 @@ export default function ProvidersTable() {
                         provider.serviceType === "vet" ? "bg-blue-100 text-blue-700" :
                         provider.serviceType === "shop" ? "bg-purple-100 text-purple-700" :
                         provider.serviceType === "babysitter" ? "bg-pink-100 text-pink-700" :
-                        "bg-gray-100 text-gray-700"
+                        "bg-muted text-foreground"
                       }`}>
                         {provider.serviceType}
                       </span>

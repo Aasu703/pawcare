@@ -56,12 +56,12 @@ export default function ProviderSidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[#0c4148] border-r border-[#f8d548]/20 flex flex-col">
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-[#f8d548]/20">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[var(--pc-teal-dark)] border-r border-[var(--pc-primary)]/20 flex flex-col">
+      <div className="flex items-center gap-3 px-6 py-5 border-b border-[var(--pc-primary)]/20">
         <Image src="/images/pawcare.png" alt="PawCare" width={36} height={36} />
         <div className="flex-1">
           <span className="text-xl font-bold text-white">PawCare</span>
-          <p className="text-xs text-[#f8d548]">{getProviderTypeLabel(providerType)}</p>
+          <p className="text-xs text-[var(--pc-primary)]">{getProviderTypeLabel(providerType)}</p>
         </div>
       </div>
 
@@ -74,8 +74,8 @@ export default function ProviderSidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-[#f8d548] text-[#0c4148]"
-                  : "text-gray-300 hover:bg-white/10 hover:text-white"
+                  ? "bg-[var(--pc-primary)] text-[var(--pc-teal-dark)]"
+                  : "text-muted-foreground hover:bg-white/10 hover:text-white"
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -85,7 +85,7 @@ export default function ProviderSidebar() {
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-[#f8d548]/20">
+      <div className="px-3 py-4 border-t border-[var(--pc-primary)]/20">
         <button
           onClick={onLogout}
           disabled={isLoggingOut}

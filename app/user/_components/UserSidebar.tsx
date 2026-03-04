@@ -26,19 +26,19 @@ export default function UserSidebar() {
   const { user, logout, loggingOut } = useAuth();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[#0c4148] border-r border-[#f8d548]/20 flex flex-col">
+    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[var(--pc-teal-dark)] border-r border-[var(--pc-primary)]/20 flex flex-col">
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-[#f8d548]/20">
+      <div className="flex items-center gap-3 px-6 py-5 border-b border-[var(--pc-primary)]/20">
         <Image src="/images/pawcare.png" alt="PawCare" width={36} height={36} />
         <span className="text-xl font-bold text-white">PawCare</span>
       </div>
 
       {/* User Info */}
-      <div className="px-6 py-4 border-b border-[#f8d548]/10">
-        <p className="text-sm text-[#f8d548] font-semibold truncate">
+      <div className="px-6 py-4 border-b border-[var(--pc-primary)]/10">
+        <p className="text-sm text-[var(--pc-primary)] font-semibold truncate">
           {user?.Firstname} {user?.Lastname}
         </p>
-        <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
       </div>
 
       {/* Navigation */}
@@ -51,8 +51,8 @@ export default function UserSidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-[#f8d548] text-[#0c4148]"
-                  : "text-gray-300 hover:bg-white/10 hover:text-white"
+                  ? "bg-[var(--pc-primary)] text-[var(--pc-teal-dark)]"
+                  : "text-muted-foreground hover:bg-white/10 hover:text-white"
               }`}
             >
               <item.icon className="h-5 w-5" />
@@ -63,7 +63,7 @@ export default function UserSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-[#f8d548]/20">
+      <div className="px-3 py-4 border-t border-[var(--pc-primary)]/20">
         <button
           onClick={logout}
           disabled={loggingOut}

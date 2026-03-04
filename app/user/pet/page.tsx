@@ -170,10 +170,10 @@ export default function PetListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[var(--pc-cream)] via-white to-green-100 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your pets...</p>
+          <p className="text-muted-foreground">Loading your pets...</p>
         </div>
       </div>
     );
@@ -186,8 +186,8 @@ export default function PetListPage() {
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <PawPrint className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Pets</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">Error Loading Pets</h2>
+          <p className="text-muted-foreground mb-6">{error}</p>
           <button
             onClick={fetchPets}
             className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
@@ -200,7 +200,7 @@ export default function PetListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-100 text-gray-900 overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--pc-cream)] via-white to-green-100 text-foreground overflow-hidden relative">
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
@@ -210,24 +210,24 @@ export default function PetListPage() {
         <motion.div
           animate={{ x: [0, -30, 0], y: [0, 30, 0] }}
           transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-96 h-96 bg-blue-300/20 rounded-full blur-3xl bottom-10 right-10"
+          className="absolute w-96 h-96 bg-[var(--pc-teal)]/10 rounded-full blur-3xl bottom-10 right-10"
         />
       </div>
 
       <motion.header
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 border-b border-gray-200 backdrop-blur-xl bg-white/80"
+        className="relative z-10 border-b border-border backdrop-blur-xl bg-white/80"
       >
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
+            className="flex items-center gap-2 text-foreground hover:text-[var(--pc-teal)] transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Back</span>
           </button>
-          <h1 className="text-xl font-bold text-gray-900">My Pets</h1>
+          <h1 className="text-xl font-bold text-foreground">My Pets</h1>
           <Link
             href="/user/pet/add"
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all"
@@ -248,8 +248,8 @@ export default function PetListPage() {
             <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-200">
               <PawPrint className="w-12 h-12 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">No Pets Yet</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-foreground mb-4">No Pets Yet</h2>
+            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
               Start building your pet family! Add your first furry friend to keep track of their health, appointments, and more.
             </p>
             <Link
@@ -299,7 +299,7 @@ export default function PetListPage() {
           </DialogHeader>
 
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Assign a PawCare-verified vet for {assignPet?.name}. The selected vet can review assigned pets one by one.
             </p>
 
@@ -317,13 +317,13 @@ export default function PetListPage() {
               </SelectContent>
             </Select>
 
-            {loadingVets && <p className="text-xs text-gray-500">Loading verified vets...</p>}
+            {loadingVets && <p className="text-xs text-muted-foreground">Loading verified vets...</p>}
 
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={closeAssignDialog}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted"
               >
                 Cancel
               </button>

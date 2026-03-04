@@ -55,20 +55,20 @@ export default function ServiceDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fffdf9] flex items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#f59e0b] border-t-transparent"></div>
+      <div className="min-h-screen bg-[var(--pc-cream)] flex items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
       </div>
     );
   }
 
   if (!service) {
     return (
-      <div className="min-h-screen bg-[#fffdf9] flex items-center justify-center px-4">
-        <div className="w-full max-w-lg rounded-3xl border border-[#f0ddc0] bg-white p-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Service Not Found</h1>
-          <p className="text-gray-600 mb-6">The service you requested is unavailable.</p>
+      <div className="min-h-screen bg-[var(--pc-cream)] flex items-center justify-center px-4">
+        <div className="w-full max-w-lg rounded-3xl border border-[var(--pc-border)] bg-white p-8 text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Service Not Found</h1>
+          <p className="text-muted-foreground mb-6">The service you requested is unavailable.</p>
           <Link href="/user/services">
-            <button className="rounded-xl bg-[#f59e0b] px-6 py-3 font-semibold text-white hover:bg-[#ef7f1a]">
+            <button className="rounded-xl bg-[var(--pc-primary)] px-6 py-3 font-semibold text-white hover:bg-[var(--pc-primary-hover)]">
               Back to Services
             </button>
           </Link>
@@ -99,7 +99,7 @@ export default function ServiceDetailPage() {
       ? "bg-[#ffe8d5] text-[#b45309]"
       : category === "boarding"
       ? "bg-[#d9f2f1] text-[#0f766e]"
-      : "bg-gray-100 text-gray-700";
+      : "bg-muted text-foreground";
 
   const includedItems = [
     providerVerificationLabel,
@@ -110,20 +110,20 @@ export default function ServiceDetailPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#fffdf9] pb-12"
-      style={{ fontFamily: '"Nunito", "Poppins", sans-serif' }}
+      className="min-h-screen bg-[var(--pc-cream)] pb-12"
+
     >
-      <div className="border-b border-[#f0dfc6] bg-gradient-to-r from-[#fff6e5] to-[#ecfeff]">
+      <div className="border-b border-[var(--pc-border)] bg-gradient-to-r from-[var(--pc-primary-light)] to-[var(--pc-teal-light)]">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-6">
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 rounded-xl border border-[#e8d8bc] bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-[#fff8ec]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--pc-border)] bg-white px-4 py-2 text-sm font-semibold text-foreground hover:bg-[var(--pc-primary-light)]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to results
           </button>
-          <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#7a4d0b]">
-            <ShieldCheck className="h-4 w-4 text-[#f59e0b]" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold uppercase tracking-wide text-[var(--pc-text)]">
+            <ShieldCheck className="h-4 w-4 text-[var(--pc-primary)]" />
             {providerVerificationLabel}
           </div>
         </div>
@@ -148,27 +148,27 @@ export default function ServiceDetailPage() {
             </div>
 
             <h1 className="text-3xl font-extrabold text-[#111827] md:text-4xl">{service.title}</h1>
-            <p className="mt-4 text-base leading-relaxed text-gray-600 md:text-lg">
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
               {service.description || "No description available for this service."}
             </p>
 
             <div className="mt-6 grid gap-3 md:grid-cols-3">
-              <div className="rounded-2xl bg-[#fff8ec] p-4">
+              <div className="rounded-2xl bg-[var(--pc-primary-light)] p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#a16207]">Duration</p>
-                <p className="mt-1 inline-flex items-center gap-2 font-bold text-gray-900">
-                  <Clock className="h-4 w-4 text-[#f59e0b]" />
+                <p className="mt-1 inline-flex items-center gap-2 font-bold text-foreground">
+                  <Clock className="h-4 w-4 text-[var(--pc-primary)]" />
                   {service.duration_minutes} min
                 </p>
               </div>
               <div className="rounded-2xl bg-[#eff6ff] p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#1d4ed8]">Price</p>
-                <p className="mt-1 inline-flex items-center gap-2 font-bold text-gray-900">
+                <p className="mt-1 inline-flex items-center gap-2 font-bold text-foreground">
                   <DollarSign className="h-4 w-4 text-[#1d4ed8]" />${service.price}
                 </p>
               </div>
               <div className="rounded-2xl bg-[#f0fdfa] p-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#0f766e]">Rating</p>
-                <p className="mt-1 inline-flex items-center gap-2 font-bold text-gray-900">
+                <p className="mt-1 inline-flex items-center gap-2 font-bold text-foreground">
                   <Star className="h-4 w-4 fill-current text-yellow-400" />
                   {service.rating ? service.rating.toFixed(1) : "New"}
                 </p>
@@ -185,9 +185,9 @@ export default function ServiceDetailPage() {
             <h2 className="mb-4 text-2xl font-extrabold text-[#111827]">What&apos;s included</h2>
             <div className="grid gap-3 md:grid-cols-2">
               {includedItems.map((item) => (
-                <div key={item} className="inline-flex items-start gap-2 rounded-xl border border-[#f2e7d1] bg-[#fffef9] p-3">
-                  <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#f59e0b]" />
-                  <span className="text-sm font-medium text-gray-700">{item}</span>
+                <div key={item} className="inline-flex items-start gap-2 rounded-xl border border-[var(--pc-border)] bg-[#fffef9] p-3">
+                  <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--pc-primary)]" />
+                  <span className="text-sm font-medium text-foreground">{item}</span>
                 </div>
               ))}
             </div>
@@ -206,7 +206,7 @@ export default function ServiceDetailPage() {
                   <User className="h-7 w-7 text-[#b45309]" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-bold text-gray-900">
+                  <h3 className="text-lg font-bold text-foreground">
                     {service.provider.name || service.provider.businessName || "Provider"}
                   </h3>
                   {providerIsPawcareVerified ? (
@@ -216,20 +216,20 @@ export default function ServiceDetailPage() {
                     </p>
                   ) : null}
                   {service.provider.address && (
-                    <p className="inline-flex items-center gap-2 text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 text-[#f59e0b]" />
+                    <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4 text-[var(--pc-primary)]" />
                       {service.provider.address}
                     </p>
                   )}
                   {service.provider.phone && (
-                    <p className="inline-flex items-center gap-2 text-sm text-gray-600">
-                      <Phone className="h-4 w-4 text-[#f59e0b]" />
+                    <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                      <Phone className="h-4 w-4 text-[var(--pc-primary)]" />
                       {service.provider.phone}
                     </p>
                   )}
                   {service.provider.email && (
-                    <p className="inline-flex items-center gap-2 text-sm text-gray-600">
-                      <Mail className="h-4 w-4 text-[#f59e0b]" />
+                    <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                      <Mail className="h-4 w-4 text-[var(--pc-primary)]" />
                       {service.provider.email}
                     </p>
                   )}
@@ -248,26 +248,26 @@ export default function ServiceDetailPage() {
             {service.reviews && service.reviews.length > 0 ? (
               <div className="space-y-4">
                 {service.reviews.map((review: any) => (
-                  <article key={review._id} className="rounded-2xl border border-[#f2e7d1] bg-[#fffef9] p-4">
+                  <article key={review._id} className="rounded-2xl border border-[var(--pc-border)] bg-[#fffef9] p-4">
                     <div className="mb-2 flex items-center justify-between gap-3">
-                      <span className="text-sm font-bold text-gray-900">{review.user?.name || "Anonymous"}</span>
+                      <span className="text-sm font-bold text-foreground">{review.user?.name || "Anonymous"}</span>
                       <div className="flex items-center gap-1">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
                             className={`h-4 w-4 ${
-                              i < review.rating ? "text-yellow-400 fill-current" : "text-gray-300"
+                              i < review.rating ? "text-yellow-400 fill-current" : "text-muted-foreground"
                             }`}
                           />
                         ))}
                       </div>
                     </div>
-                    <p className="text-sm leading-relaxed text-gray-600">{review.comment}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{review.comment}</p>
                   </article>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-500">No reviews yet. Be the first to share your experience.</p>
+              <p className="text-sm text-muted-foreground">No reviews yet. Be the first to share your experience.</p>
             )}
           </motion.section>
         </div>
@@ -279,25 +279,25 @@ export default function ServiceDetailPage() {
             className="sticky top-24 rounded-[28px] border border-[#efdfc8] bg-white p-5 shadow-[0_18px_50px_rgba(17,24,39,0.08)]"
           >
             <h3 className="text-xl font-extrabold text-[#111827]">Book this service</h3>
-            <p className="mt-1 text-sm text-gray-500">Fast confirmation from provider.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Fast confirmation from provider.</p>
 
             <div className="mt-4 space-y-2 rounded-2xl bg-[#faf7f1] p-4 text-sm">
-              <p className="inline-flex items-center gap-2 text-gray-700">
-                <ClipboardList className="h-4 w-4 text-[#f59e0b]" />
+              <p className="inline-flex items-center gap-2 text-foreground">
+                <ClipboardList className="h-4 w-4 text-[var(--pc-primary)]" />
                 {service.title}
               </p>
-              <p className="inline-flex items-center gap-2 text-gray-700">
-                <Clock className="h-4 w-4 text-[#f59e0b]" />
+              <p className="inline-flex items-center gap-2 text-foreground">
+                <Clock className="h-4 w-4 text-[var(--pc-primary)]" />
                 {service.duration_minutes} min
               </p>
-              <p className="inline-flex items-center gap-2 font-bold text-gray-900">
+              <p className="inline-flex items-center gap-2 font-bold text-foreground">
                 <DollarSign className="h-4 w-4 text-[#16a34a]" />
                 ${service.price}
               </p>
             </div>
 
             <Link href={`/user/bookings/new?serviceId=${service._id}`}>
-              <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#ef7f1a] py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(239,127,26,0.35)] hover:from-[#ef7f1a] hover:to-[#dd6b13]">
+              <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--pc-primary)] to-[var(--pc-primary-hover)] py-3 text-sm font-semibold text-white shadow-[0_12px_24px_rgba(239,127,26,0.35)] hover:from-[var(--pc-primary-hover)] hover:to-[var(--pc-primary-hover)]">
                 <Calendar className="h-4 w-4" />
                 Continue to Booking
               </button>
@@ -309,15 +309,15 @@ export default function ServiceDetailPage() {
                   providerName,
                 )}&participantSubtitle=${encodeURIComponent(providerSubtitle)}`}
               >
-                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#e8d8bc] bg-white py-3 text-sm font-semibold text-gray-700 hover:bg-[#fff8ec]">
+                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--pc-border)] bg-white py-3 text-sm font-semibold text-foreground hover:bg-[var(--pc-primary-light)]">
                   <Mail className="h-4 w-4" />
                   Chat with Vet
                 </button>
               </Link>
             )}
 
-            <p className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-gray-500">
-              <HeartPulse className="h-4 w-4 text-[#f59e0b]" />
+            <p className="mt-3 inline-flex items-center gap-2 text-xs font-medium text-muted-foreground">
+              <HeartPulse className="h-4 w-4 text-[var(--pc-primary)]" />
               Your pet&apos;s care details stay private and secure.
             </p>
           </motion.section>
@@ -333,17 +333,17 @@ export default function ServiceDetailPage() {
               <div className="space-y-3">
                 {providerServices.slice(0, 3).map((otherService: any) => (
                   <Link key={otherService._id} href={`/user/services/${otherService._id}`}>
-                    <article className="rounded-xl border border-[#f2e7d1] bg-[#fffef9] p-3 transition-colors hover:bg-[#fff8ec]">
-                      <p className="line-clamp-1 text-sm font-bold text-gray-900">{otherService.title}</p>
-                      <div className="mt-1 flex items-center gap-3 text-xs text-gray-600">
+                    <article className="rounded-xl border border-[var(--pc-border)] bg-[#fffef9] p-3 transition-colors hover:bg-[var(--pc-primary-light)]">
+                      <p className="line-clamp-1 text-sm font-bold text-foreground">{otherService.title}</p>
+                      <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5 text-[#f59e0b]" />
+                          <Clock className="h-3.5 w-3.5 text-[var(--pc-primary)]" />
                           {otherService.duration_minutes} min
                         </span>
-                        <span className="inline-flex items-center gap-1 font-semibold text-gray-900">
+                        <span className="inline-flex items-center gap-1 font-semibold text-foreground">
                           <DollarSign className="h-3.5 w-3.5 text-[#16a34a]" />${otherService.price}
                         </span>
-                        <ChevronRight className="ml-auto h-4 w-4 text-gray-400" />
+                        <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
                       </div>
                     </article>
                   </Link>

@@ -59,7 +59,7 @@ const defaultAppointments: any[] = [
 ];
 
 const statusColors = {
-  scheduled: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+  scheduled: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-[var(--pc-teal)]",
   completed:
     "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
   cancelled: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400",

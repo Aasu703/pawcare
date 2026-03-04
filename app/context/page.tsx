@@ -14,10 +14,10 @@ export default function Page() {
     }, [router]);
 
     return (
-        <main className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-8">
+        <main className="min-h-screen flex flex-col items-center justify-center bg-muted p-8">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
                 <h1 className="text-2xl font-bold mb-4">Context Page</h1>
-                <p className="text-gray-700">
+                <p className="text-foreground">
                     This page demonstrates context functionality in Next.js.
                 </p>
             </div>

@@ -40,11 +40,11 @@ export default function AdminReviewsPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : reviews.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl border">
-          <p className="text-gray-400">No reviews found</p>
+          <p className="text-muted-foreground">No reviews found</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -56,17 +56,17 @@ export default function AdminReviewsPage() {
                     <span className="font-medium text-sm">
                       {typeof r.userId === "object" ? (r.userId as any).Firstname || "User" : "User"}
                     </span>
-                    <span className="text-xs text-gray-400">left a review</span>
+                    <span className="text-xs text-muted-foreground">left a review</span>
                   </div>
                   <div className="flex items-center gap-1 mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star key={star} className={`h-4 w-4 ${star <= r.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}`} />
                     ))}
-                    <span className="text-xs text-gray-400 ml-2">{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ""}</span>
                   </div>
-                  {r.comment && <p className="text-sm text-gray-600">{r.comment}</p>}
+                  {r.comment && <p className="text-sm text-muted-foreground">{r.comment}</p>}
                 </div>
-                <button onClick={() => handleDelete(r._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                <button onClick={() => handleDelete(r._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>

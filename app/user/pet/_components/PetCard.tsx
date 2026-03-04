@@ -64,7 +64,7 @@ export function PetCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="group relative bg-gradient-to-br from-white via-white to-slate-50 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden"
+      className="group relative bg-gradient-to-br from-white via-white to-slate-50 backdrop-blur-xl border border-border rounded-2xl shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden"
     >
       {/* Background gradient on hover */}
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -75,7 +75,7 @@ export function PetCard({
           className="flex-shrink-0"
           whileHover={{ scale: 1.05 }}
         >
-          <div className="relative w-28 h-28 rounded-xl overflow-hidden border-2 border-gray-200 group-hover:border-emerald-300 transition-colors duration-300 shadow-md">
+          <div className="relative w-28 h-28 rounded-xl overflow-hidden border-2 border-border group-hover:border-emerald-300 transition-colors duration-300 shadow-md">
             {pet.imageUrl ? (
               <img
                 src={resolveMediaUrl(pet.imageUrl, baseUrl, 'image')}
@@ -97,10 +97,10 @@ export function PetCard({
           <div className="space-y-1">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">
+                <h3 className="text-lg font-bold text-foreground group-hover:text-emerald-600 transition-colors">
                   {pet.name}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {pet.species} • {pet.breed}
                 </p>
               </div>
@@ -108,13 +108,13 @@ export function PetCard({
 
             {/* Pet Stats */}
             <div className="flex gap-3 flex-wrap pt-1">
-              <div className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 rounded-full border border-blue-200">
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-[var(--pc-teal-light)] rounded-full border border-[var(--pc-teal)]/20">
                 <span className="text-xs text-blue-700 font-medium">Age:</span>
-                <span className="text-xs text-blue-600 font-semibold">{pet.age}y</span>
+                <span className="text-xs text-[var(--pc-teal)] font-semibold">{pet.age}y</span>
               </div>
-              <div className="flex items-center gap-1 px-2.5 py-1 bg-orange-50 rounded-full border border-orange-200">
-                <span className="text-xs text-orange-700 font-medium">Weight:</span>
-                <span className="text-xs text-orange-600 font-semibold">{pet.weight}kg</span>
+              <div className="flex items-center gap-1 px-2.5 py-1 bg-[var(--pc-primary-light)] rounded-full border border-[var(--pc-primary)]/30">
+                <span className="text-xs text-[var(--pc-primary-hover)] font-medium">Weight:</span>
+                <span className="text-xs text-[var(--pc-primary-hover)] font-semibold">{pet.weight}kg</span>
               </div>
             </div>
 
@@ -123,7 +123,7 @@ export function PetCard({
               <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
                 hasAssignedVet 
                   ? 'bg-amber-50 border-amber-200 text-amber-700' 
-                  : 'bg-gray-100 border-gray-200 text-gray-600'
+                  : 'bg-muted border-border text-muted-foreground'
               }`}>
                 <ShieldCheck className="w-3.5 h-3.5" />
                 {getAssignedVetLabel(pet)}
@@ -146,7 +146,7 @@ export function PetCard({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onEdit}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold rounded-lg hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
+              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-[var(--pc-teal)] to-[var(--pc-teal-dark)] text-white text-xs font-semibold rounded-lg hover:shadow-lg hover:from-[var(--pc-teal-dark)] hover:to-[var(--pc-teal)] transition-all duration-200"
             >
               <Edit className="w-3.5 h-3.5" />
               Edit
@@ -158,7 +158,7 @@ export function PetCard({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-all duration-200 group-hover:bg-emerald-100 group-hover:text-emerald-700"
+                className="flex items-center justify-center px-3 py-2 bg-muted text-foreground text-xs font-semibold rounded-lg hover:bg-muted hover:text-foreground transition-all duration-200 group-hover:bg-emerald-100 group-hover:text-emerald-700"
               >
                 <MoreVertical className="w-3.5 h-3.5" />
               </motion.button>
@@ -169,14 +169,14 @@ export function PetCard({
                   initial={{ opacity: 0, y: -8, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden min-w-max"
+                  className="absolute top-full right-0 mt-1 bg-white border border-border rounded-lg shadow-xl z-50 overflow-hidden min-w-max"
                 >
                   <button
                     onClick={() => {
                       onAssignVet();
                       setShowMenu(false);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors text-left"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-foreground hover:bg-amber-50 hover:text-amber-700 transition-colors text-left"
                   >
                     <Stethoscope className="w-3.5 h-3.5" />
                     Assign Vet
@@ -189,8 +189,8 @@ export function PetCard({
                     disabled={!hasAssignedVet}
                     className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-left transition-colors ${
                       hasAssignedVet
-                        ? 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-700'
-                        : 'text-gray-400 cursor-not-allowed'
+                        ? 'text-foreground hover:bg-cyan-50 hover:text-cyan-700'
+                        : 'text-muted-foreground cursor-not-allowed'
                     }`}
                   >
                     <Stethoscope className="w-3.5 h-3.5" />

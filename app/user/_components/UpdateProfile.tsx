@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { handleUpdateProfile } from "@/lib/actions/auth-actions";
 import { UpdateUserData, updateUserSchema } from "../schema";
 import { useState, useRef } from "react";
@@ -81,7 +81,7 @@ export default function UpdateUserForm({
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 text-gray-900 overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-[var(--pc-cream)] via-white to-[var(--pc-teal-light)] text-foreground overflow-hidden">
             {/* Animated background elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div 
@@ -93,7 +93,7 @@ export default function UpdateUserForm({
                     }}
                 />
                 <div 
-                    className="absolute w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"
+                    className="absolute w-96 h-96 bg-[var(--pc-teal)]/10 rounded-full blur-3xl"
                     style={{
                         bottom: '10%',
                         right: `${15 + mousePosition.y * 0.01}%`,
@@ -103,16 +103,16 @@ export default function UpdateUserForm({
             </div>
 
             {/* Header */}
-            <header className="relative z-10 border-b border-gray-200 backdrop-blur-xl bg-white/80">
+            <header className="relative z-10 border-b border-border backdrop-blur-xl bg-white/80">
                 <div className="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
                     <button 
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors"
+                        className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5" />
                         <span className="font-medium">Back</span>
                     </button>
-                    <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
+                    <h1 className="text-xl font-bold text-foreground">Edit Profile</h1>
                     <div className="w-20"></div> {/* Spacer for centering */}
                 </div>
             </header>
@@ -120,7 +120,7 @@ export default function UpdateUserForm({
             <main className="relative z-10 max-w-4xl mx-auto px-6 py-12">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                     {/* Profile Image Section */}
-                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-8 shadow-xl">
+                    <div className="bg-white/80 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl">
                         <div className="flex flex-col items-center">
                             <div className="relative group">
                                 {/* Profile Image Display */}
@@ -140,8 +140,8 @@ export default function UpdateUserForm({
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center">
-                                            <UserCircle className="w-20 h-20 text-gray-900" />
+                                        <div className="w-full h-full bg-gradient-to-br from-primary to-[var(--pc-primary-hover)] flex items-center justify-center">
+                                            <UserCircle className="w-20 h-20 text-foreground" />
                                         </div>
                                     )}
                                 </div>
@@ -185,7 +185,7 @@ export default function UpdateUserForm({
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="mt-4 px-4 py-2 rounded-lg border border-gray-300 hover:border-yellow-500 hover:bg-yellow-50 transition-all text-sm font-medium text-gray-700 hover:text-primary"
+                                className="mt-4 px-4 py-2 rounded-lg border border-border hover:border-yellow-500 hover:bg-yellow-50 transition-all text-sm font-medium text-foreground hover:text-primary"
                             >
                                 Change Photo
                             </button>
@@ -207,7 +207,7 @@ export default function UpdateUserForm({
                     )}
 
                     {/* Personal Information Section */}
-                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-8 shadow-xl">
+                    <div className="bg-white/80 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl">
                         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
                             <User className="w-6 h-6 text-primary" />
                             Personal Information
@@ -216,7 +216,7 @@ export default function UpdateUserForm({
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* First Name */}
                             <div className="space-y-2">
-                                <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700">
+                                <label htmlFor="firstName" className="block text-sm font-semibold text-foreground">
                                     First Name
                                 </label>
                                 <div className="relative">
@@ -224,7 +224,7 @@ export default function UpdateUserForm({
                                         id="firstName"
                                         type="text"
                                         {...register("Firstname")}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all bg-white/50"
+                                        className="w-full px-4 py-3 rounded-xl border border-border focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all bg-white/50"
                                         placeholder="Enter your first name"
                                     />
                                 </div>
@@ -238,7 +238,7 @@ export default function UpdateUserForm({
 
                             {/* Last Name */}
                             <div className="space-y-2">
-                                <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">
+                                <label htmlFor="lastName" className="block text-sm font-semibold text-foreground">
                                     Last Name
                                 </label>
                                 <div className="relative">
@@ -246,7 +246,7 @@ export default function UpdateUserForm({
                                         id="lastName"
                                         type="text"
                                         {...register("Lastname")}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all bg-white/50"
+                                        className="w-full px-4 py-3 rounded-xl border border-border focus:border-yellow-500 focus:ring-2 focus:ring-yellow-500/20 outline-none transition-all bg-white/50"
                                         placeholder="Enter your last name"
                                     />
                                 </div>
@@ -261,27 +261,27 @@ export default function UpdateUserForm({
                     </div>
 
                     {/* Contact Information Section */}
-                    <div className="bg-white/80 backdrop-blur-xl border border-gray-200 rounded-3xl p-8 shadow-xl">
+                    <div className="bg-white/80 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-xl">
                         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-                            <Mail className="w-6 h-6 text-blue-600" />
+                            <Mail className="w-6 h-6 text-[var(--pc-teal)]" />
                             Contact Information
                         </h2>
 
                         <div className="space-y-6">
                             {/* Email */}
                             <div className="space-y-2">
-                                <label htmlFor="email" className="block text-sm font-semibold text-gray-700">
+                                <label htmlFor="email" className="block text-sm font-semibold text-foreground">
                                     Email Address
                                 </label>
                                 <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                         <Mail className="w-5 h-5" />
                                     </div>
                                     <input
                                         id="email"
                                         type="email"
                                         {...register("email")}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:border-[var(--pc-teal)] focus:ring-2 focus:ring-[var(--pc-teal)]/20 outline-none transition-all bg-white/50"
                                         placeholder="your.email@example.com"
                                     />
                                 </div>
@@ -295,18 +295,18 @@ export default function UpdateUserForm({
 
                             {/* Phone Number */}
                             <div className="space-y-2">
-                                <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-700">
+                                <label htmlFor="phoneNumber" className="block text-sm font-semibold text-foreground">
                                     Phone Number
                                 </label>
                                 <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground">
                                         <Phone className="w-5 h-5" />
                                     </div>
                                     <input
                                         id="phoneNumber"
                                         type="text"
                                         {...register("PhoneNumber")}
-                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all bg-white/50"
+                                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-border focus:border-[var(--pc-teal)] focus:ring-2 focus:ring-[var(--pc-teal)]/20 outline-none transition-all bg-white/50"
                                         placeholder="+1 (555) 000-0000"
                                     />
                                 </div>
@@ -325,7 +325,7 @@ export default function UpdateUserForm({
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-primary to-orange-600 text-white font-semibold hover:shadow-lg hover:shadow-primary/50 transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-gradient-to-r from-primary to-[var(--pc-primary-hover)] text-white font-semibold hover:shadow-lg hover:shadow-primary/50 transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                         >
                             {isSubmitting ? (
                                 <>
@@ -343,7 +343,7 @@ export default function UpdateUserForm({
                         <button
                             type="button"
                             onClick={() => router.back()}
-                            className="flex-1 sm:flex-none px-6 py-4 rounded-xl border-2 border-gray-300 font-semibold hover:bg-gray-50 transition-all"
+                            className="flex-1 sm:flex-none px-6 py-4 rounded-xl border-2 border-border font-semibold hover:bg-muted transition-all"
                         >
                             Cancel
                         </button>

@@ -12,7 +12,7 @@ import {
   RecentAppointments,
 } from "./_components";
 import { getDashboardStats } from "@/lib/api/admin/stats";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface DashboardStats {
   totalPets: number;
@@ -188,7 +188,7 @@ export default function AdminDashboardPage() {
           value={(stats?.appointmentsToday ?? 0).toString()}
           change={-2.4}
           icon={Calendar}
-          iconColor="text-blue-500"
+          iconColor="text-[var(--pc-teal)]"
           isLoading={loading}
         />
         <StatsCard

@@ -64,9 +64,9 @@ export default function AssignedPetsPage() {
 
   if (!hasVetAccess) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Assigned Pets Not Available</h1>
-        <p className="text-gray-500">This page is only available to verified vet providers.</p>
+      <div className="bg-white rounded-xl border border-border p-8 text-center">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Assigned Pets Not Available</h1>
+        <p className="text-muted-foreground">This page is only available to verified vet providers.</p>
       </div>
     );
   }
@@ -74,7 +74,7 @@ export default function AssignedPetsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f4f57]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -90,10 +90,10 @@ export default function AssignedPetsPage() {
 
   if (pets.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-        <PawPrint className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">No pets assigned yet</h1>
-        <p className="text-gray-500">Assigned pets from users will appear here for one-by-one follow-up.</p>
+      <div className="bg-white rounded-xl border border-border p-10 text-center">
+        <PawPrint className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+        <h1 className="text-2xl font-bold text-foreground mb-2">No pets assigned yet</h1>
+        <p className="text-muted-foreground">Assigned pets from users will appear here for one-by-one follow-up.</p>
       </div>
     );
   }
@@ -101,12 +101,12 @@ export default function AssignedPetsPage() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#0c4148]">Assigned Pets</h1>
-        <p className="text-gray-500 mt-1">Review and look after each assigned pet one by one.</p>
+        <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)]">Assigned Pets</h1>
+        <p className="text-muted-foreground mt-1">Review and look after each assigned pet one by one.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white border border-gray-200 rounded-xl p-4 space-y-3">
+        <div className="bg-white border border-border rounded-xl p-4 space-y-3">
           {pets.map((pet) => {
             const isActive = String(pet?._id) === selectedPetId;
             return (
@@ -114,63 +114,63 @@ export default function AssignedPetsPage() {
                 key={String(pet?._id)}
                 onClick={() => setSelectedPetId(String(pet?._id))}
                 className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
-                  isActive ? "border-[#0f4f57] bg-[#0f4f57]/5" : "border-gray-200 hover:bg-gray-50"
+                  isActive ? "border-[var(--pc-teal)] bg-[var(--pc-teal)]/5" : "border-border hover:bg-muted"
                 }`}
               >
-                <p className="font-semibold text-gray-900">{pet?.name || "Unnamed pet"}</p>
-                <p className="text-xs text-gray-500 capitalize">{pet?.species || "Unknown species"}</p>
+                <p className="font-semibold text-foreground">{pet?.name || "Unnamed pet"}</p>
+                <p className="text-xs text-muted-foreground capitalize">{pet?.species || "Unknown species"}</p>
               </button>
             );
           })}
         </div>
 
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-6">
+        <div className="lg:col-span-2 bg-white border border-border rounded-xl p-6">
           {selectedPet ? (
             <div className="space-y-5">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{selectedPet?.name || "Pet profile"}</h2>
-                <p className="text-sm text-gray-500 capitalize">
+                <h2 className="text-2xl font-bold text-foreground">{selectedPet?.name || "Pet profile"}</h2>
+                <p className="text-sm text-muted-foreground capitalize">
                   {(selectedPet?.species || "unknown")} {selectedPet?.breed ? `• ${selectedPet.breed}` : ""}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <div className="rounded-lg border border-gray-200 p-3">
-                  <p className="text-gray-500">Age</p>
-                  <p className="font-semibold text-gray-900">{selectedPet?.age ? `${selectedPet.age} years` : "N/A"}</p>
+                <div className="rounded-lg border border-border p-3">
+                  <p className="text-muted-foreground">Age</p>
+                  <p className="font-semibold text-foreground">{selectedPet?.age ? `${selectedPet.age} years` : "N/A"}</p>
                 </div>
-                <div className="rounded-lg border border-gray-200 p-3">
-                  <p className="text-gray-500">Weight</p>
-                  <p className="font-semibold text-gray-900">{selectedPet?.weight ? `${selectedPet.weight} kg` : "N/A"}</p>
+                <div className="rounded-lg border border-border p-3">
+                  <p className="text-muted-foreground">Weight</p>
+                  <p className="font-semibold text-foreground">{selectedPet?.weight ? `${selectedPet.weight} kg` : "N/A"}</p>
                 </div>
               </div>
 
-              <div className="rounded-lg border border-gray-200 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-gray-700">
+              <div className="rounded-lg border border-border p-4 space-y-2">
+                <div className="flex items-center gap-2 text-foreground">
                   <UserRound className="h-4 w-4" />
                   <span className="font-medium">Owner</span>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {selectedPet?.owner?.name || selectedPet?.user?.name || selectedPet?.owner?.email || "Not available"}
                 </p>
               </div>
 
-              <div className="rounded-lg border border-gray-200 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-gray-700">
+              <div className="rounded-lg border border-border p-4 space-y-2">
+                <div className="flex items-center gap-2 text-foreground">
                   <HeartPulse className="h-4 w-4" />
                   <span className="font-medium">Care Notes</span>
                 </div>
-                <p className="text-sm text-gray-600 whitespace-pre-line">
+                <p className="text-sm text-muted-foreground whitespace-pre-line">
                   {selectedPet?.care?.notes || selectedPet?.carePlan?.notes || "No care notes added yet."}
                 </p>
               </div>
 
-              <div className="rounded-lg border border-gray-200 p-4">
-                <div className="flex items-center gap-2 text-gray-700 mb-1">
+              <div className="rounded-lg border border-border p-4">
+                <div className="flex items-center gap-2 text-foreground mb-1">
                   <CalendarDays className="h-4 w-4" />
                   <span className="font-medium">Assigned On</span>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">
                   {selectedPet?.assignedAt
                     ? new Date(selectedPet.assignedAt).toLocaleString()
                     : selectedPet?.updatedAt
@@ -183,7 +183,7 @@ export default function AssignedPetsPage() {
                 <div className="pt-1">
                   <Link
                     href={`/provider/messages?participantId=${selectedPet.owner._id}&participantRole=user&participantName=${encodeURIComponent(selectedPet.owner.name || "Pet Owner")}`}
-                    className="inline-flex items-center rounded-lg bg-[#0f4f57] px-4 py-2 text-sm font-medium text-white hover:bg-[#0c4148]"
+                    className="inline-flex items-center rounded-lg bg-[var(--pc-teal)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--pc-teal-dark)]"
                   >
                     Send Care Advice
                   </Link>
@@ -191,7 +191,7 @@ export default function AssignedPetsPage() {
               )}
             </div>
           ) : (
-            <div className="text-center py-12 text-gray-500">Select an assigned pet to view details.</div>
+            <div className="text-center py-12 text-muted-foreground">Select an assigned pet to view details.</div>
           )}
         </div>
       </div>

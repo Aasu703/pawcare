@@ -83,7 +83,7 @@ export default function ProviderPostsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f4f57]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -92,12 +92,12 @@ export default function ProviderPostsPage() {
     <div className="max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#0c4148]">Announcements & Posts</h1>
-          <p className="text-gray-500 mt-1">Share updates with your customers</p>
+          <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)]">Announcements & Posts</h1>
+          <p className="text-muted-foreground mt-1">Share updates with your customers</p>
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-[#0f4f57] text-white px-4 py-2 rounded-lg hover:bg-[#0c4148] transition"
+          className="flex items-center gap-2 bg-[var(--pc-teal)] text-white px-4 py-2 rounded-lg hover:bg-[var(--pc-teal-dark)] transition"
         >
           <Plus className="h-5 w-5" /> New Post
         </button>
@@ -105,9 +105,9 @@ export default function ProviderPostsPage() {
 
       {posts.length === 0 ? (
         <div className="text-center py-16">
-          <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-600">No posts yet</h3>
-          <p className="text-gray-400 mt-1">Create your first post to share with customers</p>
+          <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-muted-foreground">No posts yet</h3>
+          <p className="text-muted-foreground mt-1">Create your first post to share with customers</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -116,29 +116,29 @@ export default function ProviderPostsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h2 className="text-lg font-semibold text-[#0c4148]">{post.title}</h2>
+                    <h2 className="text-lg font-semibold text-[var(--pc-teal-dark)]">{post.title}</h2>
                     <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${
-                      post.isPublic ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                      post.isPublic ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"
                     }`}>
                       {post.isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                       {post.isPublic ? "Public" : "Draft"}
                     </span>
                   </div>
-                  <p className="text-gray-600 whitespace-pre-wrap">{post.content}</p>
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-muted-foreground whitespace-pre-wrap">{post.content}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
                     {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : ""}
                   </p>
                 </div>
                 <div className="flex gap-2 ml-4">
                   <button
                     onClick={() => openEdit(post)}
-                    className="p-2 text-gray-400 hover:text-[#0f4f57] hover:bg-gray-100 rounded-lg transition"
+                    className="p-2 text-muted-foreground hover:text-[var(--pc-teal)] hover:bg-muted rounded-lg transition"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(post._id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                    className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-lg transition"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -154,31 +154,31 @@ export default function ProviderPostsPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-[#0c4148]">
+              <h2 className="text-xl font-bold text-[var(--pc-teal-dark)]">
                 {editingPost ? "Edit Post" : "New Post"}
               </h2>
-              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-gray-100 rounded">
+              <button onClick={() => setShowModal(false)} className="p-1 hover:bg-muted rounded">
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Title</label>
                 <input
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Post title"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Content</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Content</label>
                 <textarea
                   value={form.content}
                   onChange={(e) => setForm({ ...form, content: e.target.value })}
                   rows={5}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Write your announcement..."
                 />
               </div>
@@ -188,14 +188,14 @@ export default function ProviderPostsPage() {
                   id="isPublic"
                   checked={form.isPublic}
                   onChange={(e) => setForm({ ...form, isPublic: e.target.checked })}
-                  className="rounded border-gray-300"
+                  className="rounded border-border"
                 />
-                <label htmlFor="isPublic" className="text-sm text-gray-700">Make this post public</label>
+                <label htmlFor="isPublic" className="text-sm text-foreground">Make this post public</label>
               </div>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="w-full bg-[#0f4f57] text-white py-2 rounded-lg font-medium hover:bg-[#0c4148] disabled:opacity-50 transition"
+                className="w-full bg-[var(--pc-teal)] text-white py-2 rounded-lg font-medium hover:bg-[var(--pc-teal-dark)] disabled:opacity-50 transition"
               >
                 {submitting ? "Saving..." : editingPost ? "Update Post" : "Create Post"}
               </button>

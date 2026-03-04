@@ -16,7 +16,7 @@ export default function StatsCard({
   value,
   change,
   icon: Icon,
-  iconColor = "text-orange-500",
+  iconColor = "text-[var(--pc-primary)]",
   isLoading = false,
   onClick,
 }: any) {

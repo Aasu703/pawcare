@@ -136,27 +136,27 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
       <div className="w-full bg-white/80 p-10 md:p-12 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">Create Account</h2>
-          <p className="text-gray-500 font-medium">Get started with your free account</p>
+          <h2 className="text-3xl font-extrabold text-foreground mb-2 tracking-tight">Create Account</h2>
+          <p className="text-muted-foreground font-medium">Get started with your free account</p>
         </div>
 
         {/* Role Toggle */}
         {!hideRoleToggle && (
-          <div className="flex mb-8 bg-gray-100/80 p-1.5 rounded-2xl relative">
+          <div className="flex mb-8 bg-muted/80 p-1.5 rounded-2xl relative">
             <div
               className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-md transition-all duration-300 ease-spring ${role === 'user' ? 'left-1.5' : 'left-[calc(50%+4.5px)]'}`}
             ></div>
             <button
               type="button"
               onClick={() => { setRole('user'); setErrors({}); }}
-              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'user' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <span>🐕</span> Pet Owner
             </button>
             <button
               type="button"
               onClick={() => { setRole('provider'); setErrors({}); }}
-              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-gray-500 hover:text-gray-700'}`}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 relative z-10 flex items-center justify-center gap-2 ${role === 'provider' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
             >
               <span>🏥</span> Provider
             </button>
@@ -169,12 +169,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
               {/* First Name & Last Name */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="Firstname" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="Firstname" className="block text-sm font-bold text-foreground ml-1">
                     First Name
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <User className={`h-5 w-5 transition-colors ${errors.Firstname ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                      <User className={`h-5 w-5 transition-colors ${errors.Firstname ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                     </div>
                     <input
                       id="Firstname"
@@ -182,7 +182,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                       type="text"
                       value={formData.Firstname}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.Firstname
+                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.Firstname
                         ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                         : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                         }`}
@@ -193,7 +193,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="Lastname" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="Lastname" className="block text-sm font-bold text-foreground ml-1">
                     Last Name
                   </label>
                   <input
@@ -202,7 +202,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type="text"
                     value={formData.Lastname}
                     onChange={handleChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.Lastname
+                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.Lastname
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -214,12 +214,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
 
               {/* Email */}
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-bold text-gray-700 ml-1">
+                <label htmlFor="email" className="block text-sm font-bold text-foreground ml-1">
                   Email Address
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                    <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                   </div>
                   <input
                     id="email"
@@ -227,7 +227,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.email
+                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.email
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -239,12 +239,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
 
               {/* Phone */}
               <div className="space-y-2">
-                <label htmlFor="phoneNumber" className="block text-sm font-bold text-gray-700 ml-1">
+                <label htmlFor="phoneNumber" className="block text-sm font-bold text-foreground ml-1">
                   Phone Number
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Phone className={`h-5 w-5 transition-colors ${errors.phoneNumber ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                    <Phone className={`h-5 w-5 transition-colors ${errors.phoneNumber ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                   </div>
                   <input
                     id="phoneNumber"
@@ -252,7 +252,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type="text"
                     value={formData.phoneNumber}
                     onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.phoneNumber
+                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.phoneNumber
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -265,12 +265,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
               {/* Password & Confirm Password */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="password" className="block text-sm font-bold text-foreground ml-1">
                     Password
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                     </div>
                     <input
                       id="password"
@@ -278,7 +278,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                       type={showPasswords ? "text" : "password"}
                       value={formData.password}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
+                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
                         ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                         : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                         }`}
@@ -289,7 +289,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="confirmPassword" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="confirmPassword" className="block text-sm font-bold text-foreground ml-1">
                     Confirm
                   </label>
                   <input
@@ -298,7 +298,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type={showPasswords ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
+                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -312,12 +312,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
             <>
               {/* Provider Fields */}
               <div className="space-y-2">
-                <label htmlFor="businessName" className="block text-sm font-bold text-gray-700 ml-1">
+                <label htmlFor="businessName" className="block text-sm font-bold text-foreground ml-1">
                   Business Name
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Building className={`h-5 w-5 transition-colors ${errors.businessName ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                    <Building className={`h-5 w-5 transition-colors ${errors.businessName ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                   </div>
                   <input
                     id="businessName"
@@ -325,7 +325,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type="text"
                     value={providerFormData.businessName}
                     onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.businessName
+                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.businessName
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -336,12 +336,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="address" className="block text-sm font-bold text-gray-700 ml-1">
+                <label htmlFor="address" className="block text-sm font-bold text-foreground ml-1">
                   Business Address
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <MapPin className={`h-5 w-5 transition-colors ${errors.address ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                    <MapPin className={`h-5 w-5 transition-colors ${errors.address ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                   </div>
                   <input
                     id="address"
@@ -349,7 +349,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type="text"
                     value={providerFormData.address}
                     onChange={handleChange}
-                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.address
+                    className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.address
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -361,12 +361,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="phone" className="block text-sm font-bold text-foreground ml-1">
                     Phone
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Phone className={`h-5 w-5 transition-colors ${errors.phone ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                      <Phone className={`h-5 w-5 transition-colors ${errors.phone ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                     </div>
                     <input
                       id="phone"
@@ -374,7 +374,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                       type="tel"
                       value={providerFormData.phone}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.phone
+                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.phone
                         ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                         : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                         }`}
@@ -385,12 +385,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="providerEmail" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="providerEmail" className="block text-sm font-bold text-foreground ml-1">
                     Email
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                      <Mail className={`h-5 w-5 transition-colors ${errors.email ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                     </div>
                     <input
                       id="providerEmail"
@@ -398,7 +398,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                       type="email"
                       value={providerFormData.email}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.email
+                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.email
                         ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                         : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                         }`}
@@ -411,12 +411,12 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor="providerPassword" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="providerPassword" className="block text-sm font-bold text-foreground ml-1">
                     Password
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-gray-400 group-focus-within:text-primary'}`} />
+                      <Lock className={`h-5 w-5 transition-colors ${errors.password ? 'text-red-400' : 'text-muted-foreground group-focus-within:text-primary'}`} />
                     </div>
                     <input
                       id="providerPassword"
@@ -424,7 +424,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                       type={showPasswords ? "text" : "password"}
                       value={providerFormData.password}
                       onChange={handleChange}
-                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
+                      className={`w-full pl-12 pr-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.password
                         ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                         : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                         }`}
@@ -435,7 +435,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="providerConfirmPassword" className="block text-sm font-bold text-gray-700 ml-1">
+                  <label htmlFor="providerConfirmPassword" className="block text-sm font-bold text-foreground ml-1">
                     Confirm
                   </label>
                   <input
@@ -444,7 +444,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
                     type={showPasswords ? "text" : "password"}
                     value={providerFormData.confirmPassword}
                     onChange={handleChange}
-                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-gray-50/50 text-gray-900 placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
+                    className={`w-full px-4 py-4 border-2 rounded-2xl bg-background/50 text-foreground placeholder-gray-400 outline-none transition-all duration-300 ${errors.confirmPassword
                       ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
                       : 'border-gray-100 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/10'
                       }`}
@@ -460,7 +460,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
             <button
               type="button"
               onClick={() => setShowPasswords((prev) => !prev)}
-              className="text-xs font-semibold text-primary hover:text-orange-600 transition-colors"
+              className="text-xs font-semibold text-primary hover:text-[var(--pc-primary-hover)] transition-colors"
             >
               {showPasswords ? "Hide Passwords" : "Show Passwords"}
             </button>
@@ -470,7 +470,7 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
           <button
             type="submit"
             disabled={loading}
-            className="group w-full bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-primary text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden mt-6"
+            className="group w-full bg-gradient-to-r from-primary to-[var(--pc-primary-hover)] hover:from-[var(--pc-primary-hover)] hover:to-primary text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 disabled:opacity-70 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center gap-3 relative overflow-hidden mt-6"
           >
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             {loading ? (
@@ -488,9 +488,9 @@ export default function RegisterForm(props: RegisterFormProps = {}) {
         </form>
 
         {/* Login Link */}
-        <p className="mt-8 text-center text-gray-500 font-medium">
+        <p className="mt-8 text-center text-muted-foreground font-medium">
           Already have an account?{' '}
-          <Link href="/login" className="font-bold text-primary hover:text-orange-600 transition-colors ml-1">
+          <Link href="/login" className="font-bold text-primary hover:text-[var(--pc-primary-hover)] transition-colors ml-1">
             Sign in here
           </Link>
         </p>

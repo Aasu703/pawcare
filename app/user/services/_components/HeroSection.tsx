@@ -6,7 +6,7 @@ export function HeroSection() {
     <section className="relative w-full bg-[#faf7f2] pt-12 pb-20 px-4 md:px-6 overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#f59e0b]/5 blur-3xl"></div>
+        <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[var(--pc-primary)]/5 blur-3xl"></div>
         <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-[#1a3a2a]/5 blur-3xl"></div>
       </div>
 
@@ -14,7 +14,7 @@ export function HeroSection() {
         {/* Left Content */}
         <div className="space-y-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-[#e7e5e4] rounded-full shadow-sm">
-            <PawPrint className="w-3.5 h-3.5 text-[#f59e0b]" />
+            <PawPrint className="w-3.5 h-3.5 text-[var(--pc-primary)]" />
             <span className="text-xs font-bold tracking-wide text-[#1a3a2a] uppercase">
               Trusted Pet Care
             </span>
@@ -22,10 +22,10 @@ export function HeroSection() {
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#1c1917] leading-[1.1]">
             Book care your pet <br />
-            <span className="text-[#f59e0b] relative inline-block">
+            <span className="text-[var(--pc-primary)] relative inline-block">
               actually enjoys
               <svg
-                className="absolute w-full h-3 -bottom-1 left-0 text-[#f59e0b]/20"
+                className="absolute w-full h-3 -bottom-1 left-0 text-[var(--pc-primary)]/20"
                 viewBox="0 0 100 10"
                 preserveAspectRatio="none"
               >
@@ -58,13 +58,13 @@ export function HeroSection() {
               </p>
               <p className="text-2xl font-bold text-[#1c1917]">50K+</p>
             </div>
-            <div className="bg-white p-4 rounded-xl border-l-4 border-l-blue-500 shadow-sm">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-l-[var(--pc-teal)] shadow-sm">
               <p className="text-[10px] font-bold text-[#78716c] uppercase tracking-wider mb-1">
                 Avg Rating
               </p>
               <div className="flex items-center gap-1">
                 <p className="text-2xl font-bold text-[#1c1917]">4.8</p>
-                <Star className="w-4 h-4 text-[#f59e0b] fill-[#f59e0b]" />
+                <Star className="w-4 h-4 text-[var(--pc-primary)] fill-[var(--pc-primary)]" />
               </div>
             </div>
             <div className="bg-white p-4 rounded-xl border-l-4 border-l-rose-500 shadow-sm">
@@ -85,7 +85,7 @@ export function HeroSection() {
 
             <div className="relative z-10 flex flex-col items-center text-center space-y-6">
               <div className="w-24 h-24 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 shadow-inner">
-                <PawPrint className="w-12 h-12 text-[#f59e0b]" />
+                <PawPrint className="w-12 h-12 text-[var(--pc-primary)]" />
               </div>
 
               <div>

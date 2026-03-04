@@ -117,9 +117,9 @@ export default function VetAppointmentsPage() {
 
   if (!hasVetAccess) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Vet Appointments Not Available</h1>
-        <p className="text-gray-500">
+      <div className="bg-white rounded-xl border border-border p-8 text-center">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Vet Appointments Not Available</h1>
+        <p className="text-muted-foreground">
           This page is only available to verified vet providers.
         </p>
       </div>
@@ -129,7 +129,7 @@ export default function VetAppointmentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f4f57]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -137,48 +137,48 @@ export default function VetAppointmentsPage() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#0c4148]">Vet Appointments</h1>
-        <p className="text-gray-500 mt-1">Complete checkups and save reports to pet health records.</p>
+        <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)]">Vet Appointments</h1>
+        <p className="text-muted-foreground mt-1">Complete checkups and save reports to pet health records.</p>
       </div>
 
       {appointmentList.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <HeartPulse className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-lg text-gray-500">No confirmed vet appointments found</p>
-          <p className="text-sm text-gray-400 mt-1">Confirmed bookings will appear here for checkup reporting.</p>
+        <div className="text-center py-20 bg-white rounded-xl border border-border">
+          <HeartPulse className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-lg text-muted-foreground">No confirmed vet appointments found</p>
+          <p className="text-sm text-muted-foreground mt-1">Confirmed bookings will appear here for checkup reporting.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {appointmentList.map((booking) => (
-            <div key={booking._id} className="bg-white border border-gray-200 rounded-xl p-5">
+            <div key={booking._id} className="bg-white border border-border rounded-xl p-5">
               <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">{booking.service?.title || "Vet Service"}</h3>
+                <h3 className="font-semibold text-foreground">{booking.service?.title || "Vet Service"}</h3>
                 <span className="text-xs px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 capitalize">
                   {booking.status}
                 </span>
               </div>
 
-              <div className="mt-3 space-y-2 text-sm text-gray-600">
+              <div className="mt-3 space-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span>{new Date(booking.startTime).toLocaleDateString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-gray-400" />
+                  <Clock className="h-4 w-4 text-muted-foreground" />
                   <span>
                     {new Date(booking.startTime).toLocaleTimeString()} - {new Date(booking.endTime).toLocaleTimeString()}
                   </span>
                 </div>
-                <p><span className="font-medium text-gray-700">Pet:</span> {booking.pet?.name || booking.petId || "Not linked"}</p>
+                <p><span className="font-medium text-foreground">Pet:</span> {booking.pet?.name || booking.petId || "Not linked"}</p>
                 {booking.user && (
-                  <p><span className="font-medium text-gray-700">Owner:</span> {booking.user.name || booking.user.email || "N/A"}</p>
+                  <p><span className="font-medium text-foreground">Owner:</span> {booking.user.name || booking.user.email || "N/A"}</p>
                 )}
               </div>
 
               <button
                 onClick={() => openForm(booking)}
                 disabled={!booking.petId}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[#0f4f57] text-white px-4 py-2.5 rounded-lg font-medium hover:bg-[#0c4148] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 bg-[var(--pc-teal)] text-white px-4 py-2.5 rounded-lg font-medium hover:bg-[var(--pc-teal-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <FilePlus2 className="h-4 w-4" />
                 Add Checkup Report
@@ -192,53 +192,53 @@ export default function VetAppointmentsPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-xl">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-bold text-gray-900">New Checkup Report</h2>
-              <button onClick={closeForm} className="text-gray-400 hover:text-gray-600">
+              <h2 className="text-xl font-bold text-foreground">New Checkup Report</h2>
+              <button onClick={closeForm} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={submitReport} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Title</label>
                 <input
                   type="text"
                   required
                   value={form.title}
                   onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Checkup Notes</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Checkup Notes</label>
                 <textarea
                   required
                   value={form.description}
                   onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
                   rows={4}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Checkup Date</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Checkup Date</label>
                   <input
                     type="date"
                     required
                     value={form.date}
                     onChange={(e) => setForm((prev) => ({ ...prev, date: e.target.value }))}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Next Follow-up (optional)</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Next Follow-up (optional)</label>
                   <input
                     type="date"
                     value={form.nextDueDate}
                     onChange={(e) => setForm((prev) => ({ ...prev, nextDueDate: e.target.value }))}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -246,7 +246,7 @@ export default function VetAppointmentsPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full bg-[#0f4f57] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0c4148] disabled:opacity-60 transition-colors"
+                className="w-full bg-[var(--pc-teal)] text-white py-2.5 rounded-lg font-semibold hover:bg-[var(--pc-teal-dark)] disabled:opacity-60 transition-colors"
               >
                 {submitting ? "Saving..." : "Save To Health Records"}
               </button>

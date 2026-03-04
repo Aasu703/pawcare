@@ -94,9 +94,9 @@ export default function ProviderServicesPage() {
 
   if (!hasServiceAccess) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Services Not Available</h1>
-        <p className="text-gray-500">
+      <div className="bg-white rounded-xl border border-border p-8 text-center">
+        <h1 className="text-2xl font-bold text-foreground mb-2">Services Not Available</h1>
+        <p className="text-muted-foreground">
           Shop owners cannot create service bookings. Use Inventory to add products for users.
         </p>
       </div>
@@ -107,12 +107,12 @@ export default function ProviderServicesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Services</h1>
-          <p className="text-gray-500 mt-1">Manage the services you offer</p>
+          <h1 className="text-3xl font-bold text-foreground">My Services</h1>
+          <p className="text-muted-foreground mt-1">Manage the services you offer</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowForm(true); }}
-          className="flex items-center gap-2 bg-[#0f4f57] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-[#0c4148] transition-colors"
+          className="flex items-center gap-2 bg-[var(--pc-teal)] text-white px-5 py-2.5 rounded-lg font-medium hover:bg-[var(--pc-teal-dark)] transition-colors"
         >
           <Plus className="h-5 w-5" />
           Add Service
@@ -125,46 +125,46 @@ export default function ProviderServicesPage() {
           <div className="bg-white rounded-2xl p-6 w-full max-w-lg">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-xl font-bold">{editingId ? "Edit Service" : "Add Service"}</h2>
-              <button onClick={resetForm} className="text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              <button onClick={resetForm} className="text-muted-foreground hover:text-muted-foreground"><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Title</label>
                 <input type="text" value={form.title ?? ""} onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" required />
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent" required />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-foreground mb-1">Description</label>
                 <textarea value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent resize-none" />
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent resize-none" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Price ($)</label>
                   <input type="number" value={form.price ?? 0} onChange={(e) => setForm({ ...form, price: +e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="0" required />
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent" min="0" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (min)</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Duration (min)</label>
                   <input type="number" value={form.duration_minutes ?? 30} onChange={(e) => setForm({ ...form, duration_minutes: +e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent" min="1" required />
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent" min="1" required />
                 </div>
               </div>
               {vetOnly ? (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Category</label>
                   <input
                     type="text"
                     value="Vet"
                     disabled
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-100 text-gray-600"
+                    className="w-full px-4 py-2.5 border border-border rounded-lg bg-muted text-muted-foreground"
                   />
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">Category</label>
                   <select value={form.catergory ?? ""} onChange={(e) => setForm({ ...form, catergory: e.target.value as any })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent">
+                    className="w-full px-4 py-2.5 border border-border rounded-lg focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent">
                     <option value="">Select category</option>
                     <option value="grooming">Grooming</option>
                     <option value="boarding">Boarding</option>
@@ -172,7 +172,7 @@ export default function ProviderServicesPage() {
                 </div>
               )}
               <button type="submit"
-                className="w-full bg-[#0f4f57] text-white py-2.5 rounded-lg font-semibold hover:bg-[#0c4148] transition-colors">
+                className="w-full bg-[var(--pc-teal)] text-white py-2.5 rounded-lg font-semibold hover:bg-[var(--pc-teal-dark)] transition-colors">
                 {editingId ? "Update Service" : "Create Service"}
               </button>
             </form>
@@ -183,24 +183,24 @@ export default function ProviderServicesPage() {
       {/* Services Table */}
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>
         </div>
       ) : serviceList.length === 0 ? (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <p className="text-lg text-gray-500">No services yet</p>
-          <p className="text-sm text-gray-400 mt-1">Add your first service to get started</p>
+        <div className="text-center py-20 bg-white rounded-xl border border-border">
+          <p className="text-lg text-muted-foreground">No services yet</p>
+          <p className="text-sm text-muted-foreground mt-1">Add your first service to get started</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl border border-border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Price</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Duration</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -211,14 +211,14 @@ export default function ProviderServicesPage() {
                   'bg-amber-100 text-amber-800';
                 
                 return (
-                  <tr key={s._id || s.id || `${s.title || "service"}-${idx}`} className="hover:bg-gray-50">
+                  <tr key={s._id || s.id || `${s.title || "service"}-${idx}`} className="hover:bg-muted">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">{s.title}</div>
-                      <div className="text-xs text-gray-500 truncate max-w-xs">{s.description}</div>
+                      <div className="text-sm font-medium text-foreground">{s.title}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-xs">{s.description}</div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 capitalize">{s.catergory || s.category || "-"}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">${s.price}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{s.duration_minutes} min</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground capitalize">{s.catergory || s.category || "-"}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-foreground">${s.price}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">{s.duration_minutes} min</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${statusColor}`}>
                         {s.approvalStatus === 'approved' ? 'Approved' :
@@ -228,8 +228,8 @@ export default function ProviderServicesPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex gap-2 justify-end">
-                        <button onClick={() => handleEdit(s)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Pencil className="h-4 w-4" /></button>
-                        <button onClick={() => handleDelete(s._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                        <button onClick={() => handleEdit(s)} className="p-2 text-muted-foreground hover:text-[var(--pc-teal)] hover:bg-[var(--pc-teal-light)] rounded-lg"><Pencil className="h-4 w-4" /></button>
+                        <button onClick={() => handleDelete(s._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
                       </div>
                     </td>
                   </tr>

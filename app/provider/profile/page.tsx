@@ -228,7 +228,7 @@ export default function ProviderProfilePage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
       </div>
     );
   }
@@ -236,8 +236,8 @@ export default function ProviderProfilePage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Provider Profile</h1>
-        <p className="text-gray-600">Update your business and verification details.</p>
+        <h1 className="text-3xl font-bold text-foreground">Provider Profile</h1>
+        <p className="text-muted-foreground">Update your business and verification details.</p>
         {form.pawcareVerified && (form.providerType === "shop" || form.providerType === "vet") ? (
           <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
             <BadgeCheck className="h-4 w-4" />
@@ -248,11 +248,11 @@ export default function ProviderProfilePage() {
 
       <form onSubmit={onSubmit} className="space-y-6">
         {/* Profile Photo Section */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-border p-6">
           <h2 className="text-lg font-semibold mb-4">Profile Photo</h2>
           <div className="flex flex-col md:flex-row gap-6 items-start">
             {/* Photo Preview */}
-            <div className="relative w-full md:w-40 h-40 bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden shrink-0">
+            <div className="relative w-full md:w-40 h-40 bg-muted rounded-xl border-2 border-dashed border-border flex items-center justify-center overflow-hidden shrink-0">
               {profileImageUrl && !imageLoadError ? (
                 <img
                   src={profileImageUrl}
@@ -262,23 +262,23 @@ export default function ProviderProfilePage() {
                 />
               ) : profileImageUrl && imageLoadError ? (
                 <div className="text-center">
-                  <svg className="h-8 w-8 text-gray-400 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-8 w-8 text-muted-foreground mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
-                  <p className="text-xs text-gray-500">Failed to load image</p>
+                  <p className="text-xs text-muted-foreground">Failed to load image</p>
                 </div>
               ) : (
                 <div className="text-center">
-                  <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">No photo yet</p>
+                  <Camera className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-xs text-muted-foreground">No photo yet</p>
                 </div>
               )}
             </div>
 
             {/* Upload Button */}
             <div className="flex-1 space-y-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-3 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10 transition-colors">
+              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-4 py-3 text-sm font-semibold text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10 transition-colors">
                 <FileUp className="h-5 w-5" />
                 {saving ? "Uploading..." : "Change Photo"}
                 <input
@@ -296,7 +296,7 @@ export default function ProviderProfilePage() {
                   }}
                 />
               </label>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Accepted formats: JPG, PNG, WEBP (max 5MB).
               </p>
               {profileImageUrl && (
@@ -319,68 +319,68 @@ export default function ProviderProfilePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-border p-6">
           <h2 className="text-lg font-semibold mb-4">Business Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               value={form.businessName}
               onChange={(e) => onChange("businessName", e.target.value)}
               placeholder="Business name"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             <input
               value={form.email}
               onChange={(e) => onChange("email", e.target.value)}
               placeholder="Email"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             <input
               value={form.phone}
               onChange={(e) => onChange("phone", e.target.value)}
               placeholder="Phone"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             <input
               value={form.address}
               onChange={(e) => onChange("address", e.target.value)}
               placeholder="Address"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-border p-6">
           <h2 className="text-lg font-semibold mb-4">Verification Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               value={form.clinicOrShopName}
               onChange={(e) => onChange("clinicOrShopName", e.target.value)}
               placeholder="Clinic/Shop name"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             <input
               value={form.panNumber}
               onChange={(e) => onChange("panNumber", e.target.value.toUpperCase())}
               placeholder="PAN number"
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary uppercase"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary uppercase"
             />
             <textarea
               value={form.experience}
               onChange={(e) => onChange("experience", e.target.value)}
               placeholder="Experience"
               rows={4}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             <textarea
               value={form.certification}
               onChange={(e) => onChange("certification", e.target.value)}
               placeholder="Certification"
               rows={4}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+              className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
             />
             {form.providerType === "vet" ? (
               <div className="md:col-span-2 space-y-2">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-2 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-4 py-2 text-sm font-semibold text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10">
                   <FileUp className="h-4 w-4" />
                   {saving ? "Uploading..." : "Attach Certification File"}
                   <input
@@ -401,7 +401,7 @@ export default function ProviderProfilePage() {
                       href={certificateUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1 font-semibold text-[#0f4f57] hover:underline"
+                      className="inline-flex items-center gap-1 font-semibold text-[var(--pc-teal)] hover:underline"
                     >
                       <Paperclip className="h-3.5 w-3.5" />
                       View Attached Certificate
@@ -421,7 +421,7 @@ export default function ProviderProfilePage() {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Accepted formats: PDF, JPG, PNG, WEBP (max 10MB).
                   </p>
                 )}
@@ -449,7 +449,7 @@ export default function ProviderProfilePage() {
                   }))
                 }
                 placeholder="Location notes (optional)"
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-primary"
+                className="w-full rounded-xl border border-border px-4 py-3 outline-none focus:border-primary"
               />
             </div>
           )}

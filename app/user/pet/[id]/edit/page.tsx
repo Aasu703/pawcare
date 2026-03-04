@@ -50,10 +50,10 @@ export default function EditPetPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-[var(--pc-teal-light)] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading pet details...</p>
+          <p className="text-muted-foreground">Loading pet details...</p>
         </div>
       </div>
     );
@@ -66,8 +66,8 @@ export default function EditPetPage() {
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
             <PawPrint className="w-8 h-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Pet</h2>
-          <p className="text-gray-600 mb-6">{error || 'Pet not found'}</p>
+          <h2 className="text-xl font-bold text-foreground mb-2">Error Loading Pet</h2>
+          <p className="text-muted-foreground mb-6">{error || 'Pet not found'}</p>
           <button
             onClick={() => window.history.back()}
             className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"

@@ -2,8 +2,8 @@
 
 export default function loading() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+        <main className="min-h-screen flex items-center justify-center bg-muted">
+            <div className="loader ease-linear rounded-full border-8 border-t-8 border-border h-32 w-32"></div>
             <style jsx>{`
                 .loader {
                     border-top-color: #3498db;

@@ -21,7 +21,7 @@ const providerTypes = [
     title: "Pet Shop",
     description: "Sell pet supplies, food, toys, and accessories",
     icon: ShoppingBag,
-    color: "bg-blue-500",
+    color: "bg-[var(--pc-teal)]",
   },
   {
     id: "babysitter",
@@ -155,14 +155,14 @@ export default function SelectProviderType() {
   const isShop = selectedType === "shop";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50/30 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-[var(--pc-cream)] via-white to-[var(--pc-primary-light)]/30 flex items-center justify-center p-6">
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Choose Your Provider Type
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Select the type of pet services you provide. This will help us customize your experience and connect you with the right customers.
           </p>
         </div>
@@ -182,7 +182,7 @@ export default function SelectProviderType() {
                 className={`relative bg-white/80 backdrop-blur-md rounded-3xl p-8 border-2 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 ${
                   isSelected
                     ? "border-primary shadow-lg shadow-primary/20 scale-105"
-                    : "border-gray-200 hover:border-primary/50"
+                    : "border-border hover:border-primary/50"
                 }`}
               >
                 {isSelected && (
@@ -196,8 +196,8 @@ export default function SelectProviderType() {
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{type.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{type.description}</p>
+                    <h3 className="text-xl font-bold text-foreground mb-2">{type.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{type.description}</p>
                   </div>
                 </div>
               </div>
@@ -206,12 +206,12 @@ export default function SelectProviderType() {
         </div>
 
         {selectedType && (
-          <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-3xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Details</h2>
+          <div className="bg-white/80 backdrop-blur-md border border-border rounded-3xl p-8 mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Verification Details</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {(isVet || isShop) && (
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Clinic/Shop Name
                   </label>
                   <input
@@ -219,14 +219,14 @@ export default function SelectProviderType() {
                     value={clinicOrShopName}
                     onChange={(e) => setClinicOrShopName(e.target.value)}
                     placeholder="Enter clinic or shop name"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
                   />
                 </div>
               )}
 
               {(isVet || isGroomer) && (
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Experience
                   </label>
                   <textarea
@@ -234,14 +234,14 @@ export default function SelectProviderType() {
                     onChange={(e) => setExperience(e.target.value)}
                     placeholder="Describe your relevant experience"
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
                   />
                 </div>
               )}
 
               {isVet && (
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     Certification
                   </label>
                   <textarea
@@ -249,10 +249,10 @@ export default function SelectProviderType() {
                     onChange={(e) => setCertification(e.target.value)}
                     placeholder="Enter certification/license details"
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
                   />
                   <div className="mt-3 space-y-2">
-                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-2 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-4 py-2 text-sm font-semibold text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10">
                       <FileUp className="h-4 w-4" />
                       {uploadingCertificate ? "Uploading..." : "Attach Certificate File"}
                       <input
@@ -273,7 +273,7 @@ export default function SelectProviderType() {
                           href={certificationDocumentUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1 font-semibold text-[#0f4f57] hover:underline"
+                          className="inline-flex items-center gap-1 font-semibold text-[var(--pc-teal)] hover:underline"
                         >
                           <Paperclip className="h-3.5 w-3.5" />
                           {certificationFileName || "View attached certificate"}
@@ -291,7 +291,7 @@ export default function SelectProviderType() {
                         </button>
                       </div>
                     ) : (
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         Accepted formats: PDF, JPG, PNG, WEBP (max 10MB).
                       </p>
                     )}
@@ -301,7 +301,7 @@ export default function SelectProviderType() {
 
               {isShop && (
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label className="block text-sm font-semibold text-foreground mb-2">
                     PAN Number
                   </label>
                   <input
@@ -309,7 +309,7 @@ export default function SelectProviderType() {
                     value={panNumber}
                     onChange={(e) => setPanNumber(e.target.value.toUpperCase())}
                     placeholder="Enter PAN number"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70 uppercase"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70 uppercase"
                   />
                 </div>
               )}
@@ -325,7 +325,7 @@ export default function SelectProviderType() {
                   />
 
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    <label className="block text-sm font-semibold text-foreground mb-2">
                       Location Notes (Optional)
                     </label>
                     <input
@@ -338,7 +338,7 @@ export default function SelectProviderType() {
                         }))
                       }
                       placeholder="Landmark, floor, or nearby reference"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                      className="w-full px-4 py-3 rounded-xl border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
                     />
                   </div>
                 </div>
@@ -355,7 +355,7 @@ export default function SelectProviderType() {
             className={`px-12 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
               selectedType && !loading
                 ? "bg-primary text-white hover:bg-primary/90 shadow-lg hover:shadow-primary/25"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-gray-200 text-muted-foreground cursor-not-allowed"
             }`}
           >
             {loading ? (
@@ -369,7 +369,7 @@ export default function SelectProviderType() {
           </button>
         </div>
 
-        <p className="text-center mt-6 text-sm text-gray-500">
+        <p className="text-center mt-6 text-sm text-muted-foreground">
           Dashboard access will unlock after admin verification.
         </p>
       </div>

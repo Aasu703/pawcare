@@ -177,7 +177,7 @@ export default function OrdersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0f4f57]" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-teal)]" />
       </div>
     );
   }
@@ -186,12 +186,12 @@ export default function OrdersPage() {
     <div className="max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#0c4148]">My Orders</h1>
-          <p className="text-gray-500 mt-1">Track your purchases</p>
+          <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)]">My Orders</h1>
+          <p className="text-muted-foreground mt-1">Track your purchases</p>
         </div>
         <Link
           href="/user/shop"
-          className="bg-[#0f4f57] text-white px-4 py-2 rounded-lg hover:bg-[#0c4148] transition"
+          className="bg-[var(--pc-teal)] text-white px-4 py-2 rounded-lg hover:bg-[var(--pc-teal-dark)] transition"
         >
           Continue Shopping
         </Link>
@@ -205,8 +205,8 @@ export default function OrdersPage() {
             onClick={() => setFilter(status)}
             className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition ${
               filter === status
-                ? "bg-[#0f4f57] text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-[var(--pc-teal)] text-white"
+                : "bg-muted text-muted-foreground hover:bg-muted"
             }`}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -216,9 +216,9 @@ export default function OrdersPage() {
 
       {filteredOrders.length === 0 ? (
         <div className="text-center py-16">
-          <ShoppingBag className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-600">No orders found</h3>
-          <p className="text-gray-400 mt-1">Start shopping to see your orders here</p>
+          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-muted-foreground">No orders found</h3>
+          <p className="text-muted-foreground mt-1">Start shopping to see your orders here</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -231,11 +231,11 @@ export default function OrdersPage() {
                     <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${status.color}`}>
                       {status.icon} {status.label}
                     </span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-muted-foreground">
                       {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : ""}
                     </span>
                   </div>
-                  <span className="text-lg font-bold text-[#0f4f57]">
+                  <span className="text-lg font-bold text-[var(--pc-teal)]">
                     ${order.totalAmount?.toFixed(2)}
                   </span>
                 </div>
@@ -247,7 +247,7 @@ export default function OrdersPage() {
                         <span>
                           {item.productName} x {item.quantity}
                         </span>
-                        <span className="text-gray-500">
+                        <span className="text-muted-foreground">
                           ${(Number(item.price ?? item.unitPrice ?? 0) * Number(item.quantity ?? 0)).toFixed(2)}
                         </span>
                       </div>
@@ -286,7 +286,7 @@ export default function OrdersPage() {
                 </div>
 
                 {order.shippingAddress && (
-                  <p className="text-sm text-gray-500 mb-3">
+                  <p className="text-sm text-muted-foreground mb-3">
                     <span className="font-medium">Ship to:</span> {order.shippingAddress}
                   </p>
                 )}
@@ -310,19 +310,19 @@ export default function OrdersPage() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Rate Provider</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-xl font-bold text-foreground">Rate Provider</h2>
+                <p className="text-sm text-muted-foreground">
                   {selectedItem?.productName || "Share your shopping experience"}
                 </p>
               </div>
-              <button onClick={closeReviewModal} className="text-gray-400 hover:text-gray-600">
+              <button onClick={closeReviewModal} className="text-muted-foreground hover:text-muted-foreground">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
             <form onSubmit={handleReviewSubmit} className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-gray-700">Rating</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">Rating</label>
                 <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -333,7 +333,7 @@ export default function OrdersPage() {
                     >
                       <Star
                         className={`h-6 w-6 ${
-                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                          star <= reviewForm.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"
                         }`}
                       />
                     </button>
@@ -342,12 +342,12 @@ export default function OrdersPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700">Comment (optional)</label>
+                <label className="mb-1 block text-sm font-medium text-foreground">Comment (optional)</label>
                 <textarea
                   value={reviewForm.comment}
                   onChange={(e) => setReviewForm((prev) => ({ ...prev, comment: e.target.value }))}
                   rows={4}
-                  className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full resize-none rounded-lg border border-border px-3 py-2.5 focus:border-transparent focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Tell us what went well (or not)"
                 />
               </div>
@@ -355,7 +355,7 @@ export default function OrdersPage() {
               <button
                 type="submit"
                 disabled={submittingReview}
-                className="w-full rounded-lg bg-[#0f4f57] py-2.5 font-semibold text-white hover:bg-[#0c4148] disabled:opacity-50"
+                className="w-full rounded-lg bg-[var(--pc-teal)] py-2.5 font-semibold text-white hover:bg-[var(--pc-teal-dark)] disabled:opacity-50"
               >
                 {submittingReview ? "Submitting..." : "Submit Rating"}
               </button>

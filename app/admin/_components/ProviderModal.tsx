@@ -63,7 +63,7 @@ export default function ProviderModal({
               type="text"
               defaultValue={provider?.businessName || ""}
               required
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -74,7 +74,7 @@ export default function ProviderModal({
               type="email"
               defaultValue={provider?.email || ""}
               required
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -87,7 +87,7 @@ export default function ProviderModal({
                   type="password"
                   required
                   minLength={8}
-                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
                 />
               </div>
               <div>
@@ -97,7 +97,7 @@ export default function ProviderModal({
                   type="password"
                   required
                   minLength={8}
-                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
                 />
               </div>
             </>
@@ -112,7 +112,7 @@ export default function ProviderModal({
               required
               minLength={10}
               placeholder="e.g. 1234567890"
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -121,7 +121,7 @@ export default function ProviderModal({
             <select
               name="specialty"
               defaultValue={provider?.specialty || "general"}
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             >
               <option value="general">General</option>
               <option value="grooming">Grooming</option>
@@ -140,7 +140,7 @@ export default function ProviderModal({
               required
               minLength={5}
               rows={2}
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -149,7 +149,7 @@ export default function ProviderModal({
               name="isActive"
               type="checkbox"
               defaultChecked={provider?.isActive !== false}
-              className="h-4 w-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+              className="h-4 w-4 rounded border-border text-[var(--pc-primary)] focus:ring-[var(--pc-primary)]"
             />
             <label className="text-sm font-medium">Active</label>
           </div>
@@ -165,7 +165,7 @@ export default function ProviderModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[var(--pc-primary)] px-4 py-2 text-white hover:bg-[var(--pc-primary-hover)] disabled:opacity-50"
             >
               {loading ? "Saving..." : mode === "create" ? "Create" : "Update"}
             </button>

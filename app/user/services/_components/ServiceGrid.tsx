@@ -154,7 +154,7 @@ export function ServiceGrid({ filters = DEFAULT_FILTERS }: ServiceGridProps) {
             <button
               key={tab}
               onClick={() => handleTabChange(tab)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeTab === tab ? 'bg-[#f59e0b] text-white shadow-md' : 'bg-white border border-[#e7e5e4] text-[#78716c] hover:border-[#f59e0b] hover:text-[#f59e0b]'}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${activeTab === tab ? 'bg-[var(--pc-primary)] text-white shadow-md' : 'bg-white border border-[#e7e5e4] text-[#78716c] hover:border-[var(--pc-primary)] hover:text-[var(--pc-primary)]'}`}
             >
               {tab}
             </button>
@@ -206,7 +206,7 @@ export function ServiceGrid({ filters = DEFAULT_FILTERS }: ServiceGridProps) {
         <>
           {loading ? (
             <div className="flex justify-center py-16">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#f59e0b] border-t-transparent" />
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent" />
             </div>
           ) : error ? (
             <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">

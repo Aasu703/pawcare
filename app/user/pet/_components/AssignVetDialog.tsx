@@ -40,7 +40,7 @@ export function AssignVetDialog({
         </DialogHeader>
 
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Assign a PawCare-verified vet for {petName}. The selected vet can review assigned pets one by one.
           </p>
 
@@ -58,13 +58,13 @@ export function AssignVetDialog({
             </SelectContent>
           </Select>
 
-          {loadingVets && <p className="text-xs text-gray-500">Loading verified vets...</p>}
+          {loadingVets && <p className="text-xs text-muted-foreground">Loading verified vets...</p>}
 
           <div className="flex justify-end gap-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 rounded-lg border border-border text-foreground hover:bg-muted"
             >
               Cancel
             </button>

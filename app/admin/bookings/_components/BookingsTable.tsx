@@ -31,7 +31,7 @@ export function BookingsTable({ bookings, onView, onDelete, onStatusChange }: Bo
   if (bookings.length === 0) {
     return (
       <tr>
-        <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+        <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
           No bookings found
         </td>
       </tr>
@@ -41,7 +41,7 @@ export function BookingsTable({ bookings, onView, onDelete, onStatusChange }: Bo
   return (
     <>
       {bookings.map((b) => (
-        <tr key={b._id} className="hover:bg-gray-50">
+        <tr key={b._id} className="hover:bg-muted">
           <td className="px-6 py-4 text-sm">
             {typeof b.serviceId === "object" ? b.serviceId?.title : b.serviceId}
           </td>
@@ -55,7 +55,7 @@ export function BookingsTable({ bookings, onView, onDelete, onStatusChange }: Bo
             <select
               value={b.status}
               onChange={(e) => onStatusChange(b._id, e.target.value)}
-              className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[b.status] || "bg-gray-100"}`}
+              className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[b.status] || "bg-muted"}`}
             >
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
@@ -67,13 +67,13 @@ export function BookingsTable({ bookings, onView, onDelete, onStatusChange }: Bo
             <div className="flex gap-1 justify-end">
               <button
                 onClick={() => onView(b)}
-                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                className="p-2 text-muted-foreground hover:text-[var(--pc-teal)] hover:bg-[var(--pc-teal-light)] rounded-lg"
               >
                 <Eye className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onDelete(b._id)}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg"
               >
                 <Trash2 className="h-4 w-4" />
               </button>

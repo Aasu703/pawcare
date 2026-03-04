@@ -62,7 +62,7 @@ export default function UserModal({
               type="text"
               defaultValue={user?.Firstname || ""}
               required
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -73,7 +73,7 @@ export default function UserModal({
               type="text"
               defaultValue={user?.Lastname || ""}
               required
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -84,7 +84,7 @@ export default function UserModal({
               type="email"
               defaultValue={user?.email || ""}
               required
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -95,7 +95,7 @@ export default function UserModal({
                 name="password"
                 type="password"
                 required
-                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
               />
             </div>
           )}
@@ -107,7 +107,7 @@ export default function UserModal({
                 name="confirmPassword"
                 type="password"
                 required
-                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
               />
             </div>
           )}
@@ -117,7 +117,7 @@ export default function UserModal({
             <select
               name="role"
               defaultValue={user?.role || "user"}
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             >
               <option value="user">User</option>
               <option value="admin">Admin</option>
@@ -131,7 +131,7 @@ export default function UserModal({
               name="phone"
               type="tel"
               defaultValue={user?.phone || ""}
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -141,7 +141,7 @@ export default function UserModal({
               name="image"
               type="file"
               accept="image/*"
-              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full rounded-lg border bg-background px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
 
@@ -156,7 +156,7 @@ export default function UserModal({
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600 disabled:opacity-50"
+              className="flex-1 rounded-lg bg-[var(--pc-primary)] px-4 py-2 text-white hover:bg-[var(--pc-primary-hover)] disabled:opacity-50"
             >
               {loading ? "Saving..." : mode === "create" ? "Create" : "Update"}
             </button>

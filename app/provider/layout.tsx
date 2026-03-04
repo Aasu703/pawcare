@@ -99,7 +99,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
   if (loading || (isAuthenticated && user?.role === "provider" && !profileSynced)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
       </div>
     );
   }
@@ -129,7 +129,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       <ProviderSidebar />
       <main className="ml-64 min-h-screen p-8">{children}</main>
     </div>

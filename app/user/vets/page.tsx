@@ -78,7 +78,7 @@ export default function VetsPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Hero header */}
-      <div className="relative bg-linear-to-br from-[#0c4148] via-[#1E8F84] to-[#56C2B7] rounded-2xl p-8 pb-12 text-white overflow-hidden">
+      <div className="relative bg-linear-to-br from-[var(--pc-teal-dark)] via-[var(--pc-teal)] to-[var(--pc-sage)] rounded-2xl p-8 pb-12 text-white overflow-hidden">
         {/* Decorative circles */}
         <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-white/5" />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-white/5" />
@@ -123,7 +123,7 @@ export default function VetsPage() {
               onClick={() => setCategory(cat.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-200 ${
                 category === cat.key
-                  ? "bg-[#1E8F84] text-white shadow-md shadow-teal-200/40"
+                  ? "bg-[var(--pc-teal)] text-white shadow-md shadow-teal-200/40"
                   : "bg-white text-stone-500 border border-stone-200 hover:border-teal-300 hover:text-teal-700"
               }`}
             >
@@ -197,7 +197,7 @@ function ProviderCard({ provider }: { provider: VerifiedProviderLocation }) {
           )}
           {/* Type badge */}
           <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg shadow-sm">
-            <span className="text-[10px] font-extrabold tracking-wider uppercase text-[#1E8F84]">
+            <span className="text-[10px] font-extrabold tracking-wider uppercase text-[var(--pc-teal)]">
               {provider.providerType === "vet" ? "Veterinary" : "Shop"}
             </span>
           </div>
@@ -217,12 +217,12 @@ function ProviderCard({ provider }: { provider: VerifiedProviderLocation }) {
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="font-bold text-base text-stone-900 group-hover:text-[#1E8F84] transition-colors mb-0.5 truncate">
+          <h3 className="font-bold text-base text-stone-900 group-hover:text-[var(--pc-teal)] transition-colors mb-0.5 truncate">
             {provider.businessName}
           </h3>
 
           {provider.degree && (
-            <p className="text-xs font-semibold text-[#1E8F84] mb-0.5 truncate">
+            <p className="text-xs font-semibold text-[var(--pc-teal)] mb-0.5 truncate">
               {provider.degree}
             </p>
           )}
@@ -236,7 +236,7 @@ function ProviderCard({ provider }: { provider: VerifiedProviderLocation }) {
           {/* Tag chips */}
           <div className="flex flex-wrap gap-1.5 mb-3">
             {provider.experience && (
-              <span className="inline-flex items-center gap-1 bg-teal-50 text-[#1E8F84] text-[11px] font-semibold px-2 py-0.5 rounded-md">
+              <span className="inline-flex items-center gap-1 bg-teal-50 text-[var(--pc-teal)] text-[11px] font-semibold px-2 py-0.5 rounded-md">
                 <Award className="w-3 h-3" />
                 {provider.experience}
               </span>
@@ -268,7 +268,7 @@ function ProviderCard({ provider }: { provider: VerifiedProviderLocation }) {
 
           {/* CTA */}
           <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
-            <span className="text-sm font-bold text-[#1E8F84] group-hover:text-[#0c4148]">
+            <span className="text-sm font-bold text-[var(--pc-teal)] group-hover:text-[var(--pc-teal-dark)]">
               View Profile
             </span>
             <ChevronRight className="w-4 h-4 text-teal-500 group-hover:translate-x-1 transition-transform" />

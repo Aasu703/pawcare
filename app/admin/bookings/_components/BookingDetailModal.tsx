@@ -23,7 +23,7 @@ export function BookingDetailModal({ selected, onClose }: BookingDetailModalProp
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Booking Details</h2>
           <button onClick={onClose}>
-            <X className="h-5 w-5 text-gray-400" />
+            <X className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
         <div className="space-y-3 text-sm">

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CheckCircle, ExternalLink, MapPin, Search, ShieldCheck, XCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   handleGetAllProviders,
   handleApproveProvider,
@@ -96,7 +96,7 @@ export default function AllProvidersTable() {
         <div className="relative w-64">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
-            className="w-full rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             placeholder="Search providers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -106,7 +106,7 @@ export default function AllProvidersTable() {
 
       {loading ? (
         <div className="flex h-32 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -158,7 +158,7 @@ export default function AllProvidersTable() {
                           approved: "bg-green-100 text-green-700",
                           rejected: "bg-red-100 text-red-700",
                           pending: "bg-yellow-100 text-yellow-700",
-                        }[provider.status] || "bg-gray-100 text-gray-700"}`}
+                        }[provider.status] || "bg-muted text-foreground"}`}
                       >
                         {provider.status?.charAt(0).toUpperCase() + (provider.status?.slice(1) || "")}
                       </span>
@@ -182,7 +182,7 @@ export default function AllProvidersTable() {
                           href={mapUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[var(--pc-teal)] hover:underline"
                         >
                           <MapPin className="h-3.5 w-3.5" />
                           View Pin
