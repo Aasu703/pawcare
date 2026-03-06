@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import {
   Bell,
@@ -13,6 +14,9 @@ import {
   AlertCircle,
   FileText,
   ArrowLeft,
+  Minus,
+  Check,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -158,6 +162,25 @@ function formatRelativeMinutes(diff: number) {
     return diff >= 0 ? `in ${durationLabel}` : `${durationLabel} ago`;
   }
   return diff >= 0 ? `in ${absoluteMinutes} min` : `${absoluteMinutes} min ago`;
+}
+
+/* ── Helpers for feeding timetable ── */
+function getMealPeriod(time: string) {
+  const hour = parseInt(time.split(":")[0], 10);
+  if (isNaN(hour)) return { label: "Meal", icon: "🍽️", color: "text-amber-500" };
+  if (hour >= 5 && hour <= 11) return { label: "Morning", icon: "🌅", color: "text-amber-500" };
+  if (hour >= 12 && hour <= 16) return { label: "Afternoon", icon: "☀️", color: "text-yellow-500" };
+  if (hour >= 17 && hour <= 20) return { label: "Evening", icon: "🌆", color: "text-[var(--pc-teal)]" };
+  return { label: "Night", icon: "🌙", color: "text-indigo-400" };
+}
+
+function formatTime12(time: string) {
+  const [h, m] = time.split(":");
+  const hour = parseInt(h, 10);
+  if (isNaN(hour)) return { display: time, period: "" };
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const h12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  return { display: `${String(h12).padStart(2, "0")}:${m}`, period: ampm };
 }
 
 export function CarePlanPage() {
@@ -317,302 +340,597 @@ export function CarePlanPage() {
     setNotes(response.data?.notes || notes.trim());
   };
 
+  /* ── Format upcoming feeding time ── */
+  const nextFeedingFormatted = useMemo(() => {
+    if (!upcomingFeeding) return null;
+    return formatTime12(upcomingFeeding.timeLabel);
+  }, [upcomingFeeding]);
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#1a3a2a] border-t-transparent"></div>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
       </div>
     );
   }
 
+  const petName = pet?.name || "Pet";
+
   return (
-    <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-6 md:py-10">
-      <Link
-        href="/user/pet"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-[#78716c] transition-colors hover:text-[#1a3a2a]"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to Pets
-      </Link>
+    <div
+      className="min-h-screen bg-[var(--pc-cream)] px-4 py-6 md:py-10"
+      style={{
+        backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><text y='30' font-size='20' opacity='0.03'>🐾</text></svg>")`,
+      }}
+    >
+      <div className="mx-auto w-full max-w-5xl">
 
-      <div className="space-y-1">
-        <h1 className="text-3xl font-serif font-bold text-[#1c1917] md:text-4xl">
-          {pet?.name || "Pet"}&apos;s Care Plan
-        </h1>
-        <p className="text-sm text-[#78716c] md:text-base">
-          Track daily feeding and vaccination progress for {pet?.species || "your pet"}.
-        </p>
-      </div>
-
-      <section className="rounded-2xl border border-[#fcd34d] bg-[#fffbeb] p-4 shadow-sm md:p-6">
-        <div className="mb-5 flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
-          <div>
-            <div className="mb-1 flex items-center gap-2">
-              <Bell className="h-5 w-5 text-[var(--pc-primary)]" />
-              <h2 className="text-lg font-semibold text-[#1c1917]">Smart Reminders</h2>
-            </div>
-            <p className="text-xs text-[#78716c] md:text-sm">
-              Keep reminders enabled so pending care tasks stay visible while you manage the plan.
-            </p>
+        {/* ═══════ SECTION 1 — HERO BANNER ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] relative mb-6 flex min-h-[140px] items-center gap-5 overflow-hidden rounded-[28px] p-6"
+          style={{ background: "linear-gradient(135deg, #FFF0EA 0%, #EFF6EE 60%, #E6F4F2 100%)" }}
+        >
+          {/* Decorative cat image */}
+          <div className="pointer-events-none absolute bottom-0 right-0 top-0 w-[180px] select-none">
+            <Image
+              src="/images/kittiy.png"
+              fill
+              className="object-contain object-right-bottom opacity-40"
+              alt=""
+            />
           </div>
 
-          <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap lg:w-auto">
-            <label className="flex items-center gap-2 rounded-lg border border-[#fcd34d] bg-white px-3 py-2 text-sm font-medium text-[#1c1917]">
-              <input
-                type="checkbox"
-                checked={remindersEnabled}
-                onChange={(e) => setRemindersEnabled(e.target.checked)}
-                className="h-4 w-4 rounded accent-[var(--pc-primary)]"
-              />
-              Enable reminders
-            </label>
+          {/* Scattered paw prints */}
+          <span className="pointer-events-none absolute right-[140px] top-3 select-none text-xs opacity-[0.08] rotate-[15deg]">🐾</span>
+          <span className="pointer-events-none absolute right-[60px] top-6 select-none text-lg opacity-[0.07] -rotate-[20deg]">🐾</span>
+          <span className="pointer-events-none absolute right-[100px] top-[70px] select-none text-sm opacity-[0.06] rotate-[40deg]">🐾</span>
+          <span className="pointer-events-none absolute right-[30px] top-[90px] select-none text-xs opacity-[0.09] -rotate-[10deg]">🐾</span>
 
-            <div className="relative">
-              <select
-                value={reminderIntervalMinutes}
-                onChange={(e) => setReminderIntervalMinutes(Number(e.target.value))}
-                disabled={!remindersEnabled}
-                className="h-10 w-full appearance-none rounded-lg border border-[#fcd34d] bg-white pl-3 pr-8 text-sm font-medium text-[#1c1917] focus:outline-none disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-              >
-                <option value={3}>Every 3 min</option>
-                <option value={5}>Every 5 min</option>
-                <option value={10}>Every 10 min</option>
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--pc-primary)]" />
-            </div>
-          </div>
-        </div>
+          {/* Left content */}
+          <div className="relative z-10 flex-1">
+            <Link
+              href="/user/pet"
+              className="mb-3 inline-flex cursor-pointer items-center gap-1.5 text-sm text-[var(--pc-text-muted)] transition-colors hover:text-[var(--pc-primary)]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back to Pets
+            </Link>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          <div className="rounded-xl border border-[#fcd34d]/30 border-l-4 border-l-amber-400 bg-white/80 p-4 shadow-sm">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-              Pending Vaccinations
+            <h1 className="text-3xl font-bold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+              {petName}&apos;s Care Plan 🐾
+            </h1>
+            <p className="mt-1 text-sm text-[var(--pc-text-muted)]">
+              Track daily feeding and vaccination progress for {pet?.species || "your pet"}.
             </p>
-            <p className="text-2xl font-bold text-[#1c1917]">{pendingVaccinations.length}</p>
-          </div>
-          <div className="rounded-xl border border-[#fcd34d]/30 border-l-4 border-l-emerald-400 bg-white/80 p-4 shadow-sm">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-              Feeding Status
-            </p>
-            <p className="mt-1 flex items-center gap-1.5 text-sm font-medium text-[#1c1917]">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
-              {upcomingFeeding ? "Schedule active" : "No feeding times"}
-            </p>
-          </div>
-          <div className="rounded-xl border border-[#fcd34d]/30 border-l-4 border-l-[var(--pc-teal)] bg-white/80 p-4 shadow-sm">
-            <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-              Next Feeding
-            </p>
-            <p className="mt-1 text-sm font-medium text-[#1c1917]">
-              {upcomingFeeding ? (
-                <>
-                  <span className="text-lg font-bold">{upcomingFeeding.timeLabel}</span>
-                  <span className="ml-1 text-[#78716c]">
-                    ({formatRelativeMinutes(upcomingFeeding.minutesFromNow)})
-                  </span>
-                </>
-              ) : (
-                "No feeding time set"
+
+            {/* Status pills */}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-600">
+                💉 {pendingVaccinations.length} pending vaccine{pendingVaccinations.length !== 1 ? "s" : ""}
+              </span>
+              <span className="rounded-full border border-green-100 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-600">
+                🍽️ {upcomingFeeding ? "Schedule active" : "No schedule"}
+              </span>
+              {nextFeedingFormatted && (
+                <span className="rounded-full border border-[var(--pc-primary)]/20 bg-[var(--pc-primary-light)] px-3 py-1.5 text-xs font-semibold text-[var(--pc-primary)]">
+                  ⏰ Next: {nextFeedingFormatted.display} {nextFeedingFormatted.period}
+                </span>
               )}
-            </p>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section className="rounded-2xl border border-[#e7e5e4] bg-white p-4 shadow-sm md:p-6">
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-[#1a3a2a]" />
-            <h2 className="text-lg font-semibold text-[#1c1917]">Feeding Timetable</h2>
-          </div>
-          <button
-            type="button"
-            onClick={addFeedingTime}
-            className="inline-flex items-center gap-1 rounded-full border border-[#e7e5e4] bg-stone-50 px-3 py-1.5 text-sm font-medium text-[#1a3a2a] transition-colors hover:bg-stone-100"
-          >
-            <Plus className="h-3.5 w-3.5" />
-            Add time
-          </button>
-        </div>
+        {/* ═══════ SECTION 2 — SMART REMINDERS ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] relative mb-6 overflow-hidden rounded-[24px] border border-amber-200 p-5"
+          style={{ background: "linear-gradient(135deg, #FFFBEB, #FFF7E6)", animationDelay: "100ms" }}
+        >
+          {/* Decorative bell */}
+          <span className="pointer-events-none absolute right-3 top-3 select-none text-4xl opacity-10">🔔</span>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {feedingTimes.map((time, index) => (
-            <div key={`feeding-${index}`} className="flex items-center gap-2">
-              <input
-                type="time"
-                value={time}
-                onChange={(e) => updateFeedingTime(index, e.target.value)}
-                className="h-11 w-full rounded-xl border border-[#e7e5e4] bg-stone-50 px-4 text-sm font-medium text-[#1c1917] focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-              />
+          {/* Header row */}
+          <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
+            <div>
+              <div className="mb-1 flex items-center gap-2">
+                <Bell className="h-5 w-5 text-amber-400" />
+                <h2 className="text-lg font-semibold text-amber-800" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                  Smart Reminders
+                </h2>
+              </div>
+              <p className="text-sm text-amber-700/70">
+                Keep reminders enabled so pending care tasks stay visible while you manage the plan.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Pill toggle */}
               <button
                 type="button"
-                onClick={() => removeFeedingTime(index)}
-                disabled={feedingTimes.length === 1}
-                className="rounded-lg p-2 text-[#78716c] transition-colors hover:bg-rose-50 hover:text-rose-500 disabled:cursor-not-allowed disabled:opacity-40"
+                onClick={() => setRemindersEnabled(!remindersEnabled)}
+                className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-all ${
+                  remindersEnabled
+                    ? "border-amber-400 bg-amber-400 text-white"
+                    : "border-amber-200 bg-white text-amber-700 hover:border-amber-400"
+                }`}
               >
-                <Trash2 className="h-4 w-4" />
+                {remindersEnabled ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" /> Reminders On
+                  </>
+                ) : (
+                  "Enable Reminders"
+                )}
+              </button>
+
+              {/* Interval dropdown */}
+              <div className="relative">
+                <select
+                  value={reminderIntervalMinutes}
+                  onChange={(e) => setReminderIntervalMinutes(Number(e.target.value))}
+                  disabled={!remindersEnabled}
+                  className="cursor-pointer appearance-none rounded-full border border-amber-200 bg-white py-2 pl-4 pr-8 text-sm font-semibold text-amber-700 outline-none transition-colors focus:border-amber-400 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <option value={3}>Every 3 min</option>
+                  <option value={5}>Every 5 min</option>
+                  <option value={10}>Every 10 min</option>
+                </select>
+                <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-amber-500" />
+              </div>
+            </div>
+          </div>
+
+          {/* Stats row */}
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+            {/* Card 1 — Pending Vaccinations */}
+            <div className="rounded-[16px] border border-amber-100 bg-white p-4 text-center shadow-sm">
+              <div className="mb-1 text-2xl">💉</div>
+              <p className="text-3xl font-bold text-amber-600" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                {pendingVaccinations.length}
+              </p>
+              <p className="text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Pending Vaccines</p>
+            </div>
+
+            {/* Card 2 — Feeding Status */}
+            <div className="rounded-[16px] border border-amber-100 bg-white p-4 text-center shadow-sm">
+              <div className="mb-1 text-2xl">🍽️</div>
+              <p className={`text-lg font-bold ${upcomingFeeding ? "text-green-600" : "text-[var(--pc-text-muted)]"}`} style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                {upcomingFeeding ? "Active" : "Inactive"}
+              </p>
+              <div className="mt-0.5 flex items-center justify-center gap-1.5">
+                <span className={`inline-block h-2 w-2 rounded-full ${upcomingFeeding ? "bg-green-400" : "bg-gray-300"}`} />
+                <p className="text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Feeding Status</p>
+              </div>
+            </div>
+
+            {/* Card 3 — Next Feeding */}
+            <div className="rounded-[16px] border border-amber-100 bg-white p-4 text-center shadow-sm">
+              <div className="mb-1 text-2xl">⏰</div>
+              {nextFeedingFormatted ? (
+                <>
+                  <p style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                    <span className="text-2xl font-bold text-[var(--pc-primary)]">{nextFeedingFormatted.display}</span>
+                    <span className="ml-0.5 text-sm text-[var(--pc-text-muted)]">{nextFeedingFormatted.period}</span>
+                  </p>
+                  <p className="text-xs text-[var(--pc-text-muted)]">
+                    ({formatRelativeMinutes(upcomingFeeding!.minutesFromNow)})
+                  </p>
+                </>
+              ) : (
+                <p className="text-sm font-medium text-[var(--pc-text-muted)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                  No time set
+                </p>
+              )}
+              <p className="mt-0.5 text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Next Feeding</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════ SECTION 3 — FEEDING TIMETABLE ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] mb-6 rounded-[24px] border border-[var(--pc-border)] bg-white p-6 shadow-sm"
+          style={{ animationDelay: "200ms" }}
+        >
+          {/* Section header */}
+          <div className="mb-5 flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--pc-primary-light)] text-xl">
+                🍽️
+              </div>
+              <h2 className="ml-3 text-xl font-semibold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                Feeding Timetable
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={addFeedingTime}
+              className="flex items-center gap-1.5 rounded-[12px] bg-[var(--pc-primary)] px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-md hover:brightness-95"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add Time
+            </button>
+          </div>
+
+          {feedingTimes.length === 0 ? (
+            /* Empty state */
+            <div className="py-8 text-center">
+              <div className="mb-3 text-5xl">🍽️</div>
+              <p className="text-lg text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                No feeding times set
+              </p>
+              <p className="mx-auto mt-1 max-w-[280px] text-sm text-[var(--pc-text-muted)]">
+                Add your pet&apos;s meal schedule to track feeding
+              </p>
+              <button
+                type="button"
+                onClick={addFeedingTime}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--pc-primary)] px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-md hover:brightness-95"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add First Meal
               </button>
             </div>
-          ))}
-        </div>
-      </section>
+          ) : (
+            /* Timeline */
+            <div className="relative">
+              {/* Vertical line */}
+              <div
+                className="absolute bottom-4 left-[23px] top-4 w-[2px]"
+                style={{ background: "linear-gradient(to bottom, rgba(232,133,90,0.3), rgba(45,125,116,0.2))" }}
+              />
 
-      <section className="rounded-2xl border border-[#e7e5e4] bg-white p-4 shadow-sm md:p-6">
-        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2">
-            <Syringe className="h-5 w-5 text-[#1a3a2a]" />
-            <h2 className="text-lg font-semibold text-[#1c1917]">Vaccination Checklist</h2>
+              {feedingTimes.map((time, index) => {
+                const meal = getMealPeriod(time);
+                const t12 = formatTime12(time);
+                const hour = parseInt(time.split(":")[0], 10);
+                const dotColor = !isNaN(hour) && hour >= 17 ? "bg-[var(--pc-teal)]" : "bg-[var(--pc-primary)]";
+
+                return (
+                  <div key={`feeding-${index}`} className="group relative mb-4 flex items-center gap-4">
+                    {/* Timeline dot */}
+                    <div className={`absolute left-[16px] z-10 h-[14px] w-[14px] rounded-full border-2 border-white shadow-sm ${dotColor}`} />
+
+                    {/* Meal card */}
+                    <div className="ml-10 flex flex-1 items-center justify-between rounded-[16px] border border-[var(--pc-border)] bg-[var(--pc-cream)] px-4 py-3 transition-all hover:border-[var(--pc-primary)]/40 hover:shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <span className={`text-lg ${meal.color}`}>{meal.icon}</span>
+                        <div>
+                          <p className="text-xs font-medium text-[var(--pc-text-muted)]">{meal.label}</p>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-xl font-bold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                              {t12.display}
+                            </span>
+                            <span className="text-sm text-[var(--pc-text-muted)]">{t12.period}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Time input for editing */}
+                        <input
+                          type="time"
+                          value={time}
+                          onChange={(e) => updateFeedingTime(index, e.target.value)}
+                          className="h-8 w-[100px] rounded-[10px] border border-[var(--pc-border)] bg-white px-2 text-xs text-[var(--pc-text)] opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
+                        />
+                        {/* Delete button */}
+                        <button
+                          type="button"
+                          onClick={() => removeFeedingTime(index)}
+                          disabled={feedingTimes.length === 1}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-red-50 text-red-400 opacity-0 transition-all hover:bg-red-500 hover:text-white group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-0"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ═══════ SECTION 4 — VACCINATION CHECKLIST ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] mb-6 rounded-[24px] border border-[var(--pc-border)] bg-white p-6 shadow-sm"
+          style={{ animationDelay: "300ms" }}
+        >
+          {/* Section header */}
+          <div className="mb-2 flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-green-50 text-xl">
+                💉
+              </div>
+              <h2 className="ml-3 text-xl font-semibold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                Vaccination Checklist
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={addVaccination}
+              className="flex items-center gap-1.5 rounded-[12px] bg-[var(--pc-teal)] px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-md hover:brightness-95"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Add Vaccine
+            </button>
           </div>
+
+          {/* Progress row */}
+          <div className="mb-5">
+            <div className="mb-1.5 flex justify-between text-sm">
+              <span className="text-[var(--pc-text-muted)]">
+                Completed vaccinations:{" "}
+                <span style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }} className="font-semibold">{completedVaccines}</span>
+                {" / "}
+                <span style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }} className="font-semibold">{vaccinations.length}</span>
+              </span>
+              <span className="font-semibold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                {vaccinations.length === 0
+                  ? "0%"
+                  : `${Math.round((completedVaccines / vaccinations.length) * 100)}%`}
+              </span>
+            </div>
+            {/* Progress bar */}
+            <div className="mt-2 h-[8px] overflow-hidden rounded-full bg-[var(--pc-cream)]">
+              <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{
+                  background: "linear-gradient(90deg, var(--pc-teal), #4ADE80)",
+                  width:
+                    vaccinations.length === 0
+                      ? "0%"
+                      : `${Math.round((completedVaccines / vaccinations.length) * 100)}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {vaccinations.length === 0 ? (
+            /* Empty state */
+            <div className="rounded-[20px] border-2 border-dashed border-[var(--pc-border)] py-10 text-center">
+              <div className="mb-3 text-5xl">💉</div>
+              <p className="text-lg text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+                No vaccinations tracked
+              </p>
+              <p className="mx-auto mt-1 max-w-[280px] text-sm text-[var(--pc-text-muted)]">
+                Add vaccines to monitor your pet&apos;s health protection
+              </p>
+              <button
+                type="button"
+                onClick={addVaccination}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-[12px] bg-[var(--pc-teal)] px-4 py-2 text-sm font-semibold text-white transition-all hover:shadow-md hover:brightness-95"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add First Vaccine
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {vaccinations.map((item, index) => {
+                const dueLabel = getDueLabel(ageInMonths, item.recommendedByMonths);
+                const isDue = dueLabel === "Due now";
+                const isCompleted = item.status === "done";
+                const isOverdue = isDue && !isCompleted;
+
+                const borderColor = isCompleted
+                  ? "border-green-300 bg-green-50/20"
+                  : isOverdue
+                    ? "border-red-300 bg-red-50/20"
+                    : "border-amber-300 bg-amber-50/30";
+
+                return (
+                  <div
+                    key={`vaccine-${index}`}
+                    className={`overflow-hidden rounded-[20px] border-2 transition-all ${borderColor}`}
+                  >
+                    {/* Card top row */}
+                    <div className="flex items-center justify-between px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        {/* Status icon */}
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-[12px] ${
+                            isCompleted
+                              ? "bg-green-500 text-white"
+                              : isOverdue
+                                ? "border-2 border-red-300 bg-red-50 text-red-400"
+                                : "border-2 border-amber-300 bg-amber-50 text-amber-400"
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <Check className="h-5 w-5" />
+                          ) : isOverdue ? (
+                            <AlertTriangle className="h-5 w-5" />
+                          ) : (
+                            <Clock className="h-5 w-5" />
+                          )}
+                        </div>
+
+                        {/* Vaccine info */}
+                        <div>
+                          <input
+                            type="text"
+                            value={item.vaccine}
+                            onChange={(e) => updateVaccination(index, "vaccine", e.target.value)}
+                            placeholder="Vaccine name"
+                            className="border-0 bg-transparent p-0 text-base font-semibold text-[var(--pc-text)] placeholder:text-[var(--pc-text-light)] focus:outline-none"
+                            style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}
+                          />
+                          <p className={`text-xs font-semibold ${
+                            isCompleted
+                              ? "text-green-600"
+                              : isOverdue
+                                ? "text-red-500"
+                                : "text-amber-600"
+                          }`}>
+                            {isCompleted ? "✓ Completed" : isOverdue ? "⚠ Overdue" : "Pending"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Status select */}
+                        <div className="relative">
+                          <select
+                            value={item.status}
+                            onChange={(e) =>
+                              updateVaccination(index, "status", e.target.value as PetVaccinationStatus)
+                            }
+                            className="cursor-pointer appearance-none rounded-[10px] border-[1.5px] border-[var(--pc-border)] bg-white px-3 py-1.5 pr-7 text-xs font-semibold text-[var(--pc-text)] outline-none transition-colors focus:border-[var(--pc-primary)]"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="done">Done</option>
+                            <option value="not_required">Not Required</option>
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[var(--pc-text-muted)]" />
+                        </div>
+
+                        {/* Delete button */}
+                        <button
+                          type="button"
+                          onClick={() => removeVaccination(index)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--pc-cream)] text-[var(--pc-text-muted)] transition-all hover:bg-red-50 hover:text-red-400"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Card details row */}
+                    <div className="grid grid-cols-2 gap-3 px-5 pb-4">
+                      {/* Recommended By (months) */}
+                      <div>
+                        <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-[var(--pc-text-muted)]">
+                          Recommended by (months)
+                        </label>
+                        <div className="flex items-center gap-2 rounded-[12px] border border-[var(--pc-border)] bg-white px-3 py-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = typeof item.recommendedByMonths === "number" ? item.recommendedByMonths : 0;
+                              updateVaccination(index, "recommendedByMonths", Math.max(0, current - 1));
+                            }}
+                            className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--pc-cream)] font-bold text-[var(--pc-text-muted)] transition-all hover:bg-[var(--pc-primary-light)] hover:text-[var(--pc-primary)]"
+                          >
+                            <Minus className="h-3.5 w-3.5" />
+                          </button>
+                          <span
+                            className="flex-1 text-center text-base font-bold text-[var(--pc-text)]"
+                            style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}
+                          >
+                            {item.recommendedByMonths ?? 0}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = typeof item.recommendedByMonths === "number" ? item.recommendedByMonths : 0;
+                              updateVaccination(index, "recommendedByMonths", current + 1);
+                            }}
+                            className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--pc-cream)] font-bold text-[var(--pc-text-muted)] transition-all hover:bg-[var(--pc-primary-light)] hover:text-[var(--pc-primary)]"
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Doses Taken */}
+                      <div>
+                        <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-[var(--pc-text-muted)]">
+                          Doses Taken
+                        </label>
+                        <div className="flex items-center gap-2 rounded-[12px] border border-[var(--pc-border)] bg-white px-3 py-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateVaccination(index, "dosesTaken", Math.max(0, (item.dosesTaken || 0) - 1))
+                            }
+                            className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--pc-cream)] font-bold text-[var(--pc-text-muted)] transition-all hover:bg-[var(--pc-primary-light)] hover:text-[var(--pc-primary)]"
+                          >
+                            <Minus className="h-3.5 w-3.5" />
+                          </button>
+                          <span
+                            className="flex-1 text-center text-base font-bold text-[var(--pc-text)]"
+                            style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}
+                          >
+                            {item.dosesTaken}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              updateVaccination(index, "dosesTaken", (item.dosesTaken || 0) + 1)
+                            }
+                            className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--pc-cream)] font-bold text-[var(--pc-text-muted)] transition-all hover:bg-[var(--pc-primary-light)] hover:text-[var(--pc-primary)]"
+                          >
+                            <Plus className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Due now inline pill */}
+                    {isDue && !isCompleted && (
+                      <div className="mx-5 mb-4 flex items-center gap-2 rounded-[10px] border border-red-200 bg-red-50 px-3 py-2">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                        <span className="text-xs font-medium text-red-600">
+                          Due now — schedule vaccination
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Non-due label */}
+                    {!isDue && (
+                      <div className={`mx-5 mb-4 flex items-center gap-2 rounded-[10px] border px-3 py-2 text-xs font-semibold ${
+                        isCompleted
+                          ? "border-green-100 bg-green-50 text-green-700"
+                          : "border-emerald-100 bg-emerald-50 text-emerald-700"
+                      }`}>
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                        <span>{dueLabel}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* ═══════ CARE NOTES ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] mb-6 rounded-[24px] border border-[var(--pc-border)] bg-white p-6 shadow-sm"
+          style={{ animationDelay: "400ms" }}
+        >
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[var(--pc-teal-light)] text-xl">
+              📝
+            </div>
+            <h2 className="ml-1 text-xl font-semibold text-[var(--pc-text)]" style={{ fontFamily: "var(--font-display), 'Fraunces', Georgia, serif" }}>
+              Care Notes
+            </h2>
+          </div>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Add any care notes, food preferences, or reminders..."
+            className="min-h-[120px] w-full resize-none rounded-[16px] border border-[var(--pc-border)] bg-[var(--pc-cream)] p-4 text-sm text-[var(--pc-text)] placeholder:text-[var(--pc-text-light)] transition-colors focus:border-[var(--pc-primary)] focus:outline-none"
+          />
+        </div>
+
+        {/* ═══════ SAVE BUTTON ═══════ */}
+        <div
+          className="animate-[fadeUp_0.4s_ease_forwards] pb-6"
+          style={{ animationDelay: "500ms" }}
+        >
           <button
             type="button"
-            onClick={addVaccination}
-            className="inline-flex items-center gap-1 rounded-full border border-[#e7e5e4] bg-stone-50 px-3 py-1.5 text-sm font-medium text-[#1a3a2a] transition-colors hover:bg-stone-100"
+            onClick={handleSave}
+            disabled={saving}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-[16px] bg-[var(--pc-primary)] px-8 py-3.5 font-semibold text-white shadow-lg shadow-[var(--pc-primary)]/20 transition-all hover:brightness-95 hover:shadow-xl disabled:opacity-70 sm:w-auto"
           >
-            <Plus className="h-3.5 w-3.5" />
-            Add vaccine
+            <Save className="h-4 w-4" />
+            {saving ? "Saving..." : "Save Care Plan"}
           </button>
         </div>
 
-        <div className="mb-5">
-          <div className="mb-1.5 flex justify-between text-xs font-medium text-[#78716c]">
-            <span>
-              Completed vaccinations: {completedVaccines} / {vaccinations.length}
-            </span>
-            <span>
-              {vaccinations.length === 0
-                ? "0%"
-                : `${Math.round((completedVaccines / vaccinations.length) * 100)}%`}
-            </span>
-          </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
-            <div
-              className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-              style={{
-                width:
-                  vaccinations.length === 0
-                    ? "0%"
-                    : `${Math.round((completedVaccines / vaccinations.length) * 100)}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {vaccinations.map((item, index) => (
-            <div key={`vaccine-${index}`} className="space-y-4 rounded-xl border border-[#e7e5e4] p-4">
-              <div className="flex items-start gap-3">
-                <input
-                  type="text"
-                  value={item.vaccine}
-                  onChange={(e) => updateVaccination(index, "vaccine", e.target.value)}
-                  placeholder="Vaccine name"
-                  className="h-10 w-full rounded-lg border border-[#e7e5e4] bg-stone-50 px-3 text-sm font-semibold text-[#1c1917] focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeVaccination(index)}
-                  className="mt-0.5 rounded-lg p-2 text-[#78716c] transition-colors hover:bg-rose-50 hover:text-rose-500"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                <div>
-                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-                    Recommended By (months)
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={item.recommendedByMonths ?? ""}
-                    onChange={(e) =>
-                      updateVaccination(
-                        index,
-                        "recommendedByMonths",
-                        e.target.value === "" ? undefined : Number(e.target.value),
-                      )
-                    }
-                    className="h-10 w-full rounded-lg border border-[#e7e5e4] bg-stone-50 px-3 text-sm text-[#1c1917] focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-                    Doses Taken
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={item.dosesTaken}
-                    onChange={(e) =>
-                      updateVaccination(index, "dosesTaken", Math.max(0, Number(e.target.value || 0)))
-                    }
-                    className="h-10 w-full rounded-lg border border-[#e7e5e4] bg-stone-50 px-3 text-sm text-[#1c1917] focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#78716c]">
-                    Status
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={item.status}
-                      onChange={(e) =>
-                        updateVaccination(index, "status", e.target.value as PetVaccinationStatus)
-                      }
-                      className="h-10 w-full appearance-none rounded-lg border border-[#e7e5e4] bg-stone-50 pl-3 pr-8 text-sm text-[#1c1917] focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-                    >
-                      <option value="pending">Pending</option>
-                      <option value="done">Done</option>
-                      <option value="not_required">Not Required</option>
-                    </select>
-                    <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#78716c]" />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-semibold ${
-                  getDueLabel(ageInMonths, item.recommendedByMonths) === "Due now"
-                    ? "border-rose-100 bg-rose-50 text-rose-600"
-                    : "border-emerald-100 bg-emerald-50 text-emerald-700"
-                }`}
-              >
-                {getDueLabel(ageInMonths, item.recommendedByMonths) === "Due now" ? (
-                  <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                ) : (
-                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                )}
-                <span>{getDueLabel(ageInMonths, item.recommendedByMonths)}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-[#e7e5e4] bg-white p-4 shadow-sm md:p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <FileText className="h-5 w-5 text-[#1a3a2a]" />
-          <h2 className="text-lg font-semibold text-[#1c1917]">Care Notes</h2>
-        </div>
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Add any care notes, food preferences, or reminders..."
-          className="min-h-[120px] w-full resize-none rounded-xl border border-[#e7e5e4] bg-stone-50 p-4 text-sm text-[#1c1917] placeholder:text-stone-400 focus:border-[#1a3a2a] focus:outline-none focus:ring-2 focus:ring-[#1a3a2a]/10"
-        />
-      </section>
-
-      <div className="pb-6">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={saving}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#1a3a2a] px-8 py-3 font-semibold text-white shadow-lg shadow-[#1a3a2a]/20 transition-all hover:bg-[#0f2318] disabled:opacity-70 sm:w-auto"
-        >
-          <Save className="h-4 w-4" />
-          {saving ? "Saving..." : "Save Care Plan"}
-        </button>
       </div>
     </div>
   );

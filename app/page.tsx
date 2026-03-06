@@ -453,7 +453,7 @@ export default function Page() {
 
       {/* ================= CALL TO ACTION ================= */}
       <section className="py-24 px-4 overflow-hidden bg-gradient-vibrant relative">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--pc-teal)]/5 via-transparent to-[var(--pc-primary)]/5 opacity-50"></div>
         <motion.div
           animate={{
             backgroundPosition: ['0% 0%', '100% 100%'],

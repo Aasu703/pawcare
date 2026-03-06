@@ -34,8 +34,14 @@ export default function AboutPage() {
       >
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-              <Stethoscope className="w-6 h-6 text-primary" />
+            <div className="relative w-12 h-12 rounded-full overflow-hidden">
+              <Image
+                src="/images/pawcare.png"
+                alt="PawCare Logo"
+                width={48}
+                height={48}
+                className="object-cover"
+              />
             </div>
             <span className="text-2xl font-bold tracking-tight text-foreground">PawCare</span>
           </div>

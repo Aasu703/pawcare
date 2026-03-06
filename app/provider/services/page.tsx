@@ -14,6 +14,7 @@ export default function ProviderServicesPage() {
   const vetOnly = isVetProvider(providerType);
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({
@@ -26,8 +27,16 @@ export default function ProviderServicesPage() {
 
   async function loadServices() {
     setLoading(true);
+    setError(null);
     const res = await getProviderServices();
-    if (res.success && res.data) setServices(res.data);
+    console.log('📦 [Services Page] Response:', res);
+    if (res.success && res.data) {
+      setServices(res.data);
+      console.log('✅ [Services Page] Loaded services:', res.data.length);
+    } else {
+      setError(res.message || 'Failed to load services');
+      console.error('❌ [Services Page] Failed to load services:', res.message);
+    }
     setLoading(false);
   }
 
@@ -181,6 +190,13 @@ export default function ProviderServicesPage() {
       )}
 
       {/* Services Table */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <p className="text-sm text-red-600 font-medium">Error loading services: {error}</p>
+          <p className="text-xs text-red-500 mt-1">Check the browser console (F12) for more details.</p>
+        </div>
+      )}
+      
       {loading ? (
         <div className="flex justify-center py-20">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>

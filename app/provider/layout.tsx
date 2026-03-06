@@ -13,7 +13,7 @@ import {
   canManageServices,
 } from "@/lib/provider-access";
 
-const authPages = ["/provider/login", "/provider/register", "/provider/select-type", "/provider/verification-pending"];
+const authPages = ["/login", "/register", "/provider/select-type", "/provider/verification-pending"];
 
 export default function ProviderLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,7 +27,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
 
     if (!isAuthenticated) {
       if (!isAuthPage) {
-        router.replace("/provider/login");
+        router.replace("/login");
       }
       return;
     }
