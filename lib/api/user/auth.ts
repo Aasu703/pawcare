@@ -108,9 +108,9 @@ export const createUserByAdmin = async (data: any) => {
     }
 }
 
-export const requestPasswordReset = async (data: any) => {
+export const requestPasswordReset = async (email: string) => {
     try {
-        const response = await axios.post(API.AUTH.REQUEST_PASSWORD_RESET, data);
+        const response = await axios.post(API.AUTH.REQUEST_PASSWORD_RESET, { email });
         return response.data;
     } catch (err: Error | any) {
         throw new Error(
