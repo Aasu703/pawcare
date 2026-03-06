@@ -68,7 +68,7 @@ const statusColors = {
 export default function RecentAppointments({
   appointments = defaultAppointments,
   isLoading = false,
-}: any) {
+}: RecentAppointmentsProps) {
   if (isLoading) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">

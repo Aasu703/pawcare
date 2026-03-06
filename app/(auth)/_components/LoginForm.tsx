@@ -63,11 +63,9 @@ export default function LoginForm(props: LoginFormProps = {}) {
       const response = role === 'provider'
         ? await handleProviderLogin(result.data)
         : await handleLogin(result.data);
-      console.log('🔐 Login response:', response);
 
       if (response.success) {
         const userData = response.data?.user ?? response.data ?? null;
-        console.log('✅ Login successful, user role:', userData?.role);
 
         if (!userData) {
           setErrors({ email: 'Login succeeded but user data missing' });
@@ -83,7 +81,6 @@ export default function LoginForm(props: LoginFormProps = {}) {
         window.location.href = redirectPath;
         return; // Stop further execution
       } else {
-        console.error('❌ Login failed:', response.message);
         const errorMessage = response.message === "Error" ? "Login failed. Please check your credentials." : response.message || 'Login failed';
         setErrors({ email: errorMessage });
       }

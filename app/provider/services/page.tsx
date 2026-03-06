@@ -29,13 +29,10 @@ export default function ProviderServicesPage() {
     setLoading(true);
     setError(null);
     const res = await getProviderServices();
-    console.log('📦 [Services Page] Response:', res);
     if (res.success && res.data) {
       setServices(res.data);
-      console.log('✅ [Services Page] Loaded services:', res.data.length);
     } else {
       setError(res.message || 'Failed to load services');
-      console.error('❌ [Services Page] Failed to load services:', res.message);
     }
     setLoading(false);
   }

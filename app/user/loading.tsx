@@ -1,19 +1,7 @@
-"use client";
-
-export default function loading() {
+export default function Loading() {
     return (
-        <main className="min-h-screen flex items-center justify-center bg-muted">
-            <div className="loader ease-linear rounded-full border-8 border-t-8 border-border h-32 w-32"></div>
-            <style jsx>{`
-                .loader {
-                    border-top-color: #3498db;
-                    animation: spin 1s linear infinite;
-                }
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            `}</style>
-        </main>
+        <div className="flex items-center justify-center min-h-[400px]">
+            <div className="w-8 h-8 rounded-full border-2 border-[var(--pc-primary)] border-t-transparent animate-spin" />
+        </div>
     );
 }

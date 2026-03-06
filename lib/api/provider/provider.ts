@@ -112,35 +112,26 @@ export async function createProviderService(data: any): Promise<{ success: boole
 export async function getProviderServices(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_ALL);
-    console.log('🔍 [getProviderServices] Full response:', response.data);
 
     let data: any[] = [];
     
     // Check response.data.services first (actual backend structure)
     if (Array.isArray(response.data?.services)) {
       data = response.data.services.map((item: any) => item?._doc || item);
-      console.log('✅ [getProviderServices] Parsed from response.data.services, count:', data.length);
     } 
     // Fallback patterns for other possible structures
     else if (Array.isArray(response.data?.data)) {
       data = response.data.data.map((item: any) => item?._doc || item);
-      console.log('✅ [getProviderServices] Parsed from response.data.data, count:', data.length);
     } 
     else if (Array.isArray(response.data?.data?.services)) {
       data = response.data.data.services.map((item: any) => item?._doc || item);
-      console.log('✅ [getProviderServices] Parsed from response.data.data.services, count:', data.length);
     } 
     else if (Array.isArray(response.data?.data?.data)) {
       data = response.data.data.data.map((item: any) => item?._doc || item);
-      console.log('✅ [getProviderServices] Parsed from response.data.data.data, count:', data.length);
-    } 
-    else {
-      console.warn('⚠️ [getProviderServices] Unknown response structure:', response.data);
     }
 
     return { success: true, message: "Services fetched", data };
   } catch (err: any) {
-    console.error('❌ [getProviderServices] Error:', err.response?.data || err.message);
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch services" };
   }
 }

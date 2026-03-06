@@ -1,7 +1,8 @@
 "use client"
+
 import { useEffect } from "react"
 
-export default function  ({
+export default function UserError({
      error,
      reset
 }: {
@@ -14,9 +15,10 @@ export default function  ({
      },[error])
 
     return (
-        <div>
-            <h2>Something went wrong!</h2>
-            <button onClick={reset}>
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+            <p className="text-muted-foreground">Something went wrong loading this page.</p>
+            <button onClick={reset}
+              className="bg-[var(--pc-primary)] text-white rounded-[12px] px-4 py-2 text-sm font-semibold">
                  Try again
             </button>
         </div>

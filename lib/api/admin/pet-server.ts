@@ -4,8 +4,6 @@ import { getAuthToken } from "@/lib/cookie";
 import axios from "@/lib/api/axios";
 import { API } from "@/lib/api/endpoints";
 
-const BASE_URL = process.env.API_BASE_URL || "http://localhost:5050";
-
 // Server-side functions that use Next.js cookies for authentication
 export const getAllPetsServer = async () => {
     try {
