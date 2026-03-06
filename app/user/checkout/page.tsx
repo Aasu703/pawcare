@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
 import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ShoppingBag, MapPin } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ShippingLocationPicker = dynamic(
+  () => import("@/components/ShippingLocationPicker"),
+  { ssr: false, loading: () => <div className="h-[280px] rounded-xl border border-border bg-muted animate-pulse" /> }
+);
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
@@ -15,6 +21,11 @@ export default function CheckoutPage() {
   const [shippingAddress, setShippingAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+
+  const handleLocationSelect = useCallback((address: string, _lat: number, _lng: number) => {
+    setShippingAddress(address);
+  }, []);
 
   useEffect(() => {
     const cartParam = searchParams.get("cart");
@@ -83,6 +94,16 @@ export default function CheckoutPage() {
         dedupeKey: `order-created:${res.data?._id || new Date().toISOString()}`,
         pushToBrowser: true,
       });
+      // Notify the provider about the new order
+      addAppNotification({
+        audience: "provider",
+        type: "order",
+        title: "New order received",
+        message: `A new order totaling $${total.toFixed(2)} has been placed and is awaiting processing.`,
+        link: "/provider/orders",
+        dedupeKey: `provider-new-order:${res.data?._id || new Date().toISOString()}`,
+        pushToBrowser: true,
+      });
       toast.success("Order placed successfully!");
       router.push("/user/orders");
     } else {
@@ -146,6 +167,19 @@ export default function CheckoutPage() {
                   className="w-full border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Enter your full shipping address"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowMap((v) => !v)}
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--pc-teal)] hover:underline"
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  {showMap ? "Hide map" : "Pick from map"}
+                </button>
+                {showMap && (
+                  <div className="mt-3">
+                    <ShippingLocationPicker onLocationSelect={handleLocationSelect} />
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">

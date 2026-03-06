@@ -291,13 +291,22 @@ export default function OrdersPage() {
                   </p>
                 )}
 
+                {/* Order Tracking */}
+                <OrderTracker currentStatus={order.status} />
+
                 {order.status === "pending" && (
                   <button
                     onClick={() => handleCancel(order._id)}
-                    className="text-sm text-red-500 hover:text-red-700 font-medium"
+                    className="mt-4 text-sm text-red-500 hover:text-red-700 font-medium"
                   >
                     Cancel Order
                   </button>
+                )}
+
+                {order.status === "processing" && (
+                  <p className="mt-4 text-xs text-muted-foreground">
+                    Your order is being processed and can no longer be cancelled.
+                  </p>
                 )}
               </div>
             );
@@ -367,3 +376,55 @@ export default function OrdersPage() {
   );
 }
 
+function OrderTracker({ currentStatus }: { currentStatus: string }) {
+  const steps = ["pending", "processing", "shipped", "delivered"];
+  const isCancelled = currentStatus === "cancelled";
+  const currentIndex = steps.indexOf(currentStatus);
+
+  if (isCancelled) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-3 mt-4">
+        <XCircle className="h-4 w-4" />
+        This order has been cancelled.
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1 mt-4">
+      {steps.map((step, idx) => {
+        const reached = idx <= currentIndex;
+        const config = statusConfig[step];
+        return (
+          <div key={step} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
+                  reached
+                    ? "bg-[var(--pc-teal)] text-white"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {reached && idx < currentIndex ? (
+                  <CheckCircle className="h-4 w-4" />
+                ) : (
+                  idx + 1
+                )}
+              </div>
+              <span className={`text-[10px] mt-1 font-medium ${reached ? "text-[var(--pc-teal-dark)]" : "text-muted-foreground"}`}>
+                {config.label}
+              </span>
+            </div>
+            {idx < steps.length - 1 && (
+              <div
+                className={`h-0.5 flex-1 -mt-4 ${
+                  idx < currentIndex ? "bg-[var(--pc-teal)]" : "bg-muted"
+                }`}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}

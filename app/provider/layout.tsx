@@ -10,6 +10,7 @@ import {
   canAccessVetFeatures,
   canManageBookings,
   canManageInventory,
+  canManageOrders,
   canManageServices,
 } from "@/lib/provider-access";
 
@@ -70,6 +71,10 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
         return;
       }
       if (pathname.startsWith("/provider/inventory") && !canManageInventory(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
+      if (pathname.startsWith("/provider/orders") && !canManageOrders(providerType)) {
         router.replace("/provider/dashboard");
         return;
       }

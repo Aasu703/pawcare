@@ -13,7 +13,15 @@ export async function createBooking(data: any): Promise<{ success: boolean; mess
 export async function getAllBookings(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.BOOKING.GET_ALL);
-    return { success: true, message: "Bookings fetched", data: response.data.data };
+    const raw = response.data;
+    const nested = raw?.data;
+    const bookingsArray =
+      Array.isArray(raw) ? raw :
+      Array.isArray(nested) ? nested :
+      nested?.bookings || nested?.items ||
+      raw?.bookings || raw?.items ||
+      [];
+    return { success: true, message: "Bookings fetched", data: bookingsArray };
   } catch (error: any) {
     return { success: false, message: error.response?.data?.message || error.message || "Failed to fetch bookings" };
   }

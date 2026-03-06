@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { getBookingsByUser, deleteBooking } from "@/lib/api/user/booking";
+import { getBookingsByUser, getAllBookings, deleteBooking } from "@/lib/api/user/booking";
 import { createReview, getMyReviews } from "@/lib/api/user/review";
 import { addAppNotification, createUpcomingAppointmentNotifications } from "@/lib/notifications/app-notifications";
-import { Calendar, Clock, Trash2, Plus, Star, X } from "lucide-react";
+import { Calendar, Clock, Trash2, Plus, Star, X, CheckCircle, XCircle } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -41,9 +41,10 @@ export default function BookingsPage() {
     return "";
   };
 
-  async function loadBookings(uid: string) {
+  async function loadBookings(uid?: string) {
     setLoading(true);
-    const [bookingsRes, reviewsRes] = await Promise.all([getBookingsByUser(uid), getMyReviews()]);
+    const bookingsPromise = uid ? getBookingsByUser(uid) : getAllBookings();
+    const [bookingsRes, reviewsRes] = await Promise.all([bookingsPromise, getMyReviews()]);
 
     if (bookingsRes.success && bookingsRes.data) {
       const nextBookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : [];
@@ -74,7 +75,7 @@ export default function BookingsPage() {
   }
 
   useEffect(() => {
-    if (userId) loadBookings(userId);
+    loadBookings(userId);
   }, [userId]);
 
   const handleCancel = async (data: any) => {
@@ -89,7 +90,7 @@ export default function BookingsPage() {
         link: "/user/bookings",
       });
       toast.success("Booking cancelled");
-      if (userId) loadBookings(userId);
+      loadBookings(userId);
     } else {
       toast.error(res.message);
     }
@@ -224,6 +225,21 @@ export default function BookingsPage() {
                   <p className="text-sm text-muted-foreground mt-2">{booking.notes}</p>
                 )}
 
+                {/* Booking Tracking */}
+                <BookingTracker currentStatus={booking.status} />
+
+                {booking.status === "pending" && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Waiting for provider confirmation. You can still cancel.
+                  </p>
+                )}
+
+                {booking.status === "confirmed" && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Your booking has been confirmed and can no longer be cancelled.
+                  </p>
+                )}
+
                 {booking.status === "completed" && (
                   <div className="mt-3">
                     {bookingReviewMap[getEntityId(booking._id || booking.id)] ? (
@@ -244,7 +260,7 @@ export default function BookingsPage() {
                 )}
               </div>
 
-              {(booking.status === "pending" || booking.status === "confirmed") && (
+              {booking.status === "pending" && (
                 <button
                   onClick={() => handleCancel(booking._id)}
                   className="ml-4 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
@@ -316,6 +332,66 @@ export default function BookingsPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+const bookingStatusConfig: Record<string, { label: string; color: string }> = {
+  pending: { label: "Pending", color: "bg-yellow-100 text-yellow-700" },
+  confirmed: { label: "Confirmed", color: "bg-blue-100 text-blue-700" },
+  completed: { label: "Completed", color: "bg-green-100 text-green-700" },
+  cancelled: { label: "Cancelled", color: "bg-red-100 text-red-700" },
+};
+
+function BookingTracker({ currentStatus }: { currentStatus: string }) {
+  const steps = ["pending", "confirmed", "completed"];
+  const isCancelled = currentStatus === "cancelled";
+  const currentIndex = steps.indexOf(currentStatus);
+
+  if (isCancelled) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg p-3 mt-3">
+        <XCircle className="h-4 w-4" />
+        This booking has been cancelled.
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1 mt-3">
+      {steps.map((step, idx) => {
+        const reached = idx <= currentIndex;
+        const config = bookingStatusConfig[step];
+        return (
+          <div key={step} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition ${
+                  reached
+                    ? "bg-[var(--pc-teal)] text-white"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {reached && idx < currentIndex ? (
+                  <CheckCircle className="h-4 w-4" />
+                ) : (
+                  idx + 1
+                )}
+              </div>
+              <span className={`text-[10px] mt-1 font-medium ${reached ? "text-[var(--pc-teal-dark)]" : "text-muted-foreground"}`}>
+                {config.label}
+              </span>
+            </div>
+            {idx < steps.length - 1 && (
+              <div
+                className={`h-0.5 flex-1 -mt-4 ${
+                  idx < currentIndex ? "bg-[var(--pc-teal)]" : "bg-muted"
+                }`}
+              />
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

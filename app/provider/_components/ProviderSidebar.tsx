@@ -4,12 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, MessageCircle, ClipboardList, LucideIcon } from "lucide-react";
+import { LayoutDashboard, Wrench, Package, MessageSquare, LogOut, CalendarCheck, FileText, UserCircle, HeartPulse, MessageCircle, ClipboardList, ShoppingBag, LucideIcon } from "lucide-react";
 import { useAuth } from '@/context/AuthContext';
 import {
   canAccessVetFeatures,
   canManageBookings,
   canManageInventory,
+  canManageOrders,
   canManageServices,
   getProviderTypeLabel,
 } from "@/lib/provider-access";
@@ -31,6 +32,7 @@ export default function ProviderSidebar() {
     { label: "Profile", href: "/provider/profile", icon: UserCircle },
     ...(canManageServices(providerType) ? [{ label: "Services", href: "/provider/services", icon: Wrench }] : []),
     ...(canManageInventory(providerType) ? [{ label: "Inventory", href: "/provider/inventory", icon: Package }] : []),
+    ...(canManageOrders(providerType) ? [{ label: "Orders", href: "/provider/orders", icon: ShoppingBag }] : []),
     ...(canManageBookings(providerType) ? [{ label: "Bookings", href: "/provider/bookings", icon: CalendarCheck }] : []),
     ...(canAccessVetFeatures(providerType) ? [{ label: "Vet Appointments", href: "/provider/vet-appointments", icon: HeartPulse }] : []),
     ...(canAccessVetFeatures(providerType) ? [{ label: "Assigned Pets", href: "/provider/assigned-pets", icon: ClipboardList }] : []),

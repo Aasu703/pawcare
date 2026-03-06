@@ -12,9 +12,15 @@ export async function createOrder(data: any): Promise<{ success: boolean; messag
 export async function getMyOrders(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.ORDER.GET_MY);
-    // Backend may return a paginated object like { items: [...], page, total }
-    const data = response.data.data;
-    const ordersArray = data?.orders || data?.items || data;
+    // Backend may wrap in data.data, data.orders, or return array directly
+    const raw = response.data;
+    const nested = raw?.data;
+    const ordersArray =
+      Array.isArray(raw) ? raw :
+      Array.isArray(nested) ? nested :
+      nested?.orders || nested?.items ||
+      raw?.orders || raw?.items ||
+      [];
     return { success: true, message: "Orders fetched", data: ordersArray };
   } catch (err: any) {
     return { success: false, message: err.response?.data?.message || err.message || "Failed to fetch orders" };

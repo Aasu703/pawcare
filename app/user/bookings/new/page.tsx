@@ -61,6 +61,7 @@ type ServiceSummary = {
   description?: string;
   price?: number;
   duration_minutes?: number;
+  providerId?: string | { _id?: string };
 };
 
 type PetSummary = {
@@ -164,10 +165,14 @@ function NewBookingForm() {
     }
 
     setSubmitting(true);
+    const providerId = typeof service?.providerId === "string"
+      ? service.providerId
+      : service?.providerId?._id;
     const res = await createBooking({
       startTime: form.startTime,
       endTime: form.endTime,
       serviceId: normalizedServiceId,
+      providerId: providerId || undefined,
       petId: form.petId || undefined,
       notes: form.notes || undefined,
     });
@@ -181,6 +186,16 @@ function NewBookingForm() {
         message: `${service?.title || "Service"} booked for ${startLabel}.`,
         link: "/user/bookings",
         dedupeKey: `booking-created:${res.data?._id || `${normalizedServiceId}:${form.startTime}`}`,
+        pushToBrowser: true,
+      });
+      // Notify the provider about the new booking
+      addAppNotification({
+        audience: "provider",
+        type: "booking",
+        title: "New booking request",
+        message: `New booking for ${service?.title || "a service"} on ${startLabel}. Please confirm or decline.`,
+        link: "/provider/bookings",
+        dedupeKey: `provider-new-booking:${res.data?._id || `${normalizedServiceId}:${form.startTime}`}`,
         pushToBrowser: true,
       });
       toast.success("Booking created successfully!");

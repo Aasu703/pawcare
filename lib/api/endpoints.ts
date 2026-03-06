@@ -211,6 +211,11 @@ export const API = {
         UPDATE: (data: any) => `/api/provider/post/${data}`,
         DELETE: (data: any) => `/api/provider/post/${data}`,
     },
+    ORDER: {
+        GET_MY: '/api/provider/order/my',
+        GET_BY_ID: (data: any) => `/api/provider/order/${data}`,
+        UPDATE_STATUS: (data: any) => `/api/provider/order/${data}/status`,
+    },
  },
  UPLOAD: {
     PROVIDER_CERTIFICATE: '/api/upload/provider-certificate',
