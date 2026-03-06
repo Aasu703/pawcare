@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Mail, Phone, Calendar, User as UserIcon } from "lucide-react";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { handleGetUserById } from "@/lib/actions/admin/user-action";
 
 interface User {
@@ -44,7 +44,7 @@ export default function UserDetail({ userId }: any) {
     return (
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <div className="flex h-40 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       </div>
     );
@@ -57,7 +57,7 @@ export default function UserDetail({ userId }: any) {
           <p className="text-muted-foreground">User not found</p>
           <Link
             href="/admin/users"
-            className="inline-flex items-center gap-2 mt-4 text-orange-500 hover:text-orange-600"
+            className="inline-flex items-center gap-2 mt-4 text-[var(--pc-primary)] hover:text-[var(--pc-primary-hover)]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Users
@@ -69,7 +69,7 @@ export default function UserDetail({ userId }: any) {
 
   const roleColors: Record<string, string> = {
     admin: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
-    user: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+    user: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-[var(--pc-teal)]",
     provider: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
   };
 
@@ -78,7 +78,7 @@ export default function UserDetail({ userId }: any) {
       {/* Back Button */}
       <Link
         href="/admin/users"
-        className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600"
+        className="inline-flex items-center gap-2 text-[var(--pc-primary)] hover:text-[var(--pc-primary-hover)]"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Users
@@ -88,8 +88,8 @@ export default function UserDetail({ userId }: any) {
       <div className="rounded-xl border bg-card p-6 shadow-sm">
         <div className="flex items-start gap-6">
           {/* Avatar */}
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900/20">
-            <UserIcon className="h-10 w-10 text-orange-600" />
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--pc-primary-light)] dark:bg-[var(--pc-primary)]/20">
+            <UserIcon className="h-10 w-10 text-[var(--pc-primary-hover)]" />
           </div>
 
           {/* User Info */}
@@ -161,7 +161,7 @@ export default function UserDetail({ userId }: any) {
       <div className="flex gap-3">
         <Link
           href={`/admin/users/${userId}/edit`}
-          className="rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
+          className="rounded-lg bg-[var(--pc-primary)] px-4 py-2 text-white hover:bg-[var(--pc-primary-hover)]"
         >
           Edit User
         </Link>

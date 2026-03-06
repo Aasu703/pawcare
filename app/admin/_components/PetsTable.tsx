@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   handleGetAllPets,
   handleCreatePet,
@@ -99,7 +99,7 @@ export default function PetsTable() {
     cat: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
     bird: "bg-sky-100 text-sky-700 dark:bg-sky-900/20 dark:text-sky-400",
     rabbit: "bg-pink-100 text-pink-700 dark:bg-pink-900/20 dark:text-pink-400",
-    other: "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400",
+    other: "bg-muted text-foreground dark:bg-gray-900/20 dark:text-muted-foreground",
   };
 
   return (
@@ -115,12 +115,12 @@ export default function PetsTable() {
               placeholder="Search pets..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
           <button
             onClick={handleCreate}
-            className="flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
+            className="flex items-center gap-2 rounded-lg bg-[var(--pc-primary)] px-4 py-2 text-white hover:bg-[var(--pc-primary-hover)]"
           >
             <Plus className="h-4 w-4" />
             Add Pet
@@ -131,7 +131,7 @@ export default function PetsTable() {
       {/* Table */}
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -182,7 +182,7 @@ export default function PetsTable() {
                           className="rounded-lg p-2 hover:bg-muted"
                           title="Edit"
                         >
-                          <Pencil className="h-4 w-4 text-blue-500" />
+                          <Pencil className="h-4 w-4 text-[var(--pc-teal)]" />
                         </button>
                         <button
                           onClick={() => handleDelete(pet._id)}

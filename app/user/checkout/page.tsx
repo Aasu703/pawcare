@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createOrder } from "@/lib/api/user/order";
 import { addAppNotification } from "@/lib/notifications/app-notifications";
 import { toast } from "sonner";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ShoppingBag, MapPin } from "lucide-react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const ShippingLocationPicker = dynamic(
+  () => import("@/components/ShippingLocationPicker"),
+  { ssr: false, loading: () => <div className="h-[280px] rounded-xl border border-border bg-muted animate-pulse" /> }
+);
 
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
@@ -15,6 +21,11 @@ export default function CheckoutPage() {
   const [shippingAddress, setShippingAddress] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+
+  const handleLocationSelect = useCallback((address: string, _lat: number, _lng: number) => {
+    setShippingAddress(address);
+  }, []);
 
   useEffect(() => {
     const cartParam = searchParams.get("cart");
@@ -83,6 +94,16 @@ export default function CheckoutPage() {
         dedupeKey: `order-created:${res.data?._id || new Date().toISOString()}`,
         pushToBrowser: true,
       });
+      // Notify the provider about the new order
+      addAppNotification({
+        audience: "provider",
+        type: "order",
+        title: "New order received",
+        message: `A new order totaling $${total.toFixed(2)} has been placed and is awaiting processing.`,
+        link: "/provider/orders",
+        dedupeKey: `provider-new-order:${res.data?._id || new Date().toISOString()}`,
+        pushToBrowser: true,
+      });
       toast.success("Order placed successfully!");
       router.push("/user/orders");
     } else {
@@ -93,17 +114,17 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <Link href="/user/shop" className="flex items-center gap-2 text-[#0f4f57] mb-6 hover:underline">
+      <Link href="/user/shop" className="flex items-center gap-2 text-[var(--pc-teal)] mb-6 hover:underline">
         <ArrowLeft className="h-4 w-4" /> Back to shop
       </Link>
 
-      <h1 className="text-3xl font-bold text-[#0c4148] mb-6">Checkout</h1>
+      <h1 className="text-3xl font-bold text-[var(--pc-teal-dark)] mb-6">Checkout</h1>
 
       {items.length === 0 ? (
         <div className="text-center py-16">
-          <ShoppingBag className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">No items to checkout</p>
-          <Link href="/user/shop" className="text-[#0f4f57] hover:underline mt-2 inline-block">
+          <ShoppingBag className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">No items to checkout</p>
+          <Link href="/user/shop" className="text-[var(--pc-teal)] hover:underline mt-2 inline-block">
             Go to shop
           </Link>
         </div>
@@ -117,7 +138,7 @@ export default function CheckoutPage() {
                 <div key={idx} className="flex justify-between items-center border-b pb-2">
                   <div>
                     <p className="font-medium">{item.productName}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-muted-foreground">
                       {item.quantity} x ${item.unitPrice.toFixed(2)}
                     </p>
                   </div>
@@ -126,7 +147,7 @@ export default function CheckoutPage() {
               ))}
               <div className="flex justify-between items-center pt-2 font-bold text-lg">
                 <span>Total</span>
-                <span className="text-[#0f4f57]">${total.toFixed(2)}</span>
+                <span className="text-[var(--pc-teal)]">${total.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -136,26 +157,39 @@ export default function CheckoutPage() {
             <h2 className="text-lg font-semibold mb-4">Shipping Details</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Shipping Address *
                 </label>
                 <textarea
                   value={shippingAddress}
                   onChange={(e) => setShippingAddress(e.target.value)}
                   rows={3}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Enter your full shipping address"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowMap((v) => !v)}
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--pc-teal)] hover:underline"
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  {showMap ? "Hide map" : "Pick from map"}
+                </button>
+                {showMap && (
+                  <div className="mt-3">
+                    <ShippingLocationPicker onLocationSelect={handleLocationSelect} />
+                  </div>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Notes (optional)
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#0f4f57]"
+                  className="w-full border border-border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]"
                   placeholder="Any special instructions..."
                 />
               </div>
@@ -165,7 +199,7 @@ export default function CheckoutPage() {
           <button
             onClick={handleCheckout}
             disabled={loading}
-            className="w-full bg-[#f8d548] text-[#0c4148] py-3 rounded-lg font-bold text-lg hover:brightness-95 disabled:opacity-50 transition"
+            className="w-full bg-[var(--pc-primary)] text-[var(--pc-teal-dark)] py-3 rounded-lg font-bold text-lg hover:brightness-95 disabled:opacity-50 transition"
           >
             {loading ? "Placing Order..." : `Place Order - $${total.toFixed(2)}`}
           </button>

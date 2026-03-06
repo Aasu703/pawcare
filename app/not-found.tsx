@@ -4,10 +4,10 @@ import { ArrowLeft, Home, Search } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-white to-blue-50">
+    <main className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[var(--pc-primary-light)] via-white to-[var(--pc-cream)]">
       <div className="absolute inset-0 -z-10 bg-gradient-mesh" />
       <div className="absolute -top-36 -right-36 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-      <div className="absolute -bottom-36 -left-36 h-96 w-96 rounded-full bg-blue-200/40 blur-3xl" />
+      <div className="absolute -bottom-36 -left-36 h-96 w-96 rounded-full bg-[var(--pc-teal)]/15 blur-3xl" />
 
       <div className="mx-auto flex min-h-screen w-full max-w-5xl items-center px-6 py-20">
         <section className="w-full rounded-4xl border border-primary/15 bg-white/80 p-8 shadow-2xl backdrop-blur-sm md:p-12">
@@ -46,14 +46,14 @@ export default function NotFound() {
             </Link>
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 font-semibold text-foreground transition hover:border-primary/40 hover:bg-orange-50"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 font-semibold text-foreground transition hover:border-primary/40 hover:bg-[var(--pc-primary-light)]"
             >
               <Search size={18} />
               Browse Services
             </Link>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 font-semibold text-foreground transition hover:border-primary/40 hover:bg-orange-50"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-6 py-3 font-semibold text-foreground transition hover:border-primary/40 hover:bg-[var(--pc-primary-light)]"
             >
               <ArrowLeft size={18} />
               Go to Login

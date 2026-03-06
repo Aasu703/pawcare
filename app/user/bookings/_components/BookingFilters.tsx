@@ -15,7 +15,7 @@ export function BookingFilters({ filter, onFilterChange }: BookingFiltersProps) 
           key={s}
           onClick={() => onFilterChange(s)}
           className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
-            filter === s ? "bg-[#0f4f57] text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            filter === s ? "bg-[var(--pc-teal)] text-white" : "bg-muted text-muted-foreground hover:bg-muted"
           }`}
         >
           {s}

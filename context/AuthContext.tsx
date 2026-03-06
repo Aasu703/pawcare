@@ -65,7 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // If user data is passed directly (e.g., after login), use it
       if (directUserData) {
-        console.log("Using direct user data:", directUserData);
         setUser(directUserData);
         setIsAuthenticated(true);
         setLoading(false);
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const hasValidToken = token && token !== "undefined" && token.length > 20;
 
       if (!hasValidToken || !userDataStr) {
-        console.log("No valid auth cookies found");
         setUser(null);
         setIsAuthenticated(false);
         clearClientAuthStorage();
@@ -89,7 +87,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const userData = JSON.parse(userDataStr);
-        console.log("User data from cookie:", userData);
         setUser(userData);
         setIsAuthenticated(true);
       } catch (e) {

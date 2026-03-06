@@ -147,7 +147,7 @@ export default function VetDetailPage() {
         </p>
         <button
           onClick={() => router.push("/user/vets")}
-          className="text-sm font-semibold text-[#1E8F84] hover:underline"
+          className="text-sm font-semibold text-[var(--pc-teal)] hover:underline"
         >
           Back to Browse
         </button>
@@ -166,7 +166,7 @@ export default function VetDetailPage() {
       {/* Back button */}
       <button
         onClick={() => router.back()}
-        className="inline-flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-[#1E8F84] transition-colors"
+        className="inline-flex items-center gap-2 text-sm font-medium text-stone-500 hover:text-[var(--pc-teal)] transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Browse
@@ -193,7 +193,7 @@ export default function VetDetailPage() {
           )}
           {/* Type badge */}
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-sm">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-[#1E8F84]">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--pc-teal)]">
               {provider.providerType === "vet" ? "Veterinarian" : "Shop"}
             </span>
           </div>
@@ -210,7 +210,7 @@ export default function VetDetailPage() {
                   {provider.businessName}
                 </h1>
                 {provider.degree && (
-                  <p className="text-sm font-bold text-[#1E8F84]">
+                  <p className="text-sm font-bold text-[var(--pc-teal)]">
                     {provider.degree}
                   </p>
                 )}
@@ -243,7 +243,7 @@ export default function VetDetailPage() {
                 </span>
               )}
               {provider.experience && (
-                <span className="inline-flex items-center gap-1.5 bg-teal-50 text-[#1E8F84] text-xs font-medium px-3 py-1.5 rounded-lg border border-teal-100">
+                <span className="inline-flex items-center gap-1.5 bg-teal-50 text-[var(--pc-teal)] text-xs font-medium px-3 py-1.5 rounded-lg border border-teal-100">
                 <Award className="w-3.5 h-3.5" />
                   {provider.experience}
                 </span>
@@ -259,9 +259,9 @@ export default function VetDetailPage() {
             {/* Appointment fee */}
             {provider.appointmentFee != null &&
               provider.appointmentFee > 0 && (
-                <div className="mt-4 flex items-center gap-2 bg-[#1E8F84]/5 border border-[#1E8F84]/15 rounded-xl px-4 py-2.5">
-                  <Banknote className="w-4 h-4 text-[#1E8F84]" />
-                  <span className="text-sm font-bold text-[#1E8F84]">
+                <div className="mt-4 flex items-center gap-2 bg-[var(--pc-teal)]/5 border border-[var(--pc-teal)]/15 rounded-xl px-4 py-2.5">
+                  <Banknote className="w-4 h-4 text-[var(--pc-teal)]" />
+                  <span className="text-sm font-bold text-[var(--pc-teal)]">
                     LKR {provider.appointmentFee} per Appointment
                   </span>
                 </div>
@@ -285,7 +285,7 @@ export default function VetDetailPage() {
         <div className="p-5 flex gap-3">
           <Link
             href={`/user/bookings/new?providerId=${provider._id}${provider.appointmentFee ? `&price=${provider.appointmentFee}` : ""}`}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#1E8F84] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-[#167a71] transition-colors shadow-md shadow-teal-200/50"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-[var(--pc-teal)] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-[var(--pc-teal-dark)] transition-colors shadow-md shadow-teal-200/50"
           >
             <Calendar className="w-5 h-5" />
             Book an Appointment
@@ -305,7 +305,7 @@ export default function VetDetailPage() {
         <div className="bg-white rounded-2xl border border-stone-200/80 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-4">
             <div className="p-1.5 bg-teal-50 rounded-lg">
-              <BadgeCheck className="w-4 h-4 text-[#1E8F84]" />
+              <BadgeCheck className="w-4 h-4 text-[var(--pc-teal)]" />
             </div>
             <h2 className="text-base font-bold text-stone-900">
               Services Offered
@@ -319,7 +319,7 @@ export default function VetDetailPage() {
                 className="flex items-center justify-between p-4 rounded-xl border border-stone-100 hover:border-teal-200 hover:bg-teal-50/30 transition-all group"
               >
                 <div>
-                  <h3 className="font-semibold text-sm text-stone-900 group-hover:text-[#1E8F84]">
+                  <h3 className="font-semibold text-sm text-stone-900 group-hover:text-[var(--pc-teal)]">
                     {svc.title}
                   </h3>
                   <p className="text-xs text-stone-500 mt-0.5">
@@ -354,7 +354,7 @@ export default function VetDetailPage() {
             className={`inline-flex items-center gap-1.5 text-sm font-bold transition-colors px-3 py-1.5 rounded-lg ${
               showReviewForm
                 ? "bg-stone-100 text-stone-600 hover:bg-stone-200"
-                : "bg-[#1E8F84]/10 text-[#1E8F84] hover:bg-[#1E8F84]/20"
+                : "bg-[var(--pc-teal)]/10 text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/20"
             }`}
           >
             {showReviewForm ? (
@@ -404,13 +404,13 @@ export default function VetDetailPage() {
                   stars={5}
                   count={breakdown.excellent}
                   total={breakdown.totalReviews}
-                  color="bg-[#1E8F84]"
+                  color="bg-[var(--pc-teal)]"
                 />
                 <BreakdownBar
                   stars={4}
                   count={breakdown.good}
                   total={breakdown.totalReviews}
-                  color="bg-[#56C2B7]"
+                  color="bg-[var(--pc-sage)]"
                 />
                 <BreakdownBar
                   stars={3}
@@ -422,7 +422,7 @@ export default function VetDetailPage() {
                   stars={2}
                   count={breakdown.belowAverage}
                   total={breakdown.totalReviews}
-                  color="bg-orange-400"
+                  color="bg-[var(--pc-primary)]"
                 />
                 <BreakdownBar
                   stars={1}
@@ -462,7 +462,7 @@ export default function VetDetailPage() {
                 </button>
               ))}
               {reviewRating > 0 && (
-                <span className="text-xs font-bold text-[#1E8F84] ml-2">
+                <span className="text-xs font-bold text-[var(--pc-teal)] ml-2">
                   {RATING_LABELS[reviewRating]}
                 </span>
               )}
@@ -472,12 +472,12 @@ export default function VetDetailPage() {
               onChange={(e) => setReviewComment(e.target.value)}
               placeholder="Tell others about your experience with this provider..."
               rows={3}
-              className="w-full mt-3 px-4 py-3 rounded-xl border border-teal-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E8F84]/30 focus:border-[#1E8F84] text-sm resize-none transition-all"
+              className="w-full mt-3 px-4 py-3 rounded-xl border border-teal-200 bg-white focus:outline-none focus:ring-2 focus:ring-[var(--pc-teal)]/30 focus:border-[var(--pc-teal)] text-sm resize-none transition-all"
             />
             <button
               onClick={handleSubmitReview}
               disabled={reviewRating === 0 || submitting}
-              className="mt-3 bg-[#1E8F84] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[#167a71] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm shadow-md shadow-teal-200/50"
+              className="mt-3 bg-[var(--pc-teal)] text-white font-bold py-2.5 px-6 rounded-xl hover:bg-[var(--pc-teal-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-sm shadow-md shadow-teal-200/50"
             >
               {submitting ? "Posting..." : "Submit Review"}
             </button>
@@ -564,7 +564,7 @@ function ReviewCard({ review }: { review: Review }) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <User className="w-4 h-4 text-[#1E8F84]" />
+            <User className="w-4 h-4 text-[var(--pc-teal)]" />
           )}
         </div>
         <div className="flex-1 min-w-0">

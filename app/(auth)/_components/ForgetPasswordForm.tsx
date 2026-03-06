@@ -38,7 +38,7 @@ const ForgetPasswordForm = () => {
     };
         if (emailSent) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100">
@@ -46,26 +46,26 @@ const ForgetPasswordForm = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
               Check your email
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm text-muted-foreground">
               We've sent a password reset link to <strong>{email}</strong>
             </p>
           </div>
           <div className="text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Didn't receive the email?{' '}
               <button
                 onClick={() => setEmailSent(false)}
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-primary hover:text-[var(--pc-primary-hover)]"
               >
                 Try again
               </button>
             </p>
             <Link
               href="/login"
-              className="mt-4 inline-block text-sm font-medium text-blue-600 hover:text-blue-500"
+              className="mt-4 inline-block text-sm font-medium text-primary hover:text-[var(--pc-primary-hover)]"
             >
               ← Back to login
             </Link>
@@ -76,13 +76,13 @@ const ForgetPasswordForm = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
             Forgot your password?
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             Enter your email address and we'll send you a link to reset your password.
           </p>
         </div>
@@ -96,8 +96,8 @@ const ForgetPasswordForm = () => {
               type="email"
               autoComplete="email"
               className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                errors.email ? 'border-red-300' : 'border-gray-300'
-              } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                errors.email ? 'border-red-300' : 'border-border'
+              } placeholder-gray-500 text-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm`}
               placeholder="Email address"
               {...register('email')}
             />
@@ -110,7 +110,7 @@ const ForgetPasswordForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[var(--pc-primary)] hover:bg-[var(--pc-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -129,9 +129,9 @@ const ForgetPasswordForm = () => {
           <div className="text-center">
             <Link
               href="/login"
-              className="text-sm font-medium text-blue-600 hover:text-blue-500"
+              className="text-sm font-medium text-primary hover:text-[var(--pc-primary-hover)]"
             >
-              ← Back to login
+              Back to login
             </Link>
           </div>
         </form>

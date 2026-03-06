@@ -268,20 +268,20 @@ export default function UserVetChatPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Vet Chat</h1>
-        <p className="text-gray-500 mt-1">Message your vet providers directly</p>
+        <h1 className="text-3xl font-bold text-foreground">Vet Chat</h1>
+        <p className="text-muted-foreground mt-1">Message your vet providers directly</p>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[320px,1fr] gap-4">
-          <aside className="bg-white border border-gray-200 rounded-xl p-3">
-            <h2 className="px-2 py-2 text-sm font-semibold text-gray-700">Your Vets</h2>
+          <aside className="bg-white border border-border rounded-xl p-3">
+            <h2 className="px-2 py-2 text-sm font-semibold text-foreground">Your Vets</h2>
             {participants.length === 0 ? (
-              <p className="px-2 py-8 text-sm text-gray-500">
+              <p className="px-2 py-8 text-sm text-muted-foreground">
                 No vet contacts yet. Contacts appear after bookings or vet assignment.
               </p>
             ) : (
@@ -294,10 +294,10 @@ export default function UserVetChatPage() {
                       key={contact.participantId}
                       onClick={() => handleSelectContact(contact)}
                       className={`w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                        isActive ? "bg-[#0f4f57]/10" : "hover:bg-gray-50"
+                        isActive ? "bg-[var(--pc-teal)]/10" : "hover:bg-muted"
                       }`}
                     >
-                      <div className="w-9 h-9 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <div className="w-9 h-9 rounded-full overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
                         {contactImage ? (
                           <img
                             src={contactImage}
@@ -305,12 +305,12 @@ export default function UserVetChatPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <UserCircle className="h-6 w-6 text-gray-400" />
+                          <UserCircle className="h-6 w-6 text-muted-foreground" />
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{contact.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{contact.subtitle || "Provider"}</p>
+                        <p className="text-sm font-medium text-foreground truncate">{contact.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{contact.subtitle || "Provider"}</p>
                       </div>
                     </button>
                   );
@@ -319,26 +319,26 @@ export default function UserVetChatPage() {
             )}
           </aside>
 
-          <section className="bg-white border border-gray-200 rounded-xl flex flex-col min-h-[520px]">
+          <section className="bg-white border border-border rounded-xl flex flex-col min-h-[520px]">
             {!active ? (
               <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-                <MessageSquare className="h-12 w-12 text-gray-300 mb-4" />
-                <p className="text-lg text-gray-500">Select a vet to start chatting</p>
+                <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
+                <p className="text-lg text-muted-foreground">Select a vet to start chatting</p>
               </div>
             ) : (
               <>
-                <div className="px-4 py-3 border-b border-gray-200">
-                  <p className="font-semibold text-gray-900">{active.name}</p>
-                  <p className="text-xs text-gray-500">{active.subtitle || "Provider"}</p>
+                <div className="px-4 py-3 border-b border-border">
+                  <p className="font-semibold text-foreground">{active.name}</p>
+                  <p className="text-xs text-muted-foreground">{active.subtitle || "Provider"}</p>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-3">
                   {messagesLoading ? (
                     <div className="flex justify-center py-10">
-                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0f4f57] border-t-transparent"></div>
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-teal)] border-t-transparent"></div>
                     </div>
                   ) : messages.length === 0 ? (
-                    <p className="text-sm text-gray-500 text-center py-10">
+                    <p className="text-sm text-muted-foreground text-center py-10">
                       No messages yet. Start the conversation.
                     </p>
                   ) : (
@@ -352,15 +352,15 @@ export default function UserVetChatPage() {
                           <div
                             className={`max-w-[78%] rounded-2xl px-3 py-2 text-sm ${
                               isOwn
-                                ? "bg-[#0f4f57] text-white rounded-br-md"
-                                : "bg-gray-100 text-gray-900 rounded-bl-md"
+                                ? "bg-[var(--pc-teal)] text-white rounded-br-md"
+                                : "bg-muted text-foreground rounded-bl-md"
                             }`}
                           >
                             <p>{msg.content}</p>
                             {msg.createdAt && (
                               <p
                                 className={`mt-1 text-[11px] ${
-                                  isOwn ? "text-white/70" : "text-gray-500"
+                                  isOwn ? "text-white/70" : "text-muted-foreground"
                                 }`}
                               >
                                 {new Date(msg.createdAt).toLocaleTimeString([], {
@@ -376,17 +376,17 @@ export default function UserVetChatPage() {
                   )}
                 </div>
 
-                <form onSubmit={handleSend} className="p-3 border-t border-gray-200 flex gap-2">
+                <form onSubmit={handleSend} className="p-3 border-t border-border flex gap-2">
                   <input
                     value={draft}
                     onChange={(e) => setDraft(e.target.value)}
                     placeholder="Type your message..."
-                    className="flex-1 px-3 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#0f4f57] focus:border-transparent outline-none"
+                    className="flex-1 px-3 py-2.5 rounded-lg border border-border focus:ring-2 focus:ring-[var(--pc-teal)] focus:border-transparent outline-none"
                   />
                   <button
                     type="submit"
                     disabled={sending || !draft.trim()}
-                    className="px-4 rounded-lg bg-[#0f4f57] text-white hover:bg-[#0c4148] disabled:opacity-50"
+                    className="px-4 rounded-lg bg-[var(--pc-teal)] text-white hover:bg-[var(--pc-teal-dark)] disabled:opacity-50"
                   >
                     <Send className="h-4 w-4" />
                   </button>

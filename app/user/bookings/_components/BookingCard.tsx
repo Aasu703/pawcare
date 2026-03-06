@@ -30,31 +30,31 @@ export function BookingCard({ booking, onCancel }: BookingCardProps) {
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between hover:shadow-md transition-shadow"
+      className="bg-white rounded-xl border border-border p-6 flex items-center justify-between hover:shadow-md transition-shadow"
     >
       <div className="flex-1">
         <div className="flex items-center gap-3 mb-2">
-          <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColors[booking.status] || "bg-gray-100 text-gray-600"}`}>
+          <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColors[booking.status] || "bg-muted text-muted-foreground"}`}>
             {booking.status}
           </span>
           {booking.price && (
-            <span className="text-sm font-semibold text-gray-700">${booking.price}</span>
+            <span className="text-sm font-semibold text-foreground">${booking.price}</span>
           )}
         </div>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
             {new Date(booking.startTime).toLocaleString()} - {new Date(booking.endTime).toLocaleString()}
           </span>
         </div>
         {(booking.provider?.businessName || booking.providerId) && (
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             <span className="font-medium">Provider:</span>{" "}
             {booking.provider?.businessName || booking.providerId}
           </p>
         )}
         {booking.notes && (
-          <p className="text-sm text-gray-600 mt-2">{booking.notes}</p>
+          <p className="text-sm text-muted-foreground mt-2">{booking.notes}</p>
         )}
       </div>
 

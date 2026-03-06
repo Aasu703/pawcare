@@ -10,8 +10,6 @@ export type VerifiedProviderLocation = {
   providerType: "shop" | "vet";
   address?: string;
   rating?: number;
-<<<<<<< HEAD
-=======
   ratingCount?: number;
   bio?: string;
   degree?: string;
@@ -20,7 +18,6 @@ export type VerifiedProviderLocation = {
   workingHours?: string;
   experience?: string;
   certification?: string;
->>>>>>> 85d8834 (working with code architecture)
   location: {
     latitude: number;
     longitude: number;
@@ -60,8 +57,6 @@ export async function getVerifiedProviderLocations(
         providerType: item.providerType === "vet" ? "vet" : "shop",
         address: item.address ? String(item.address) : "",
         rating: typeof item.rating === "number" ? item.rating : Number(item.rating || 0),
-<<<<<<< HEAD
-=======
         ratingCount: typeof item.ratingCount === "number" ? item.ratingCount : Number(item.ratingCount || 0),
         bio: item.bio ? String(item.bio) : undefined,
         degree: item.degree ? String(item.degree) : undefined,
@@ -70,7 +65,6 @@ export async function getVerifiedProviderLocations(
         workingHours: item.workingHours ? String(item.workingHours) : undefined,
         experience: item.experience ? String(item.experience) : undefined,
         certification: item.certification ? String(item.certification) : undefined,
->>>>>>> 85d8834 (working with code architecture)
         location: {
           latitude: Number(item.location.latitude),
           longitude: Number(item.location.longitude),

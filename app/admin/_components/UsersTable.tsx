@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   handleGetAllUsers,
   handleCreateUser,
@@ -101,7 +101,7 @@ export default function UsersTable() {
 
   const roleColors: Record<string, string> = {
     admin: "bg-purple-100 text-purple-700 dark:bg-purple-900/20 dark:text-purple-400",
-    user: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400",
+    user: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-[var(--pc-teal)]",
     provider: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
   };
 
@@ -118,12 +118,12 @@ export default function UsersTable() {
               placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--pc-primary)]"
             />
           </div>
           <button
             onClick={handleCreate}
-            className="flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-white hover:bg-orange-600"
+            className="flex items-center gap-2 rounded-lg bg-[var(--pc-primary)] px-4 py-2 text-white hover:bg-[var(--pc-primary-hover)]"
           >
             <Plus className="h-4 w-4" />
             Add User
@@ -134,7 +134,7 @@ export default function UsersTable() {
       {/* Table */}
       {loading ? (
         <div className="flex h-40 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -161,7 +161,7 @@ export default function UsersTable() {
                     <td className="py-4">
                       <Link
                         href={`/admin/users/${user._id}`}
-                        className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
+                        className="font-medium text-[var(--pc-primary)] hover:text-[var(--pc-primary-hover)] hover:underline"
                       >
                         {user.Firstname} {user.Lastname}
                       </Link>
@@ -186,7 +186,7 @@ export default function UsersTable() {
                           className="rounded-lg p-2 hover:bg-muted"
                           title="Edit"
                         >
-                          <Pencil className="h-4 w-4 text-blue-500" />
+                          <Pencil className="h-4 w-4 text-[var(--pc-teal)]" />
                         </button>
                         <button
                           onClick={() => handleDelete(user._id)}

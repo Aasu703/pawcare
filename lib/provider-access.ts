@@ -13,6 +13,9 @@ export const canManageBookings = (providerType: ProviderType) =>
 export const canManageInventory = (providerType: ProviderType) =>
   isShopProvider(providerType);
 
+export const canManageOrders = (providerType: ProviderType) =>
+  isShopProvider(providerType);
+
 export const canAccessVetFeatures = (providerType: ProviderType) =>
   isVetProvider(providerType);
 

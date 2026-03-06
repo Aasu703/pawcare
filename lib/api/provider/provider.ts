@@ -112,15 +112,22 @@ export async function createProviderService(data: any): Promise<{ success: boole
 export async function getProviderServices(): Promise<{ success: boolean; message: string; data?: any[] }> {
   try {
     const response = await axios.get(API.PROVIDER.SERVICE.GET_ALL);
-    const raw = response.data?.data;
 
     let data: any[] = [];
-    if (Array.isArray(raw)) {
-      data = raw.map((item) => item?._doc || item);
-    } else if (Array.isArray(raw?.services)) {
-      data = raw.services.map((item: any) => item?._doc || item);
-    } else if (raw && Array.isArray(raw?.data)) {
-      data = raw.data.map((item: any) => item?._doc || item);
+    
+    // Check response.data.services first (actual backend structure)
+    if (Array.isArray(response.data?.services)) {
+      data = response.data.services.map((item: any) => item?._doc || item);
+    } 
+    // Fallback patterns for other possible structures
+    else if (Array.isArray(response.data?.data)) {
+      data = response.data.data.map((item: any) => item?._doc || item);
+    } 
+    else if (Array.isArray(response.data?.data?.services)) {
+      data = response.data.data.services.map((item: any) => item?._doc || item);
+    } 
+    else if (Array.isArray(response.data?.data?.data)) {
+      data = response.data.data.data.map((item: any) => item?._doc || item);
     }
 
     return { success: true, message: "Services fetched", data };

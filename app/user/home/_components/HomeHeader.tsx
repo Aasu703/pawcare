@@ -38,14 +38,14 @@ export function HomeHeader({ openNotificationsRef, onLogout, onProfileClick }: H
             registerOpenHandler={(handler: (() => void) | null) => {
               openNotificationsRef.current = handler;
             }}
-            buttonClassName="h-10 w-10 bg-transparent text-gray-700 hover:bg-white/70"
+            buttonClassName="h-10 w-10 bg-transparent text-foreground hover:bg-white/70"
             iconClassName="w-5 h-5"
           />
           <button
             onClick={onProfileClick}
             className="px-3 py-1.5 rounded-full bg-white/50 hover:bg-white border border-white/20 transition-all duration-300 flex items-center gap-2 group"
           >
-            <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-primary to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full overflow-hidden bg-gradient-to-tr from-primary to-[var(--pc-cream)]0 flex items-center justify-center text-white text-xs font-bold">
               {profileImageSrc ? (
                 <img
                   src={profileImageSrc}
@@ -56,13 +56,13 @@ export function HomeHeader({ openNotificationsRef, onLogout, onProfileClick }: H
                 user?.Firstname?.charAt(0) || <User className="w-4 h-4" />
               )}
             </div>
-            <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 hidden sm:block">
+            <span className="text-sm font-medium text-foreground group-hover:text-foreground hidden sm:block">
               {user?.Firstname || "Profile"}
             </span>
           </button>
           <button
             onClick={onLogout}
-            className="p-2.5 rounded-full hover:bg-red-50 text-gray-700 hover:text-red-500 transition duration-300"
+            className="p-2.5 rounded-full hover:bg-red-50 text-foreground hover:text-red-500 transition duration-300"
             title="Logout"
           >
             <LogOut className="w-5 h-5" />

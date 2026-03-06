@@ -49,11 +49,11 @@ export default function AdminFeedbackPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : feedback.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl border">
-          <p className="text-gray-400">No feedback found</p>
+          <p className="text-muted-foreground">No feedback found</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -65,12 +65,12 @@ export default function AdminFeedbackPage() {
                     <span className="font-medium text-sm">
                       {typeof f.userId === "object" ? (f.userId as any).Firstname || "User" : "User"}
                     </span>
-                    <span className="text-xs text-gray-400">→</span>
+                    <span className="text-xs text-muted-foreground">→</span>
                     <span className="font-medium text-sm">
                       {typeof f.providerId === "object" ? (f.providerId as any).businessName || "Provider" : "Provider"}
                     </span>
                     {f.serviceId && (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
                         {typeof f.serviceId === "object" ? (f.serviceId as any).title : "Service"}
                       </span>
                     )}
@@ -79,11 +79,11 @@ export default function AdminFeedbackPage() {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star key={star} className={`h-4 w-4 ${star <= (f.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-200"}`} />
                     ))}
-                    <span className="text-xs text-gray-400 ml-2">{f.createdAt ? new Date(f.createdAt).toLocaleDateString() : ""}</span>
+                    <span className="text-xs text-muted-foreground ml-2">{f.createdAt ? new Date(f.createdAt).toLocaleDateString() : ""}</span>
                   </div>
-                  {f.comment && <p className="text-sm text-gray-600">{f.comment}</p>}
+                  {f.comment && <p className="text-sm text-muted-foreground">{f.comment}</p>}
                 </div>
-                <button onClick={() => handleDelete(f._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                <button onClick={() => handleDelete(f._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg">
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>

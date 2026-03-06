@@ -10,7 +10,7 @@ const recordTypeColors: Record<string, string> = {
   checkup: "bg-blue-100 text-blue-700",
   surgery: "bg-red-100 text-red-700",
   medication: "bg-purple-100 text-purple-700",
-  other: "bg-gray-100 text-gray-700",
+  other: "bg-muted text-foreground",
 };
 
 export default function AdminHealthRecordsPage() {
@@ -63,7 +63,7 @@ export default function AdminHealthRecordsPage() {
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold">Health Record Details</h2>
-              <button onClick={() => setSelected(null)}><X className="h-5 w-5 text-gray-400" /></button>
+              <button onClick={() => setSelected(null)}><X className="h-5 w-5 text-muted-foreground" /></button>
             </div>
             <div className="space-y-3 text-sm">
               <p><span className="font-medium">Pet:</span> {typeof selected.petId === "object" ? (selected.petId as any).name : selected.petId}</p>
@@ -78,35 +78,35 @@ export default function AdminHealthRecordsPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Pet</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Pet</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Type</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Title</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {records.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-400">No health records found</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No health records found</td></tr>
               ) : records.map((r) => (
-                <tr key={r._id} className="hover:bg-gray-50">
+                <tr key={r._id} className="hover:bg-muted">
                   <td className="px-6 py-4 text-sm">{typeof r.petId === "object" ? (r.petId as any).name : r.petId}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 rounded-full text-xs ${recordTypeColors[r.recordType] || "bg-gray-100"}`}>{r.recordType}</span>
+                    <span className={`px-2 py-1 rounded-full text-xs ${recordTypeColors[r.recordType] || "bg-muted"}`}>{r.recordType}</span>
                   </td>
                   <td className="px-6 py-4 text-sm">{new Date(r.date).toLocaleDateString()}</td>
                   <td className="px-6 py-4 text-sm">{r.title || "-"}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex gap-1 justify-end">
-                      <button onClick={() => setSelected(r)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Eye className="h-4 w-4" /></button>
-                      <button onClick={() => handleDelete(r._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                      <button onClick={() => setSelected(r)} className="p-2 text-muted-foreground hover:text-[var(--pc-teal)] hover:bg-[var(--pc-teal-light)] rounded-lg"><Eye className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(r._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>

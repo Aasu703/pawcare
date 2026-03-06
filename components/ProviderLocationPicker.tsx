@@ -205,17 +205,17 @@ export default function ProviderLocationPicker({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <label className="block text-sm font-semibold text-gray-700">
+          <label className="block text-sm font-semibold text-foreground">
             {label} {required ? <span className="text-red-500">*</span> : null}
           </label>
-          <p className="text-xs text-gray-500">{helperText}</p>
+          <p className="text-xs text-muted-foreground">{helperText}</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={setCurrentLocation}
             disabled={isLocating}
-            className="inline-flex items-center gap-1 rounded-lg border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-3 py-1.5 text-xs font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10 disabled:opacity-70"
+            className="inline-flex items-center gap-1 rounded-lg border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-3 py-1.5 text-xs font-semibold text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10 disabled:opacity-70"
           >
             <LocateFixed className={`h-3.5 w-3.5 ${isLocating ? "animate-pulse" : ""}`} />
             {isLocating ? "Locating..." : "Use My Location"}
@@ -241,16 +241,16 @@ export default function ProviderLocationPicker({
       <div
         ref={mapContainerRef}
         style={{ height: 320, width: "100%" }}
-        className="overflow-hidden rounded-xl border border-gray-200"
+        className="overflow-hidden rounded-xl border border-border"
       />
 
       {hasPin ? (
-        <p className="inline-flex items-center gap-1 text-xs font-medium text-[#0c4148]">
+        <p className="inline-flex items-center gap-1 text-xs font-medium text-[var(--pc-teal-dark)]">
           <MapPin className="h-3.5 w-3.5" />
           Pin saved at {value.latitude?.toFixed(6)}, {value.longitude?.toFixed(6)}
         </p>
       ) : (
-        <p className="text-xs text-gray-500">No location pinned yet.</p>
+        <p className="text-xs text-muted-foreground">No location pinned yet.</p>
       )}
     </div>
   );

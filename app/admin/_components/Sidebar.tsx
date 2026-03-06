@@ -102,7 +102,7 @@ export default function Sidebar() {
       <div className="flex h-full flex-col">
         {/* Logo */}
         <div className="flex h-16 items-center gap-2 border-b px-6">
-          <PawPrint className="h-8 w-8 text-orange-500" />
+          <PawPrint className="h-8 w-8 text-[var(--pc-primary)]" />
           <span className="text-xl font-bold">PawCare Admin</span>
         </div>
 
@@ -117,7 +117,7 @@ export default function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400"
+                    ? "bg-[var(--pc-primary-light)] text-[var(--pc-primary-hover)] dark:bg-[var(--pc-primary)]/20 dark:text-[var(--pc-primary)]"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 )}
               >

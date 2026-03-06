@@ -62,7 +62,7 @@ export default function AdminBookingsPage() {
           <div className="bg-white rounded-2xl p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold">Booking Details</h2>
-              <button onClick={() => setSelected(null)}><X className="h-5 w-5 text-gray-400" /></button>
+              <button onClick={() => setSelected(null)}><X className="h-5 w-5 text-muted-foreground" /></button>
             </div>
             <div className="space-y-3 text-sm">
               <p><span className="font-medium">Service:</span> {typeof selected.serviceId === "object" ? (selected.serviceId as any).title : selected.serviceId}</p>
@@ -79,31 +79,31 @@ export default function AdminBookingsPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Service</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">User</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {bookings.length === 0 ? (
-                <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-400">No bookings found</td></tr>
+                <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No bookings found</td></tr>
               ) : bookings.map((b) => (
-                <tr key={b._id} className="hover:bg-gray-50">
+                <tr key={b._id} className="hover:bg-muted">
                   <td className="px-6 py-4 text-sm">{typeof b.serviceId === "object" ? (b.serviceId as any).title : b.serviceId}</td>
                   <td className="px-6 py-4 text-sm">{typeof b.userId === "object" ? (b.userId as any).Firstname : b.userId}</td>
                   <td className="px-6 py-4 text-sm">{new Date(b.startTime).toLocaleDateString()}</td>
                   <td className="px-6 py-4">
                     <select value={b.status} onChange={(e) => handleStatusChange(b._id, e.target.value)}
-                      className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[b.status] || "bg-gray-100"}`}>
+                      className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${statusColors[b.status] || "bg-muted"}`}>
                       <option value="pending">Pending</option>
                       <option value="confirmed">Confirmed</option>
                       <option value="completed">Completed</option>
@@ -112,8 +112,8 @@ export default function AdminBookingsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex gap-1 justify-end">
-                      <button onClick={() => setSelected(b)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"><Eye className="h-4 w-4" /></button>
-                      <button onClick={() => handleDelete(b._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
+                      <button onClick={() => setSelected(b)} className="p-2 text-muted-foreground hover:text-[var(--pc-teal)] hover:bg-[var(--pc-teal-light)] rounded-lg"><Eye className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(b._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>

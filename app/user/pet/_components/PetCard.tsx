@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Edit, Trash2, ActivitySquare, Stethoscope, PawPrint, ShieldCheck, MoreVertical, Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { getApiBaseUrl, resolveMediaUrl } from "@/lib/utils/media-url";
+import { Edit, Trash2, Stethoscope, PawPrint, ShieldCheck, MoreVertical, Heart, HeartPulse } from "lucide-react";
+import Image from "next/image";
+import { resolveMediaUrl } from "@/lib/utils/media-url";
 import { useState } from "react";
 
 interface AssignedVet {
@@ -37,6 +37,26 @@ interface PetCardProps {
   baseUrl: string;
 }
 
+const speciesImage = (species: string, name: string) => {
+  const lower = (species || "").toLowerCase();
+  if (lower === "cat" || lower === "kitten") {
+    const images = ["/images/cat.png", "/images/kittiy.png", "/images/meow.png"];
+    return images[name.length % images.length];
+  }
+  return null;
+};
+
+const speciesEmoji = (species: string) => {
+  const lower = (species || "").toLowerCase();
+  if (lower === "dog" || lower === "puppy") return "🐕";
+  if (lower === "cat" || lower === "kitten") return "🐈";
+  if (lower === "bird" || lower === "parrot") return "🐦";
+  if (lower === "rabbit" || lower === "bunny") return "🐇";
+  if (lower === "fish") return "🐟";
+  if (lower === "hamster") return "🐹";
+  return "🐾";
+};
+
 export function PetCard({ 
   pet, 
   getAssignedVetLabel, 
@@ -57,6 +77,7 @@ export function PetCard({
   };
 
   const hasAssignedVet = !!getAssignedVetId();
+  const catImg = speciesImage(pet.species, pet.name);
 
   return (
     <motion.div
@@ -64,152 +85,128 @@ export function PetCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="group relative bg-gradient-to-br from-white via-white to-slate-50 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl hover:border-emerald-300 transition-all duration-300 overflow-hidden"
+      className="group relative bg-white border border-[var(--pc-border)] rounded-[20px] overflow-hidden hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-[var(--pc-primary)]/40 transition-all duration-300"
     >
-      {/* Background gradient on hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-emerald-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-      
-      <div className="relative p-5 flex gap-5">
-        {/* Pet Image */}
-        <motion.div 
-          className="flex-shrink-0"
-          whileHover={{ scale: 1.05 }}
+      {/* Image Area */}
+      <div className="relative h-[180px] overflow-hidden bg-[var(--pc-cream)]">
+        {pet.imageUrl ? (
+          <img
+            src={resolveMediaUrl(pet.imageUrl, baseUrl, 'image')}
+            alt={pet.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : catImg ? (
+          <Image src={catImg} alt={pet.species} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-[var(--pc-primary-light)] to-[var(--pc-teal-light)] flex items-center justify-center">
+            <span className="text-5xl">{speciesEmoji(pet.species)}</span>
+          </div>
+        )}
+
+        {/* Species badge top-left */}
+        <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-semibold px-2.5 py-1 rounded-[10px] text-[var(--pc-teal-dark)] capitalize shadow-sm">
+          {speciesEmoji(pet.species)} {pet.species}
+        </span>
+
+        {/* Edit button top-right (hover only) */}
+        <button
+          onClick={onEdit}
+          className="absolute top-3 right-3 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-white shadow-sm"
         >
-          <div className="relative w-28 h-28 rounded-xl overflow-hidden border-2 border-gray-200 group-hover:border-emerald-300 transition-colors duration-300 shadow-md">
-            {pet.imageUrl ? (
-              <img
-                src={resolveMediaUrl(pet.imageUrl, baseUrl, 'image')}
-                alt={pet.name}
-                width={112}
-                height={112}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center">
-                <PawPrint className="w-14 h-14 text-white" />
-              </div>
-            )}
-          </div>
-        </motion.div>
+          <Edit className="w-3.5 h-3.5 text-[var(--pc-text-muted)]" />
+        </button>
 
-        {/* Pet Info */}
-        <div className="flex-1 flex flex-col justify-between min-w-0">
-          <div className="space-y-1">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 group-hover:text-emerald-600 transition-colors">
-                  {pet.name}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {pet.species} • {pet.breed}
-                </p>
-              </div>
-            </div>
+        {/* White overlap curve */}
+        <div className="absolute bottom-0 left-0 right-0 h-6 bg-white rounded-t-[20px]" />
+      </div>
 
-            {/* Pet Stats */}
-            <div className="flex gap-3 flex-wrap pt-1">
-              <div className="flex items-center gap-1 px-2.5 py-1 bg-blue-50 rounded-full border border-blue-200">
-                <span className="text-xs text-blue-700 font-medium">Age:</span>
-                <span className="text-xs text-blue-600 font-semibold">{pet.age}y</span>
-              </div>
-              <div className="flex items-center gap-1 px-2.5 py-1 bg-orange-50 rounded-full border border-orange-200">
-                <span className="text-xs text-orange-700 font-medium">Weight:</span>
-                <span className="text-xs text-orange-600 font-semibold">{pet.weight}kg</span>
-              </div>
-            </div>
+      {/* Card Body */}
+      <div className="px-4 pb-4 -mt-1">
+        <h3 className="font-[var(--font-display)] text-lg font-bold text-foreground truncate">{pet.name}</h3>
+        <p className="text-xs text-[var(--pc-text-muted)] capitalize mb-3">{pet.breed || "Unknown breed"}</p>
 
-            {/* Assigned Vet Badge */}
-            <div className="pt-1">
-              <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
-                hasAssignedVet 
-                  ? 'bg-amber-50 border-amber-200 text-amber-700' 
-                  : 'bg-gray-100 border-gray-200 text-gray-600'
-              }`}>
-                <ShieldCheck className="w-3.5 h-3.5" />
-                {getAssignedVetLabel(pet)}
-              </div>
-            </div>
-          </div>
+        {/* Stats row */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="inline-flex items-center gap-1 bg-[var(--pc-teal-light)] text-[var(--pc-teal)] rounded-[10px] px-2.5 py-1 text-xs font-semibold">
+            🎂 {pet.age}y
+          </span>
+          <span className="inline-flex items-center gap-1 bg-[var(--pc-primary-light)] text-[var(--pc-primary)] rounded-[10px] px-2.5 py-1 text-xs font-semibold">
+            ⚖️ {pet.weight}kg
+          </span>
+        </div>
 
-          {/* Primary Actions */}
-          <div className="flex gap-2 pt-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onCareClick}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-semibold rounded-lg hover:shadow-lg hover:from-emerald-600 hover:to-emerald-700 transition-all duration-200"
+        {/* Vet assignment */}
+        <button
+          onClick={onAssignVet}
+          className={`w-full flex items-center gap-2 px-3 py-2 rounded-[10px] border text-xs font-medium transition-all duration-200 mb-3 ${
+            hasAssignedVet
+              ? "bg-[var(--pc-cream)] border-[var(--pc-border)] text-foreground hover:border-[var(--pc-primary)]"
+              : "bg-[var(--pc-cream)] border-dashed border-[var(--pc-border)] text-[var(--pc-text-muted)] hover:border-[var(--pc-primary)] hover:text-[var(--pc-primary)]"
+          }`}
+        >
+          <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">{getAssignedVetLabel(pet)}</span>
+        </button>
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <button
+            onClick={onCareClick}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--pc-primary-light)] text-[var(--pc-primary)] text-xs font-semibold rounded-[10px] hover:bg-[var(--pc-primary)] hover:text-white transition-all duration-200"
+          >
+            <Heart className="w-3.5 h-3.5" />
+            Care Plan
+          </button>
+          <button
+            onClick={() => {
+              onAskVet();
+            }}
+            disabled={!hasAssignedVet}
+            className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-[var(--pc-teal-light)] text-[var(--pc-teal)] text-xs font-semibold rounded-[10px] hover:bg-[var(--pc-teal)] hover:text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[var(--pc-teal-light)] disabled:hover:text-[var(--pc-teal)]"
+          >
+            <HeartPulse className="w-3.5 h-3.5" />
+            Ask Vet
+          </button>
+
+          {/* More menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="w-[34px] h-[34px] flex items-center justify-center border border-[var(--pc-border)] rounded-[10px] bg-white text-[var(--pc-text-muted)] hover:border-[var(--pc-primary)] hover:text-[var(--pc-primary)] transition-all duration-200"
             >
-              <Heart className="w-3.5 h-3.5" />
-              Care
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={onEdit}
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-semibold rounded-lg hover:shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200"
-            >
-              <Edit className="w-3.5 h-3.5" />
-              Edit
-            </motion.button>
-            
-            {/* More Menu */}
-            <div className="relative">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowMenu(!showMenu)}
-                className="flex items-center justify-center px-3 py-2 bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg hover:bg-gray-200 hover:text-gray-900 transition-all duration-200 group-hover:bg-emerald-100 group-hover:text-emerald-700"
+              <MoreVertical className="w-3.5 h-3.5" />
+            </button>
+
+            {showMenu && (
+              <motion.div
+                initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                className="absolute bottom-full right-0 mb-1 bg-white border border-[var(--pc-border)] rounded-[12px] shadow-xl z-50 overflow-hidden min-w-[140px]"
               >
-                <MoreVertical className="w-3.5 h-3.5" />
-              </motion.button>
-
-              {/* Dropdown Menu */}
-              {showMenu && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                  className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden min-w-max"
+                <button
+                  onClick={() => { onAssignVet(); setShowMenu(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-foreground hover:bg-[var(--pc-cream)] transition-colors text-left"
                 >
-                  <button
-                    onClick={() => {
-                      onAssignVet();
-                      setShowMenu(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-gray-700 hover:bg-amber-50 hover:text-amber-700 transition-colors text-left"
-                  >
-                    <Stethoscope className="w-3.5 h-3.5" />
-                    Assign Vet
-                  </button>
-                  <button
-                    onClick={() => {
-                      onAskVet();
-                      setShowMenu(false);
-                    }}
-                    disabled={!hasAssignedVet}
-                    className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-left transition-colors ${
-                      hasAssignedVet
-                        ? 'text-gray-700 hover:bg-cyan-50 hover:text-cyan-700'
-                        : 'text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    <Stethoscope className="w-3.5 h-3.5" />
-                    Ask Vet
-                  </button>
-                  <div className="border-t border-gray-100" />
-                  <button
-                    onClick={() => {
-                      onDelete();
-                      setShowMenu(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-50 transition-colors text-left"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    Delete
-                  </button>
-                </motion.div>
-              )}
-            </div>
+                  <Stethoscope className="w-3.5 h-3.5" />
+                  Assign Vet
+                </button>
+                <button
+                  onClick={() => { onEdit(); setShowMenu(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-foreground hover:bg-[var(--pc-cream)] transition-colors text-left"
+                >
+                  <Edit className="w-3.5 h-3.5" />
+                  Edit Pet
+                </button>
+                <div className="border-t border-[var(--pc-border)]" />
+                <button
+                  onClick={() => { onDelete(); setShowMenu(false); }}
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors text-left"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Delete
+                </button>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>

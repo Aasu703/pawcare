@@ -39,7 +39,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
 
     if (success) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8">
                     <div className="text-center">
                         <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-green-100">
@@ -47,10 +47,10 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h2 className="mt-6 text-center text-2xl font-semibold text-gray-900">Password reset</h2>
-                        <p className="mt-2 text-center text-sm text-gray-600">Your password was updated. Redirecting to login…</p>
+                        <h2 className="mt-6 text-center text-2xl font-semibold text-foreground">Password reset</h2>
+                        <p className="mt-2 text-center text-sm text-muted-foreground">Your password was updated. Redirecting to login…</p>
                         <div className="mt-6 text-center">
-                            <Link href="/login" className="text-sm font-medium text-blue-600 hover:text-blue-500">Go to login</Link>
+                            <Link href="/login" className="text-sm font-medium text-primary hover:text-[var(--pc-primary-hover)]">Go to login</Link>
                         </div>
                     </div>
                 </div>
@@ -59,13 +59,13 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-muted py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
                         Reset your password
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <p className="mt-2 text-center text-sm text-muted-foreground">
                         Enter your new password below.
                     </p>
                 </div>
@@ -80,8 +80,8 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
                             autoComplete="new-password"
                             required
                             className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                                errors.password ? 'border-red-300' : 'border-gray-300'
-                            } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                                errors.password ? 'border-red-300' : 'border-border'
+                            } placeholder-gray-500 text-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm`}
                             placeholder="New password"
                             {...register('password')}
                         />
@@ -100,8 +100,8 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
                             autoComplete="new-password"
                             required
                             className={`appearance-none rounded-md relative block w-full px-3 py-2 border ${
-                                errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                            } placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                                errors.confirmPassword ? 'border-red-300' : 'border-border'
+                            } placeholder-gray-500 text-foreground focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm`}
                             placeholder="Confirm new password"
                             {...register('confirmPassword')}
                         />
@@ -114,7 +114,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
                         <button
                             type="submit"
                             disabled={loading || isSubmitting}
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[var(--pc-primary)] hover:bg-[var(--pc-primary-hover)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? (
                                 <div className="flex items-center">
@@ -133,7 +133,7 @@ const ResetPasswordForm = ({ token }: { token: string }) => {
                     <div className="text-center">
                         <Link
                             href="/login"
-                            className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                            className="text-sm font-medium text-primary hover:text-[var(--pc-primary-hover)]"
                         >
                              Back to login
                         </Link>

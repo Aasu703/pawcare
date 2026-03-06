@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, ExternalLink, MapPin, Search, ShieldCheck, XCircle } from "lucide-react";
-import { toast } from "react-toastify";
+import { ExternalLink, MapPin, Search } from "lucide-react";
+import { toast } from "sonner";
 import {
   handleGetAllProviders,
   handleApproveProvider,
@@ -30,6 +30,43 @@ type Provider = {
   pawcareVerified?: boolean;
   createdAt?: string;
 };
+
+function TypeBadge({ type }: { type?: string }) {
+  const cfg: Record<string, { label: string; bg: string; text: string }> = {
+    vet: { label: "🏥 Vet", bg: "bg-[var(--pc-teal-light)]", text: "text-[var(--pc-teal)]" },
+    shop: { label: "🛒 Shop", bg: "bg-[var(--pc-primary-light)]", text: "text-[var(--pc-primary)]" },
+    babysitter: { label: "✂️ Groomer", bg: "bg-purple-50", text: "text-purple-600" },
+  };
+  const c = cfg[type || ""] ?? { label: type || "—", bg: "bg-gray-50", text: "text-gray-500" };
+  return (
+    <span className={`${c.bg} ${c.text} rounded-full px-3 py-1 text-xs font-semibold`}>
+      {c.label}
+    </span>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const cfg: Record<string, { bg: string; text: string; border: string }> = {
+    pending: { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200" },
+    approved: { bg: "bg-green-50", text: "text-green-600", border: "border-green-200" },
+    rejected: { bg: "bg-red-50", text: "text-red-500", border: "border-red-200" },
+  };
+  const c = cfg[status] ?? { bg: "bg-gray-50", text: "text-gray-500", border: "border-gray-200" };
+  return (
+    <span className={`${c.bg} ${c.text} border ${c.border} rounded-full px-3 py-1 text-xs font-semibold capitalize`}>
+      {status}
+    </span>
+  );
+}
+
+function formatDate(dateStr?: string) {
+  if (!dateStr) return "—";
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 export default function AllProvidersTable() {
   const [loading, setLoading] = useState(true);
@@ -90,13 +127,19 @@ export default function AllProvidersTable() {
   });
 
   return (
-    <div className="rounded-xl border bg-card p-6 shadow-sm mt-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">All Providers</h2>
-        <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="mb-8">
+      {/* Section Header */}
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <h2 className="font-[Fraunces] text-xl font-semibold text-[var(--pc-text)] flex items-center gap-2">
+          All Providers
+          <span className="rounded-full bg-[var(--pc-cream)] border border-[var(--pc-border)] px-2.5 py-0.5 text-xs font-semibold text-[var(--pc-text-muted)]">
+            {providers.length}
+          </span>
+        </h2>
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--pc-text-muted)]" />
           <input
-            className="w-full rounded-lg border bg-background py-2 pl-9 pr-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="w-full rounded-[10px] border border-[var(--pc-border)] bg-[var(--pc-cream)] py-2 pl-9 pr-4 text-sm outline-none transition-colors focus:border-[var(--pc-primary)] focus:bg-white"
             placeholder="Search providers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -104,124 +147,117 @@ export default function AllProvidersTable() {
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex h-32 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b text-left text-sm text-muted-foreground">
-                <th className="pb-3 font-medium">Business</th>
-                <th className="pb-3 font-medium">Email</th>
-                <th className="pb-3 font-medium">Type</th>
-                <th className="pb-3 font-medium">Status</th>
-                <th className="pb-3 font-medium">Submitted</th>
-                <th className="pb-3 font-medium">Verification</th>
-                <th className="pb-3 font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
-                    No providers found
-                  </td>
+      {/* Table */}
+      <div className="bg-white rounded-[20px] border border-[var(--pc-border)] overflow-hidden">
+        {loading ? (
+          <div className="flex h-32 items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent" />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-[var(--pc-cream)] border-b border-[var(--pc-border)]">
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Business</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Email</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Type</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Status</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Submitted</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Location</th>
+                  <th className="px-5 py-3 text-left text-xs uppercase tracking-wider text-[var(--pc-text-muted)]">Actions</th>
                 </tr>
-              ) : (
-                filtered.map((provider) => {
-                  const latitude = provider.location?.latitude;
-                  const longitude = provider.location?.longitude;
-                  const hasPinnedLocation =
-                    typeof latitude === "number" &&
-                    Number.isFinite(latitude) &&
-                    typeof longitude === "number" &&
-                    Number.isFinite(longitude);
-                  const needsPinnedLocation =
-                    provider.providerType === "shop" || provider.providerType === "vet";
-                  const mapUrl = hasPinnedLocation
-                    ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
-                    : null;
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-5 py-8 text-center text-sm text-[var(--pc-text-muted)]">
+                      No providers found
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((provider) => {
+                    const latitude = provider.location?.latitude;
+                    const longitude = provider.location?.longitude;
+                    const hasPinnedLocation =
+                      typeof latitude === "number" &&
+                      Number.isFinite(latitude) &&
+                      typeof longitude === "number" &&
+                      Number.isFinite(longitude);
+                    const needsPinnedLocation =
+                      provider.providerType === "shop" || provider.providerType === "vet";
+                    const mapUrl = hasPinnedLocation
+                      ? `https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=18/${latitude}/${longitude}`
+                      : null;
 
-                  return (
-                    <tr key={provider._id} className="border-b last:border-0 align-top">
-                    <td className="py-4">
-                      <div className="font-medium">{provider.businessName}</div>
-                      <div className="text-sm text-muted-foreground">{provider.email}</div>
-                    </td>
-                    <td className="py-4 text-muted-foreground">{provider.email}</td>
-                    <td className="py-4 capitalize">{provider.providerType || "-"}</td>
-                    <td className="py-4">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium ${{
-                          approved: "bg-green-100 text-green-700",
-                          rejected: "bg-red-100 text-red-700",
-                          pending: "bg-yellow-100 text-yellow-700",
-                        }[provider.status] || "bg-gray-100 text-gray-700"}`}
+                    return (
+                      <tr
+                        key={provider._id}
+                        className="border-b border-[var(--pc-border)] last:border-0 hover:bg-[var(--pc-cream)] transition-colors"
                       >
-                        {provider.status?.charAt(0).toUpperCase() + (provider.status?.slice(1) || "")}
-                      </span>
-                    </td>
-                    <td className="py-4 text-muted-foreground">
-                      {provider.createdAt ? new Date(provider.createdAt).toLocaleDateString() : "-"}
-                    </td>
-                    <td className="py-4 text-sm">
-                      {provider.pawcareVerified && (provider.providerType === "shop" || provider.providerType === "vet") ? (
-                        <div className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                          <ShieldCheck className="h-3.5 w-3.5" />
-                          {provider.providerType === "shop" ? "PawCare Verified Shop" : "PawCare Verified Vet"}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          {provider.locationVerified ? "Location verified" : "Not verified"}
-                        </span>
-                      )}
-                      {mapUrl ? (
-                        <a
-                          href={mapUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
-                        >
-                          <MapPin className="h-3.5 w-3.5" />
-                          View Pin
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                      ) : (
-                        <p className="mt-2 text-xs text-red-600">No map pin</p>
-                      )}
-                    </td>
-                    <td className="py-4">
-                      <div className="flex gap-2">
-                        {provider.status === "pending" && (
-                          <>
-                            <button
-                              onClick={() => onApprove(provider._id)}
-                              disabled={needsPinnedLocation && !hasPinnedLocation}
-                              className="rounded-lg p-2 hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
-                              title="Approve"
+                        <td className="px-5 py-4 text-sm font-medium text-[var(--pc-text)]">
+                          {provider.businessName}
+                        </td>
+                        <td className="px-5 py-4 text-sm text-[var(--pc-text-muted)]">
+                          {provider.email}
+                        </td>
+                        <td className="px-5 py-4">
+                          <TypeBadge type={provider.providerType} />
+                        </td>
+                        <td className="px-5 py-4">
+                          <StatusBadge status={provider.status} />
+                        </td>
+                        <td className="px-5 py-4 text-sm text-[var(--pc-text-muted)]">
+                          {formatDate(provider.createdAt)}
+                        </td>
+                        <td className="px-5 py-4 text-sm">
+                          {hasPinnedLocation ? (
+                            <a
+                              href={mapUrl || "#"}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--pc-teal)] hover:underline"
                             >
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            </button>
-                            <button onClick={() => onReject(provider._id)} className="rounded-lg p-2 hover:bg-red-50" title="Reject">
-                              <XCircle className="h-5 w-5 text-red-600" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                      {provider.status === "pending" && needsPinnedLocation && !hasPinnedLocation ? (
-                        <p className="mt-2 text-xs text-red-600">Map pin required before approval.</p>
-                      ) : null}
-                    </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
+                              <MapPin className="h-3.5 w-3.5" />
+                              📍 View on Map
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          ) : (
+                            <span className="text-sm text-[var(--pc-text-muted)]">— Not set</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          {provider.status === "pending" ? (
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => onApprove(provider._id)}
+                                disabled={needsPinnedLocation && !hasPinnedLocation}
+                                className="rounded-[10px] border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-semibold text-green-600 transition-all hover:border-green-600 hover:bg-green-600 hover:text-white active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                              >
+                                ✓ Approve
+                              </button>
+                              <button
+                                onClick={() => onReject(provider._id)}
+                                className="rounded-[10px] border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-500 transition-all hover:border-red-500 hover:bg-red-500 hover:text-white active:scale-95"
+                              >
+                                ✕ Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-[var(--pc-text-muted)]">—</span>
+                          )}
+                          {provider.status === "pending" && needsPinnedLocation && !hasPinnedLocation && (
+                            <p className="mt-1.5 text-xs text-red-600">Map pin required</p>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

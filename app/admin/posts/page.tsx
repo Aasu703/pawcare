@@ -41,7 +41,7 @@ export default function AdminPostsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-primary)]" />
       </div>
     );
   }
@@ -52,44 +52,44 @@ export default function AdminPostsPage() {
 
       {posts.length === 0 ? (
         <div className="text-center py-16">
-          <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">No posts found</p>
+          <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">No posts found</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-muted border-b">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Provider</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Visibility</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Title</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Provider</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Visibility</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Date</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {posts.map((post) => (
-                <tr key={post._id} className="hover:bg-gray-50">
+                <tr key={post._id} className="hover:bg-muted">
                   <td className="px-6 py-4">
                     <p className="font-medium text-sm">{post.title}</p>
-                    <p className="text-xs text-gray-400 line-clamp-1">{post.content}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{post.content}</p>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{post.providerName || "N/A"}</td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">{post.providerName || "N/A"}</td>
                   <td className="px-6 py-4">
                     <span className={`flex items-center gap-1 w-fit text-xs px-2 py-0.5 rounded-full ${
-                      post.isPublic ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                      post.isPublic ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"
                     }`}>
                       {post.isPublic ? <Globe className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
                       {post.isPublic ? "Public" : "Draft"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
                     {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : "N/A"}
                   </td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => handleDelete(post._id)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition"
+                      className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded transition"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -100,7 +100,7 @@ export default function AdminPostsPage() {
           </table>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-3 border-t bg-gray-50">
+            <div className="flex items-center justify-between px-6 py-3 border-t bg-muted">
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
@@ -108,7 +108,7 @@ export default function AdminPostsPage() {
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
+              <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}

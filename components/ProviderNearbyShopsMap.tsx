@@ -56,7 +56,7 @@ const SOURCE_STYLES: Record<ShopSource, { label: string; marker: string; chip: s
   osm: {
     label: "Near You (OSM)",
     marker: "#ea580c",
-    chip: "bg-orange-50 text-orange-700 border-orange-200",
+    chip: "bg-[var(--pc-primary-light)] text-[var(--pc-primary-hover)] border-[var(--pc-primary)]/30",
   },
 };
 
@@ -284,7 +284,7 @@ async function fetchOsmPlaces(
 function listItemClass(source: ShopSource) {
   return source === "pawcare"
     ? "border-emerald-100 bg-emerald-50/40"
-    : "border-orange-100 bg-orange-50/40";
+    : "border-[var(--pc-primary)]/20 bg-[var(--pc-primary-light)]/40";
 }
 
 export default function ProviderNearbyShopsMap({
@@ -445,8 +445,8 @@ export default function ProviderNearbyShopsMap({
       const centerMarker = leaflet
         .circleMarker([center.lat, center.lng], {
           radius: 7,
-          color: "#0f4f57",
-          fillColor: "#0f4f57",
+          color: "#2D7D74",
+          fillColor: "#2D7D74",
           fillOpacity: 0.95,
           weight: 2,
         })
@@ -503,13 +503,13 @@ export default function ProviderNearbyShopsMap({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-[#0c4148]">Nearby {modeConfig.title}</h3>
-          <p className="text-xs text-gray-500">{subtitle}</p>
+          <h3 className="text-sm font-semibold text-[var(--pc-teal-dark)]">Nearby {modeConfig.title}</h3>
+          <p className="text-xs text-muted-foreground">{subtitle}</p>
         </div>
         <button
           type="button"
           onClick={refreshLocation}
-          className="inline-flex items-center gap-1 rounded-lg border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-3 py-1.5 text-xs font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10"
+          className="inline-flex items-center gap-1 rounded-lg border border-[var(--pc-teal)]/20 bg-[var(--pc-teal)]/5 px-3 py-1.5 text-xs font-semibold text-[var(--pc-teal)] hover:bg-[var(--pc-teal)]/10"
         >
           <RefreshCw className="h-3.5 w-3.5" />
           Refresh
@@ -523,7 +523,7 @@ export default function ProviderNearbyShopsMap({
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition ${
             sourceVisibility.pawcare
               ? SOURCE_STYLES.pawcare.chip
-              : "border-gray-200 bg-gray-100 text-gray-500"
+              : "border-border bg-muted text-muted-foreground"
           }`}
         >
           <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" />
@@ -535,10 +535,10 @@ export default function ProviderNearbyShopsMap({
           className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition ${
             sourceVisibility.osm
               ? SOURCE_STYLES.osm.chip
-              : "border-gray-200 bg-gray-100 text-gray-500"
+              : "border-border bg-muted text-muted-foreground"
           }`}
         >
-          <span className="h-2.5 w-2.5 rounded-full bg-orange-600" />
+          <span className="h-2.5 w-2.5 rounded-full bg-[var(--pc-primary-hover)]" />
           Near You OSM ({osmShops.length})
         </button>
       </div>
@@ -562,20 +562,20 @@ export default function ProviderNearbyShopsMap({
       <div
         ref={mapRef}
         style={{ height: 340, width: "100%" }}
-        className="overflow-hidden rounded-xl border border-gray-200"
+        className="overflow-hidden rounded-xl border border-border"
       />
 
-      <div className="rounded-xl border border-gray-200 bg-white p-3">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
+      <div className="rounded-xl border border-border bg-white p-3">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Nearby Results
         </p>
         {loading ? (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <LocateFixed className="h-4 w-4 animate-pulse text-[#0f4f57]" />
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <LocateFixed className="h-4 w-4 animate-pulse text-[var(--pc-teal)]" />
             {modeConfig.loadingText}
           </div>
         ) : !sourceVisibility.pawcare && !sourceVisibility.osm ? (
-          <p className="text-sm text-gray-500">Enable at least one source to see results.</p>
+          <p className="text-sm text-muted-foreground">Enable at least one source to see results.</p>
         ) : (
           <div className="space-y-3">
             {sourceVisibility.pawcare && (
@@ -584,7 +584,7 @@ export default function ProviderNearbyShopsMap({
                   {modeConfig.pawcareSectionTitle}
                 </p>
                 {pawcareShops.length === 0 ? (
-                  <p className="text-sm text-gray-500">{modeConfig.pawcareEmptyText}</p>
+                  <p className="text-sm text-muted-foreground">{modeConfig.pawcareEmptyText}</p>
                 ) : (
                   <ul className="space-y-2">
                     {pawcareShops.slice(0, 5).map((shop) => (
@@ -594,10 +594,10 @@ export default function ProviderNearbyShopsMap({
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="text-sm font-semibold text-[#0c4148]">{shop.name}</p>
-                            <p className="text-xs text-gray-500">{shop.address}</p>
+                            <p className="text-sm font-semibold text-[var(--pc-teal-dark)]">{shop.name}</p>
+                            <p className="text-xs text-muted-foreground">{shop.address}</p>
                           </div>
-                          <span className="text-xs font-semibold text-[#0f4f57]">
+                          <span className="text-xs font-semibold text-[var(--pc-teal)]">
                             {shop.distanceKm.toFixed(2)} km
                           </span>
                         </div>
@@ -605,7 +605,7 @@ export default function ProviderNearbyShopsMap({
                           href={`https://www.openstreetmap.org/?mlat=${shop.location.lat}&mlon=${shop.location.lng}#map=18/${shop.location.lat}/${shop.location.lng}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[var(--pc-teal)] hover:underline"
                         >
                           <MapPin className="h-3.5 w-3.5" />
                           Open in OSM
@@ -619,21 +619,21 @@ export default function ProviderNearbyShopsMap({
 
             {sourceVisibility.osm && (
               <div>
-                <p className="mb-2 text-xs font-semibold text-orange-700">
+                <p className="mb-2 text-xs font-semibold text-[var(--pc-primary-hover)]">
                   {modeConfig.osmSectionTitle}
                 </p>
                 {osmShops.length === 0 ? (
-                  <p className="text-sm text-gray-500">{modeConfig.osmEmptyText}</p>
+                  <p className="text-sm text-muted-foreground">{modeConfig.osmEmptyText}</p>
                 ) : (
                   <ul className="space-y-2">
                     {osmShops.slice(0, 5).map((shop) => (
                       <li key={shop.id} className={`rounded-lg border p-2.5 ${listItemClass("osm")}`}>
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="text-sm font-semibold text-[#0c4148]">{shop.name}</p>
-                            <p className="text-xs text-gray-500">{shop.address}</p>
+                            <p className="text-sm font-semibold text-[var(--pc-teal-dark)]">{shop.name}</p>
+                            <p className="text-xs text-muted-foreground">{shop.address}</p>
                           </div>
-                          <span className="text-xs font-semibold text-[#0f4f57]">
+                          <span className="text-xs font-semibold text-[var(--pc-teal)]">
                             {shop.distanceKm.toFixed(2)} km
                           </span>
                         </div>
@@ -641,7 +641,7 @@ export default function ProviderNearbyShopsMap({
                           href={`https://www.openstreetmap.org/?mlat=${shop.location.lat}&mlon=${shop.location.lng}#map=18/${shop.location.lat}/${shop.location.lng}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[#0f4f57] hover:underline"
+                          className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-[var(--pc-teal)] hover:underline"
                         >
                           <MapPin className="h-3.5 w-3.5" />
                           Open in OSM
@@ -656,11 +656,11 @@ export default function ProviderNearbyShopsMap({
         )}
       </div>
 
-      <p className="inline-flex items-center gap-1 text-[11px] text-gray-400">
+      <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
         <ShieldCheck className="h-3.5 w-3.5" />
         Data source: PawCare verified providers + OpenStreetMap/Overpass
       </p>
-      <p className="inline-flex items-center gap-1 text-[11px] text-gray-400">
+      <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
         <Store className="h-3.5 w-3.5" />
         Marker colors: green = PawCare verified, orange = OSM nearby
       </p>

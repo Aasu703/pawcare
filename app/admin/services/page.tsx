@@ -40,25 +40,25 @@ export default function AdminServicesPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
         </div>
       ) : (
         <div className="bg-white rounded-xl border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50">
+            <thead className="bg-muted">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Duration</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Approval Status</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Title</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Provider</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Price</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Duration</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Approval Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {services.length === 0 ? (
-                <tr><td colSpan={7} className="px-6 py-12 text-center text-gray-400">No services found</td></tr>
+                <tr><td colSpan={7} className="px-6 py-12 text-center text-muted-foreground">No services found</td></tr>
               ) : services.map((s) => {
                 const statusColor =
                   s.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
@@ -66,10 +66,10 @@ export default function AdminServicesPage() {
                   'bg-amber-100 text-amber-800';
                 
                 return (
-                  <tr key={s._id} className="hover:bg-gray-50">
+                  <tr key={s._id} className="hover:bg-muted">
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium">{s.title}</div>
-                      <div className="text-xs text-gray-400 truncate max-w-xs">{s.description}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-xs">{s.description}</div>
                     </td>
                     <td className="px-6 py-4 text-sm">
                       {typeof s.providerId === "object" ? (s.providerId as any).businessName || (s.providerId as any).email : s.providerId || "-"}
@@ -85,7 +85,7 @@ export default function AdminServicesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <button onClick={() => handleDelete(s._id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                      <button onClick={() => handleDelete(s._id)} className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg">
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </td>

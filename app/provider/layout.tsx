@@ -10,10 +10,11 @@ import {
   canAccessVetFeatures,
   canManageBookings,
   canManageInventory,
+  canManageOrders,
   canManageServices,
 } from "@/lib/provider-access";
 
-const authPages = ["/provider/login", "/provider/register", "/provider/select-type", "/provider/verification-pending"];
+const authPages = ["/login", "/register", "/provider/select-type", "/provider/verification-pending"];
 
 export default function ProviderLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,7 +28,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
 
     if (!isAuthenticated) {
       if (!isAuthPage) {
-        router.replace("/provider/login");
+        router.replace("/login");
       }
       return;
     }
@@ -73,6 +74,10 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
         router.replace("/provider/dashboard");
         return;
       }
+      if (pathname.startsWith("/provider/orders") && !canManageOrders(providerType)) {
+        router.replace("/provider/dashboard");
+        return;
+      }
       if (pathname.startsWith("/provider/vet-appointments") && !canAccessVetFeatures(providerType)) {
         router.replace("/provider/dashboard");
         return;
@@ -99,7 +104,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
   if (loading || (isAuthenticated && user?.role === "provider" && !profileSynced)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-[var(--pc-primary)] border-t-transparent"></div>
       </div>
     );
   }
@@ -129,7 +134,7 @@ export default function ProviderLayout({ children }: { children: React.ReactNode
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-muted">
       <ProviderSidebar />
       <main className="ml-64 min-h-screen p-8">{children}</main>
     </div>

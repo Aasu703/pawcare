@@ -57,7 +57,7 @@ export function ServiceCard({
         {/* Meta Tags */}
         <div className="flex items-center gap-3 mb-5">
           <div className="flex items-center gap-1.5 bg-stone-50 px-2.5 py-1 rounded-md border border-stone-100">
-            <Clock className="w-3.5 h-3.5 text-[#f59e0b]" />
+            <Clock className="w-3.5 h-3.5 text-[var(--pc-primary)]" />
             <span className="text-xs font-medium text-stone-600">
               {duration}
             </span>
@@ -80,7 +80,7 @@ export function ServiceCard({
               </Link>
               <Link
                 href={`/user/bookings/new?serviceId=${serviceId}`}
-                className="flex-1 py-2 px-4 rounded-full bg-[#f59e0b] text-white text-sm font-medium hover:bg-[#d97706] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn"
+                className="flex-1 py-2 px-4 rounded-full bg-[var(--pc-primary)] text-white text-sm font-medium hover:bg-[var(--pc-primary-hover)] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn"
               >
                 Book Now
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
@@ -91,7 +91,7 @@ export function ServiceCard({
               <button className="flex-1 py-2 px-4 rounded-full border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition-colors">
                 View Details
               </button>
-              <button className="flex-1 py-2 px-4 rounded-full bg-[#f59e0b] text-white text-sm font-medium hover:bg-[#d97706] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn">
+              <button className="flex-1 py-2 px-4 rounded-full bg-[var(--pc-primary)] text-white text-sm font-medium hover:bg-[var(--pc-primary-hover)] transition-colors shadow-sm hover:shadow flex items-center justify-center gap-1 group/btn">
                 Book Now
                 <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
               </button>

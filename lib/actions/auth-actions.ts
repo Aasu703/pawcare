@@ -298,6 +298,7 @@ export const handleUpdateProfile = async (
     const response = await axios.put(API.AUTH.UPDATEPROFILE, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
     });
 

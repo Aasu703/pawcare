@@ -4,7 +4,6 @@ const publicPaths = ["/login", "/register", "/forget-password", "/reset-password
 const adminPaths = ["/admin"];
 const userPaths = ["/user"];
 const providerPaths = ["/provider"];
-const providerAuthPaths = ["/provider/login", "/provider/register"];
 const providerSetupPaths = ["/provider/select-type", "/provider/verification-pending"];
 
 type ProxyUser = {
@@ -37,10 +36,11 @@ function proxy(req: NextRequest) {
     const isAdminPath = adminPaths.some((path) => pathname.startsWith(path));
     const isUserPath = userPaths.some((path) => pathname.startsWith(path));
     const isProviderPath = providerPaths.some((path) => pathname.startsWith(path));
-    const isProviderAuthPath = providerAuthPaths.some((path) => pathname === path);
+    const isProviderSetupPath = providerSetupPaths.some((path) => pathname === path);
+    const isProviderAuthPath = isPublicPath || isProviderSetupPath;
 
-    // Allow provider auth pages without token
-    if (isProviderAuthPath) {
+    // Allow provider setup pages without full validation
+    if (isProviderSetupPath) {
         return NextResponse.next();
     }
 
@@ -49,10 +49,10 @@ function proxy(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    // Provider protected routes — check for provider_token cookie
+    // Provider protected routes — redirect to unified login
     const providerToken = req.cookies.get('auth_token')?.value;
-    if (!providerToken && isProviderPath && !isProviderAuthPath) {
-        return NextResponse.redirect(new URL("/provider/login", req.url));
+    if (!providerToken && isProviderPath && !isProviderSetupPath) {
+        return NextResponse.redirect(new URL("/login", req.url));
     }
 
     // Redirect authenticated users away from public auth pages
@@ -73,7 +73,7 @@ function proxy(req: NextRequest) {
     }
 
     // Block non-provider users from provider routes
-    if (hasValidToken && isProviderPath && !isProviderAuthPath && user?.role !== 'provider') {
+    if (hasValidToken && isProviderPath && !isProviderSetupPath && user?.role !== 'provider') {
         const redirectUrl = user?.role === 'admin' ? '/admin' : '/user/home';
         return NextResponse.redirect(new URL(redirectUrl, req.url));
     }

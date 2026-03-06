@@ -60,7 +60,7 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500" />
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[var(--pc-primary)]" />
       </div>
     );
   }
@@ -71,25 +71,25 @@ export default function AdminOrdersPage() {
 
       {orders.length === 0 ? (
         <div className="text-center py-16">
-          <ShoppingCart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">No orders found</p>
+          <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">No orders found</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow border overflow-hidden">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-muted border-b">
               <tr>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Order ID</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Items</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
-                <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Order ID</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Items</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Total</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Status</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Date</th>
+                <th className="text-left px-6 py-3 text-xs font-medium text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y">
               {orders.map((order) => (
-                <tr key={order._id} className="hover:bg-gray-50">
+                <tr key={order._id} className="hover:bg-muted">
                   <td className="px-6 py-4 text-sm font-mono">{order._id.slice(-8)}</td>
                   <td className="px-6 py-4 text-sm">
                     {order.items?.length || 0} item(s)
@@ -106,13 +106,13 @@ export default function AdminOrdersPage() {
                       ))}
                     </select>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
                     {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : "N/A"}
                   </td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => handleDelete(order._id)}
-                      className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition"
+                      className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded transition"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -124,7 +124,7 @@ export default function AdminOrdersPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-3 border-t bg-gray-50">
+            <div className="flex items-center justify-between px-6 py-3 border-t bg-muted">
               <button
                 onClick={() => setPage(Math.max(1, page - 1))}
                 disabled={page === 1}
@@ -132,7 +132,7 @@ export default function AdminOrdersPage() {
               >
                 Previous
               </button>
-              <span className="text-sm text-gray-500">Page {page} of {totalPages}</span>
+              <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
               <button
                 onClick={() => setPage(Math.min(totalPages, page + 1))}
                 disabled={page === totalPages}

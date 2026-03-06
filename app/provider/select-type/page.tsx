@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { setProviderType, uploadProviderCertificate } from "@/lib/api/provider/provider";
-import { FileUp, Paperclip, Stethoscope, Scissors, ShoppingBag, CheckCircle, X } from "lucide-react";
+import { Stethoscope, Scissors, ShoppingBag, Check, X, UploadCloud, MapPin, Building2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import ProviderLocationPicker, { type ProviderPinnedLocation } from "@/components/ProviderLocationPicker";
 
@@ -12,25 +12,35 @@ const providerTypes = [
   {
     id: "vet",
     title: "Veterinarian",
-    description: "Provide veterinary services including consultations, vaccinations, and medical treatments",
+    description: "Provide veterinary services including consultations, vaccinations, and medical treatments for pets.",
     icon: Stethoscope,
-    color: "bg-green-500",
+    iconBg: "bg-[var(--pc-teal-light)]",
+    iconColor: "text-[var(--pc-teal)]",
   },
   {
     id: "shop",
     title: "Pet Shop",
-    description: "Sell pet supplies, food, toys, and accessories",
+    description: "Sell pet supplies, food, toys, and accessories through your own storefront.",
     icon: ShoppingBag,
-    color: "bg-blue-500",
+    iconBg: "bg-[var(--pc-primary-light)]",
+    iconColor: "text-[var(--pc-primary)]",
   },
   {
     id: "babysitter",
     title: "Groomer",
-    description: "Offer grooming and related pet care services",
+    description: "Offer grooming, styling, and related pet care services to pet owners.",
     icon: Scissors,
-    color: "bg-purple-500",
+    iconBg: "bg-purple-50",
+    iconColor: "text-purple-600",
   },
 ];
+
+function getStepState(step: number, selectedType: string | null, hasDetails: boolean, hasLocation: boolean) {
+  if (step === 1) return selectedType ? "completed" : "active";
+  if (step === 2) return !selectedType ? "upcoming" : hasDetails ? "completed" : "active";
+  if (step === 3) return !hasDetails ? "upcoming" : hasLocation ? "completed" : "active";
+  return "upcoming";
+}
 
 export default function SelectProviderType() {
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -154,94 +164,161 @@ export default function SelectProviderType() {
   const isGroomer = selectedType === "babysitter";
   const isShop = selectedType === "shop";
 
+  /* Progress step logic (visual only) */
+  const hasDetailsFilled = selectedType
+    ? isVet
+      ? !!(certification.trim() && experience.trim() && clinicOrShopName.trim())
+      : isShop
+      ? !!(clinicOrShopName.trim() && panNumber.trim())
+      : isGroomer
+      ? !!experience.trim()
+      : false
+    : false;
+  const needsLocation = isVet || isShop;
+
+  const steps = [
+    { num: 1, label: "Choose Type" },
+    { num: 2, label: "Your Details" },
+    { num: 3, label: "Location" },
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50/30 flex items-center justify-center p-6">
-      <div className="max-w-4xl w-full">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Provider Type
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Select the type of pet services you provide. This will help us customize your experience and connect you with the right customers.
-          </p>
-        </div>
-
-        {/* Provider Types Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-          {providerTypes.map((type) => {
-            const Icon = type.icon;
-            const isSelected = selectedType === type.id;
-
+    <div className="min-h-screen bg-[var(--pc-cream)]">
+      <div className="max-w-2xl mx-auto px-4 py-12">
+        {/* Progress Indicator */}
+        <div className="flex items-center justify-center mb-10">
+          {steps.map((step, i) => {
+            const state = getStepState(step.num, selectedType, hasDetailsFilled, hasPinnedLocation);
+            const isLast = i === steps.length - 1;
             return (
-              <div
-                key={type.id}
-                onClick={() => {
-                  setSelectedType(type.id);
-                }}
-                className={`relative bg-white/80 backdrop-blur-md rounded-3xl p-8 border-2 cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 ${
-                  isSelected
-                    ? "border-primary shadow-lg shadow-primary/20 scale-105"
-                    : "border-gray-200 hover:border-primary/50"
-                }`}
-              >
-                {isSelected && (
-                  <div className="absolute -top-3 -right-3 bg-primary rounded-full p-2">
-                    <CheckCircle className="w-6 h-6 text-white" />
-                  </div>
-                )}
-
-                <div className="flex items-start gap-4">
-                  <div className={`${type.color} p-4 rounded-2xl`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{type.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{type.description}</p>
-                  </div>
+              <div key={step.num} className="flex items-center">
+                <div
+                  className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                    state === "completed"
+                      ? "bg-green-500 text-white"
+                      : state === "active"
+                      ? "bg-[var(--pc-primary)] text-white"
+                      : "bg-[var(--pc-cream)] text-[var(--pc-text-muted)] border border-[var(--pc-border)]"
+                  }`}
+                >
+                  {state === "completed" ? "✓" : step.num} {step.label}
                 </div>
+                {!isLast && (
+                  <div className="mx-2 h-[2px] w-8 sm:w-12 bg-[var(--pc-border)]" />
+                )}
               </div>
             );
           })}
         </div>
 
+        {/* STEP 1 — CHOOSE PROVIDER TYPE */}
+        <div className="relative mb-8">
+          <div className="text-center">
+            <h1 className="font-[Fraunces] text-2xl font-semibold text-[var(--pc-text)]">
+              What kind of provider are you?
+            </h1>
+            <p className="text-sm text-[var(--pc-text-muted)] mt-2 mb-8">
+              Choose the type that best describes your service
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {providerTypes.map((type) => {
+              const Icon = type.icon;
+              const isSelected = selectedType === type.id;
+
+              return (
+                <div
+                  key={type.id}
+                  onClick={() => setSelectedType(type.id)}
+                  className={`relative bg-white rounded-[24px] border-2 p-6 cursor-pointer transition-all duration-200 hover:border-[var(--pc-primary)] hover:shadow-md hover:scale-[1.01] ${
+                    isSelected
+                      ? "border-[var(--pc-primary)] bg-[var(--pc-primary-light)]/30 shadow-[0_0_0_4px_rgba(232,133,90,0.1)]"
+                      : "border-[var(--pc-border)]"
+                  }`}
+                >
+                  <div className="flex items-start gap-5">
+                    {/* Icon */}
+                    <div className={`${type.iconBg} ${type.iconColor} flex h-14 w-14 shrink-0 items-center justify-center rounded-[16px]`}>
+                      <Icon className="h-7 w-7" />
+                    </div>
+
+                    {/* Text */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-[Fraunces] text-lg font-semibold text-[var(--pc-text)] mb-1">
+                        {type.title}
+                      </h3>
+                      <p className="text-sm text-[var(--pc-text-muted)] leading-relaxed">
+                        {type.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Selected checkmark */}
+                  {isSelected && (
+                    <div className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--pc-primary)] transition-transform duration-200 scale-100">
+                      <Check className="h-4 w-4 text-white" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* STEP 2 — VERIFICATION DETAILS */}
         {selectedType && (
-          <div className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-3xl p-8 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Verification Details</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="bg-white rounded-[24px] border border-[var(--pc-border)] p-6 mt-6">
+            <h2 className="font-[Fraunces] text-xl font-semibold text-[var(--pc-text)] mb-1">
+              📋 Verification Details
+            </h2>
+            <p className="text-sm text-[var(--pc-text-muted)] mb-5">
+              This information will be reviewed by our team
+            </p>
+
+            <div className="space-y-5">
+              {/* Clinic/Shop Name */}
               {(isVet || isShop) && (
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div>
+                  <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
                     Clinic/Shop Name
                   </label>
-                  <input
-                    type="text"
-                    value={clinicOrShopName}
-                    onChange={(e) => setClinicOrShopName(e.target.value)}
-                    placeholder="Enter clinic or shop name"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
-                  />
+                  <div className="relative">
+                    <Building2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--pc-text-light)]" />
+                    <input
+                      type="text"
+                      value={clinicOrShopName}
+                      onChange={(e) => setClinicOrShopName(e.target.value)}
+                      placeholder="Enter clinic or shop name"
+                      className="w-full border-[1.5px] border-[var(--pc-border)] rounded-[12px] bg-[var(--pc-cream)] pl-10 pr-4 py-3 text-sm outline-none transition-all duration-200 focus:border-[var(--pc-primary)] focus:bg-white focus:ring-2 focus:ring-[var(--pc-primary)]/10 placeholder:text-[var(--pc-text-light)]"
+                    />
+                  </div>
                 </div>
               )}
 
+              {/* Experience */}
               {(isVet || isGroomer) && (
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div>
+                  <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
                     Experience
                   </label>
                   <textarea
                     value={experience}
                     onChange={(e) => setExperience(e.target.value)}
                     placeholder="Describe your relevant experience"
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    rows={4}
+                    className="w-full min-h-[120px] border-[1.5px] border-[var(--pc-border)] rounded-[12px] bg-[var(--pc-cream)] px-4 py-3 text-sm outline-none transition-all duration-200 focus:border-[var(--pc-primary)] focus:bg-white focus:ring-2 focus:ring-[var(--pc-primary)]/10 placeholder:text-[var(--pc-text-light)] resize-y"
                   />
+                  <p className="text-xs text-[var(--pc-text-muted)] mt-1">
+                    Describe your professional background and years of experience
+                  </p>
                 </div>
               )}
 
+              {/* Certification */}
               {isVet && (
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div>
+                  <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
                     Certification
                   </label>
                   <textarea
@@ -249,12 +326,48 @@ export default function SelectProviderType() {
                     onChange={(e) => setCertification(e.target.value)}
                     placeholder="Enter certification/license details"
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
+                    className="w-full min-h-[100px] border-[1.5px] border-[var(--pc-border)] rounded-[12px] bg-[var(--pc-cream)] px-4 py-3 text-sm outline-none transition-all duration-200 focus:border-[var(--pc-primary)] focus:bg-white focus:ring-2 focus:ring-[var(--pc-primary)]/10 placeholder:text-[var(--pc-text-light)] resize-y"
                   />
-                  <div className="mt-3 space-y-2">
-                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#0f4f57]/20 bg-[#0f4f57]/5 px-4 py-2 text-sm font-semibold text-[#0f4f57] hover:bg-[#0f4f57]/10">
-                      <FileUp className="h-4 w-4" />
-                      {uploadingCertificate ? "Uploading..." : "Attach Certificate File"}
+                  <p className="text-xs text-[var(--pc-text-muted)] mt-1">
+                    Include license number, issuing body, and expiry date
+                  </p>
+                </div>
+              )}
+
+              {/* Certificate File Upload */}
+              {isVet && (
+                <div>
+                  <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
+                    Certificate File
+                  </label>
+                  {certificationDocumentUrl ? (
+                    <div className="flex items-center gap-3 rounded-[12px] border border-[var(--pc-border)] bg-[var(--pc-cream)] p-3">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--pc-primary-light)]">
+                        <UploadCloud className="h-4 w-4 text-[var(--pc-primary)]" />
+                      </div>
+                      <span className="flex-1 truncate text-sm font-medium text-[var(--pc-text)]">
+                        {certificationFileName || "Certificate file"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCertificationDocumentUrl("");
+                          setCertificationFileName("");
+                        }}
+                        className="rounded-[10px] border border-red-200 bg-red-50 p-1.5 text-red-500 transition-all hover:bg-red-500 hover:text-white hover:border-red-500 active:scale-95"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="group flex cursor-pointer flex-col items-center rounded-[16px] border-2 border-dashed border-[var(--pc-primary)]/30 p-5 text-center transition-all duration-200 hover:border-[var(--pc-primary)] hover:bg-[var(--pc-primary-light)]">
+                      <UploadCloud className="h-8 w-8 text-[var(--pc-text-muted)] mb-2 group-hover:text-[var(--pc-primary)]" />
+                      <span className="text-sm text-[var(--pc-text-muted)]">
+                        {uploadingCertificate ? "Uploading..." : "Drop your certificate here or click to browse"}
+                      </span>
+                      <span className="text-xs text-[var(--pc-text-muted)] mt-1">
+                        PDF, JPG, PNG, WEBP · Max 10MB
+                      </span>
                       <input
                         type="file"
                         accept=".pdf,.jpg,.jpeg,.png,.webp"
@@ -267,41 +380,14 @@ export default function SelectProviderType() {
                         }}
                       />
                     </label>
-                    {certificationDocumentUrl ? (
-                      <div className="flex flex-wrap items-center gap-3 text-xs">
-                        <a
-                          href={certificationDocumentUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 font-semibold text-[#0f4f57] hover:underline"
-                        >
-                          <Paperclip className="h-3.5 w-3.5" />
-                          {certificationFileName || "View attached certificate"}
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setCertificationDocumentUrl("");
-                            setCertificationFileName("");
-                          }}
-                          className="inline-flex items-center gap-1 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700 hover:bg-red-100"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                          Remove
-                        </button>
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-500">
-                        Accepted formats: PDF, JPG, PNG, WEBP (max 10MB).
-                      </p>
-                    )}
-                  </div>
+                  )}
                 </div>
               )}
 
+              {/* PAN Number */}
               {isShop && (
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <div>
+                  <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
                     PAN Number
                   </label>
                   <input
@@ -309,68 +395,85 @@ export default function SelectProviderType() {
                     value={panNumber}
                     onChange={(e) => setPanNumber(e.target.value.toUpperCase())}
                     placeholder="Enter PAN number"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70 uppercase"
+                    className="w-full border-[1.5px] border-[var(--pc-border)] rounded-[12px] bg-[var(--pc-cream)] px-4 py-3 text-sm outline-none transition-all duration-200 focus:border-[var(--pc-primary)] focus:bg-white focus:ring-2 focus:ring-[var(--pc-primary)]/10 placeholder:text-[var(--pc-text-light)] uppercase"
                   />
-                </div>
-              )}
-
-              {(isVet || isShop) && (
-                <div className="md:col-span-2 space-y-3">
-                  <ProviderLocationPicker
-                    value={pinnedLocation}
-                    onChange={setPinnedLocation}
-                    required
-                    label={isVet ? "Clinic Location" : "Shop Location"}
-                    helperText="Allow location access or click anywhere on map to pin your exact business location."
-                  />
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Location Notes (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={pinnedLocation.address || ""}
-                      onChange={(e) =>
-                        setPinnedLocation((prev) => ({
-                          ...prev,
-                          address: e.target.value,
-                        }))
-                      }
-                      placeholder="Landmark, floor, or nearby reference"
-                      className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none bg-white/70"
-                    />
-                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {/* Continue Button */}
-        <div className="text-center">
-          <button
-            onClick={handleSubmit}
-            disabled={!selectedType || loading}
-            className={`px-12 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
-              selectedType && !loading
-                ? "bg-primary text-white hover:bg-primary/90 shadow-lg hover:shadow-primary/25"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            {loading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Setting up your profile...
-              </div>
-            ) : (
-              "Submit For Verification"
-            )}
-          </button>
-        </div>
+        {/* STEP 3 — LOCATION */}
+        {(isVet || isShop) && (
+          <div className="bg-white rounded-[24px] border border-[var(--pc-border)] p-6 mt-4">
+            <h2 className="font-[Fraunces] text-xl font-semibold text-[var(--pc-text)] mb-1">
+              📍 {isVet ? "Clinic" : "Shop"} Location
+            </h2>
+            <p className="text-sm text-[var(--pc-text-muted)] mb-4">
+              Pin your exact business location on the map
+            </p>
 
-        <p className="text-center mt-6 text-sm text-gray-500">
-          Dashboard access will unlock after admin verification.
+            <ProviderLocationPicker
+              value={pinnedLocation}
+              onChange={setPinnedLocation}
+              required
+              label={isVet ? "Clinic Location" : "Shop Location"}
+              helperText="Allow location access or click anywhere on map to pin your exact business location."
+            />
+
+            {/* Location pinned indicator */}
+            {hasPinnedLocation && (
+              <div className="bg-[var(--pc-teal-light)] rounded-[12px] px-4 py-3 mt-3 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-[var(--pc-teal)]" />
+                <span className="text-sm font-medium text-[var(--pc-teal)]">
+                  Location pinned: {pinnedLocation.address || "Custom location"} ({pinnedLocation.latitude?.toFixed(3)}, {pinnedLocation.longitude?.toFixed(3)})
+                </span>
+              </div>
+            )}
+
+            {/* Location Notes */}
+            <div className="mt-4">
+              <label className="text-xs font-semibold text-[var(--pc-text-muted)] uppercase tracking-wider mb-1.5 block">
+                Location Notes (Optional)
+              </label>
+              <input
+                type="text"
+                value={pinnedLocation.address || ""}
+                onChange={(e) =>
+                  setPinnedLocation((prev) => ({
+                    ...prev,
+                    address: e.target.value,
+                  }))
+                }
+                placeholder="Landmark, floor, or nearby reference"
+                className="w-full border-[1.5px] border-[var(--pc-border)] rounded-[12px] bg-[var(--pc-cream)] px-4 py-3 text-sm outline-none transition-all duration-200 focus:border-[var(--pc-primary)] focus:bg-white focus:ring-2 focus:ring-[var(--pc-primary)]/10 placeholder:text-[var(--pc-text-light)]"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* SUBMIT BUTTON */}
+        <button
+          onClick={handleSubmit}
+          disabled={!selectedType || loading}
+          className={`mt-8 w-full rounded-[16px] py-4 font-semibold text-base font-[Fraunces] transition-all duration-200 active:scale-[0.99] ${
+            selectedType && !loading
+              ? "bg-[var(--pc-primary)] text-white hover:bg-[var(--pc-primary-hover)] hover:shadow-[0_6px_24px_rgba(232,133,90,0.4)]"
+              : "bg-gray-200 text-[var(--pc-text-muted)] cursor-not-allowed"
+          }`}
+        >
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              Submitting...
+            </span>
+          ) : (
+            "Submit for Verification →"
+          )}
+        </button>
+
+        <p className="text-xs text-[var(--pc-text-muted)] text-center mt-3">
+          🔒 Your information is reviewed by our team within 24-48 hours
         </p>
       </div>
     </div>

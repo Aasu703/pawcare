@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, ArrowLeft, PawPrint } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { assignVetToUserPet, deleteUserPet, getUserPets, getVerifiedVets, type VerifiedVetOption } from '@/lib/api/user/pet';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getApiBaseUrl } from '@/lib/utils/media-url';
@@ -170,10 +171,10 @@ export default function PetListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--pc-cream)] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your pets...</p>
+          <div className="w-14 h-14 border-[3px] border-[var(--pc-primary)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm text-[var(--pc-text-muted)]">Loading your pets…</p>
         </div>
       </div>
     );
@@ -181,16 +182,16 @@ export default function PetListPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-100 flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--pc-cream)] flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-            <PawPrint className="w-8 h-8 text-red-600" />
+          <div className="w-14 h-14 rounded-[16px] bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <PawPrint className="w-7 h-7 text-red-500" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Pets</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="font-[var(--font-display)] text-xl font-bold text-foreground mb-2">Error Loading Pets</h2>
+          <p className="text-sm text-[var(--pc-text-muted)] mb-6">{error}</p>
           <button
             onClick={fetchPets}
-            className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            className="bg-[var(--pc-primary)] text-white rounded-[12px] px-5 py-2.5 font-semibold text-sm hover:bg-[var(--pc-primary-hover)] hover:shadow-[0_4px_16px_rgba(232,133,90,0.35)] active:scale-[0.98] transition-all duration-200"
           >
             Try Again
           </button>
@@ -200,71 +201,53 @@ export default function PetListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-100 text-gray-900 overflow-hidden relative">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <motion.div
-          animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-96 h-96 bg-green-300/20 rounded-full blur-3xl top-20 left-10"
-        />
-        <motion.div
-          animate={{ x: [0, -30, 0], y: [0, 30, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-96 h-96 bg-blue-300/20 rounded-full blur-3xl bottom-10 right-10"
-        />
-      </div>
+    <div className="min-h-screen bg-[var(--pc-cream)] text-foreground">
+      {/* Hero Header */}
+      <header className="relative overflow-hidden rounded-b-[32px] bg-gradient-to-br from-[var(--pc-teal-dark)] to-[var(--pc-teal)] text-white px-6 py-8">
+        <Image src="/images/pawcare.png" alt="" width={160} height={160} className="absolute -right-4 -bottom-6 opacity-10 rotate-12 pointer-events-none select-none" />
 
-      <motion.header
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="relative z-10 border-b border-gray-200 backdrop-blur-xl bg-white/80"
-      >
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Back</span>
-          </button>
-          <h1 className="text-xl font-bold text-gray-900">My Pets</h1>
+        <div className="max-w-6xl mx-auto flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-4">
+            <button onClick={() => router.back()} className="w-9 h-9 rounded-[10px] bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <div>
+              <h1 className="font-[var(--font-display)] text-2xl font-bold">My Pets</h1>
+              <p className="text-white/70 text-sm mt-0.5">{pets.length} furry friend{pets.length !== 1 ? "s" : ""} registered</p>
+            </div>
+          </div>
           <Link
             href="/user/pet/add"
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all"
+            className="flex items-center gap-2 bg-[var(--pc-primary)] text-white rounded-[12px] px-5 py-2.5 font-semibold text-sm hover:bg-[var(--pc-primary-hover)] hover:shadow-[0_4px_16px_rgba(232,133,90,0.35)] active:scale-[0.98] transition-all duration-200"
           >
             <Plus className="w-4 h-4" />
-            <span className="font-medium">Add Pet</span>
+            Add Pet
           </Link>
         </div>
-      </motion.header>
+      </header>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+      <main className="max-w-6xl mx-auto px-6 py-8">
         {pets.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16 bg-white rounded-[24px] border border-[var(--pc-border)]"
           >
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-green-200">
-              <PawPrint className="w-12 h-12 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">No Pets Yet</h2>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <Image src="/images/pawcare.png" alt="No pets yet" width={120} height={120} className="mx-auto mb-5 opacity-50" />
+            <h2 className="font-[var(--font-display)] text-xl font-bold text-foreground mb-2">No Pets Yet</h2>
+            <p className="text-sm text-[var(--pc-text-muted)] mb-6 max-w-md mx-auto">
               Start building your pet family! Add your first furry friend to keep track of their health, appointments, and more.
             </p>
             <Link
               href="/user/pet/add"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all"
+              className="inline-flex items-center gap-2 bg-[var(--pc-primary)] text-white rounded-[12px] px-6 py-3 font-semibold text-sm hover:bg-[var(--pc-primary-hover)] hover:shadow-[0_4px_16px_rgba(232,133,90,0.35)] active:scale-[0.98] transition-all duration-200"
             >
-              <Plus className="w-5 h-5" />
+              <Plus className="w-4 h-4" />
               Add Your First Pet
             </Link>
           </motion.div>
         ) : (
-          <motion.div
-            layout
-            className="grid grid-cols-1 gap-4"
-          >
+          <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <AnimatePresence mode="popLayout">
               {pets.map((pet) => (
                 <PetCard
@@ -292,22 +275,26 @@ export default function PetListPage() {
         )}
       </main>
 
+      {/* Assign Vet Dialog */}
       <Dialog open={Boolean(assignPet)} onOpenChange={(open) => (!open ? closeAssignDialog() : null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Assign Verified Vet</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="sm:max-w-md rounded-[20px] p-0 overflow-hidden border-none">
+          {/* Dialog header */}
+          <div className="px-6 pt-6 pb-4">
+            <DialogHeader>
+              <DialogTitle className="font-[var(--font-display)] text-lg font-bold">Assign Verified Vet</DialogTitle>
+            </DialogHeader>
+          </div>
 
-          <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Assign a PawCare-verified vet for {assignPet?.name}. The selected vet can review assigned pets one by one.
+          <div className="px-6 pb-6 space-y-4">
+            <p className="text-sm text-[var(--pc-text-muted)]">
+              Assign a PawCare-verified vet for <span className="font-semibold text-foreground">{assignPet?.name}</span>. The selected vet can review assigned pets one by one.
             </p>
 
             <Select value={selectedVetId} onValueChange={setSelectedVetId}>
-              <SelectTrigger>
+              <SelectTrigger className="rounded-[12px] border-[1.5px] border-[var(--pc-border)] bg-[var(--pc-cream)] h-11">
                 <SelectValue placeholder="Choose a verified vet" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-[12px]">
                 <SelectItem value="unassigned">No vet assigned</SelectItem>
                 {verifiedVets.map((vet) => (
                   <SelectItem key={vet._id} value={vet._id}>
@@ -317,13 +304,13 @@ export default function PetListPage() {
               </SelectContent>
             </Select>
 
-            {loadingVets && <p className="text-xs text-gray-500">Loading verified vets...</p>}
+            {loadingVets && <p className="text-xs text-[var(--pc-text-muted)]">Loading verified vets…</p>}
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={closeAssignDialog}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="border-[1.5px] border-[var(--pc-border)] text-[var(--pc-text-muted)] rounded-[12px] px-5 py-2.5 font-semibold text-sm bg-transparent hover:border-[var(--pc-primary)] hover:text-[var(--pc-primary)] hover:bg-[var(--pc-primary-light)] transition-all duration-200"
               >
                 Cancel
               </button>
@@ -331,9 +318,9 @@ export default function PetListPage() {
                 type="button"
                 onClick={handleAssignVet}
                 disabled={assigningVet}
-                className="px-4 py-2 rounded-lg bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60"
+                className="bg-[var(--pc-primary)] text-white rounded-[12px] px-5 py-2.5 font-semibold text-sm hover:bg-[var(--pc-primary-hover)] hover:shadow-[0_4px_16px_rgba(232,133,90,0.35)] active:scale-[0.98] transition-all duration-200 disabled:opacity-60"
               >
-                {assigningVet ? 'Saving...' : 'Save Assignment'}
+                {assigningVet ? 'Saving…' : 'Save Assignment'}
               </button>
             </div>
           </div>
